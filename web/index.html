@@ -664,7 +664,10 @@
                   const courseLabel=e&&e.c?(COURSE_NAMES[e.c]||e.c):null;
                   return(
                     <div key={h.id} style={{background:"#060808",border:"1px solid #0f1828",borderRadius:12,padding:"11px 13px"}}>
-                      <div style={{fontWeight:700,fontSize:14,color:"#94a3b8",marginBottom:3}}>Hall {h.id}</div>
+                      <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:3}}>
+                        <div style={{fontWeight:700,fontSize:14,color:"#94a3b8"}}>Hall {h.id}</div>
+                        <span style={{marginLeft:"auto",fontSize:12}}>{h.proj?"📽️":"🪑"}</span>
+                      </div>
                       <span style={bBadge("#1a0505","#f87171","#7f1d1d")}>✗ BUSY</span>
                       {courseLabel&&<div style={{color:"#64748b",fontSize:11,marginTop:5,lineHeight:1.3}}>{courseLabel}</div>}
                     </div>
@@ -796,9 +799,16 @@
           <FloorBar selFloor={selFloor} setSelFloor={setSelFloor} onFloorChange={()=>setSelRoom(null)}/>
 
           <div style={{flex:1,display:"flex",overflow:"hidden"}}>
-            <div style={{width:180,flexShrink:0,borderRight:"1px solid #0f1e30",overflowY:"auto",padding:"12px 10px",background:"#06090f"}}>
+            <div style={{
+              width:selRoom?"20%":180,
+              minWidth:selRoom?72:180,
+              maxWidth:selRoom?140:180,
+              flexShrink:0,borderRight:"1px solid #0f1e30",overflowY:"auto",
+              padding:selRoom?"12px 6px":"12px 10px",background:"#06090f",
+              transition:"width 0.24s ease, min-width 0.24s ease, max-width 0.24s ease, padding 0.24s ease"
+            }}>
               {!selFloor&&<p style={{color:"#1e293b",fontSize:12,textAlign:"center",marginTop:24,lineHeight:1.5}}>Pick a floor<br/>above</p>}
-              {selFloor&&(
+              {selFloor&&!selRoom&&(
                 <React.Fragment>
                   <p style={{color:"#1e3a5f",fontSize:10,textTransform:"uppercase",letterSpacing:"0.1em",margin:"0 0 8px 4px"}}>
                     {ordinal(selFloor)} Floor · {floorHalls(selFloor).length} rooms
@@ -836,9 +846,35 @@
                   </div>
                 </React.Fragment>
               )}
+              {selFloor&&selRoom&&(
+                <React.Fragment>
+                  <button onClick={()=>setSelRoom(null)} style={{width:"100%",textAlign:"center",padding:"6px 4px",marginBottom:8,borderRadius:8,border:"1px solid #1e293b",background:"transparent",color:"#475569",cursor:"pointer",fontSize:14}}>←</button>
+                  <div style={{display:"flex",flexDirection:"column",gap:5}}>
+                    {floorHalls(selFloor).map(hid=>{
+                      const h=HALL_INFO[hid];
+                      const isSel=selRoom===hid;
+                      const curE=typeof curSid==="number"&&hasTimetable(hid)?getEntry(hid,selDay,curSid):null;
+                      const occ=curE&&curE.t==="class";
+                      return(
+                        <button key={hid} onClick={()=>setSelRoom(hid)} title={`Hall ${hid}`}
+                          style={{display:"flex",flexDirection:"column",alignItems:"center",gap:3,
+                            padding:"8px 2px",borderRadius:10,
+                            border:`1px solid ${isSel?"#5b21b6":"#0f1e30"}`,
+                            background:isSel?"#120a2e":"transparent",cursor:"pointer"}}>
+                          <div style={{width:6,height:6,borderRadius:"50%",flexShrink:0,
+                            background:hasTimetable(hid)?(occ?"#ef4444":"#22c55e"):"#334155",
+                            boxShadow:hasTimetable(hid)?`0 0 4px ${occ?"#ef4444":"#22c55e"}`:"none"}}></div>
+                          <span style={{color:"#e2e8f0",fontWeight:800,fontSize:12}}>{hid}</span>
+                          <span style={{fontSize:12}}>{h.proj?"📽️":"🪑"}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </React.Fragment>
+              )}
             </div>
 
-            <div style={{flex:1,overflowY:"auto",padding:"20px 28px",background:"#030712"}}>
+            <div style={{flex:1,overflowY:"auto",padding:selRoom?"20px 16px":"20px 28px",background:"#030712"}}>
               {!selRoom?(
                 <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",height:"100%",gap:10,userSelect:"none"}}>
                   <div style={{fontSize:52,opacity:.1}}>📋</div>
@@ -867,11 +903,6 @@
           </div>
           <DayBar selDay={selDay} setSelDay={setSelDay} color="#0d9488"/>
           <div style={{flex:1,overflowY:"auto",padding:18,maxWidth:820,width:"100%",margin:"0 auto",boxSizing:"border-box"}}>
-            <div style={{background:"#041a16",border:"1px solid #0d9488",borderRadius:14,padding:22,textAlign:"center",marginBottom:18}}>
-              <div style={{fontSize:30,marginBottom:6}}>🚧</div>
-              <h2 style={{margin:0,color:"#5eead4",fontSize:17,fontWeight:800}}>Personal Schedule</h2>
-              <p style={{color:"#334155",fontSize:13,margin:"6px 0 0"}}>Faculty ID linking coming soon. Your HOD will configure your access.</p>
-            </div>
             <h3 style={{color:"#1e3a5f",fontSize:11,textTransform:"uppercase",letterSpacing:"0.09em",margin:"0 0 10px"}}>Hall Availability</h3>
             <PeriodSelector selPid={selPid} setSelPid={setSelPid} isLive={pidLive} setIsLive={setPidLive} curSid={curSid}/>
             <FloorPicker selFloor={selFloor} setSelFloor={setSelFloor} color="#0d9488"/>
