@@ -10,11 +10,11 @@
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background-color: #07050f; color: #f8fafc; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
+    body { background-color: #111010; color: #f8fafc; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #07050f; }
-    ::-webkit-scrollbar-thumb { background: #2b1b54; border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: #4c2889; }
+    ::-webkit-scrollbar-track { background: #111010; }
+    ::-webkit-scrollbar-thumb { background: #2d2417; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #45331b; }
   </style>
 </head>
 <body>
@@ -377,23 +377,23 @@
     const bBtn=(bg,fg="#fff",extra={})=>({background:bg,border:"none",color:fg,borderRadius:10,cursor:"pointer",fontWeight:700,fontSize:13,transition:"all .15s",...extra});
     const bBadge=(bg,fg,br)=>({background:bg,border:`1px solid ${br}`,color:fg,borderRadius:12,fontSize:11,padding:"2px 9px",fontWeight:600,display:"inline-flex",alignItems:"center",gap:4});
 
-    // Space Dark + Violet Palette Constants
+    // Charcoal + Amber + Orange Palette Constants
     const THEME = {
-      bgBody: "#07050f",
-      headerBg: "#0f0921",
-      headerBorder: "#241442",
-      navBorder: "#1e1338",
-      cardBg: "#0f0b24",
-      cardBorder: "#2b1b54",
-      accent: "#8b5cf6",
-      highlight: "#a78bfa",
-      highlightSoft: "#c4b5fd",
-      mutedText: "#7c65ab",
-      sidebarBg: "#090615",
-      sidebarBorder: "#1a1033",
-      selectedRoomBg: "#1e1145",
-      selectedRoomBorder: "#6d28d9",
-      studentBanner: "linear-gradient(135deg, #190a38 0%, #4c1d95 60%, #7c3aed 100%)",
+      bgBody: "#111010",
+      headerBg: "#171515",
+      headerBorder: "#2c2419",
+      navBorder: "#261e14",
+      cardBg: "#181515",
+      cardBorder: "#332717",
+      accent: "#f59e0b",
+      highlight: "#fb923c",
+      highlightSoft: "#fdba74",
+      mutedText: "#9a7b56",
+      sidebarBg: "#141212",
+      sidebarBorder: "#241c14",
+      selectedRoomBg: "#241b0d",
+      selectedRoomBorder: "#d97706",
+      studentBanner: "linear-gradient(135deg, #261605 0%, #78350f 60%, #ea580c 100%)",
     };
 
     function DayBar({selDay,setSelDay}){
@@ -431,7 +431,7 @@
       );
     }
 
-    function FloorPicker({selFloor,setSelFloor,onFloorChange,color="#8b5cf6"}){
+    function FloorPicker({selFloor,setSelFloor,onFloorChange,color="#f59e0b"}){
       return(
         <div style={{marginBottom:14}}>
           <p style={{color:THEME.mutedText,fontSize:11,textTransform:"uppercase",letterSpacing:"0.09em",margin:"0 0 8px"}}>Select Floor</p>
@@ -499,7 +499,7 @@
             <h3 style={{margin:0,fontSize:20,fontWeight:900,color:"#f1f5f9"}}>Hall {hallId}</h3>
             <p style={{color:THEME.mutedText,fontSize:13,margin:"6px 0 16px"}}>{ordinal(hall.floor)} Floor</p>
             <div style={{display:"inline-flex",alignItems:"center",gap:8,padding:"8px 18px",borderRadius:10,
-              background:hall.proj?"#1e1145":THEME.cardBg,border:`1px solid ${hall.proj?THEME.accent:THEME.cardBorder}`}}>
+              background:hall.proj?"#241b0d":THEME.cardBg,border:`1px solid ${hall.proj?THEME.accent:THEME.cardBorder}`}}>
               <span style={{fontSize:16}}>{hall.proj?"📽️":"🪑"}</span>
               <span style={{color:hall.proj?THEME.highlightSoft:THEME.mutedText,fontWeight:600,fontSize:13}}>
                 {hall.proj?"Projector Available":"No Projector"}
@@ -538,11 +538,11 @@
               return(
                 <div key={slot.id}>
                   {slot.id===6&&(
-                    <div style={{background:"#140b02",border:"1px solid #3d2004",borderRadius:10,
+                    <div style={{background:"#1c1003",border:"1px solid #472605",borderRadius:10,
                       padding:"9px 18px",marginBottom:5,display:"flex",alignItems:"center",gap:12}}>
                       <span style={{fontSize:16}}>🍱</span>
-                      <span style={{color:"#fbbf24",fontSize:12,fontWeight:700}}>Lunch Break</span>
-                      <span style={{color:"#d97706",fontSize:12}}>{lunchSlot?.time}</span>
+                      <span style={{color:"#fb923c",fontSize:12,fontWeight:700}}>Lunch Break</span>
+                      <span style={{color:"#f59e0b",fontSize:12}}>{lunchSlot?.time}</span>
                       <span style={{marginLeft:"auto",color:"#22c55e",fontSize:11,fontWeight:600}}>All halls free</span>
                     </div>
                   )}
@@ -551,8 +551,8 @@
                     onClick={()=>setExpandedPid(isExp?null:slot.id)}
                     style={{
                       cursor:"pointer",
-                      background:isCur?"#0d0826":isExp?"#130c2e":THEME.cardBg,
-                      border:`1.5px solid ${isCur?"#8b5cf6":isExp?THEME.accent:THEME.cardBorder}`,
+                      background:isCur?"#211506":isExp?"#241708":THEME.cardBg,
+                      border:`1.5px solid ${isCur?"#f59e0b":isExp?THEME.accent:THEME.cardBorder}`,
                       borderRadius:isExp?"12px 12px 0 0":12,
                       overflow:"hidden",position:"relative",
                       boxShadow:isCur?`0 0 16px ${THEME.accent}30`:isExp?`0 0 10px ${THEME.accent}20`:"none",
@@ -602,7 +602,7 @@
 
                   {isExp&&(
                     <div style={{
-                      background:"#11092b",
+                      background:"#261808",
                       border:`1.5px solid ${THEME.accent}`,
                       borderTop:`1px solid ${THEME.cardBorder}`,
                       borderRadius:"0 0 12px 12px",
@@ -653,11 +653,11 @@
             <p style={{color:THEME.mutedText,fontWeight:600,margin:0}}>Outside College Hours</p>
             <p style={{color:THEME.mutedText,fontSize:12,margin:"4px 0 0",opacity:0.8}}>Select a period above to check availability</p>
           </div>}
-          {isRest&&<div style={{background:"#170e03",border:"1px solid #78350f",borderRadius:14,padding:14,textAlign:"center",marginBottom:14}}>
+          {isRest&&<div style={{background:"#1c1003",border:"1px solid #78350f",borderRadius:14,padding:14,textAlign:"center",marginBottom:14}}>
             <p style={{color:"#fbbf24",fontWeight:700,margin:0,fontSize:14}}>{slot.ptype==="lunch"?"🍱":"☕"} {slot.label} · All halls are free!</p>
           </div>}
           {[{list:fp,icon:"📽️",label:"Free · With Projector",fg:"#5eead4",bg:"#042f2e",br:"#0d9488"},
-            {list:fn,icon:"🪑",label:"Free · No Projector",  fg:"#c4b5fd",bg:"#1e1145",br:"#6d28d9"}].map(({list,icon,label,fg,bg,br})=>(
+            {list:fn,icon:"🪑",label:"Free · No Projector",  fg:"#fdba74",bg:"#241b0d",br:"#d97706"}].map(({list,icon,label,fg,bg,br})=>(
             <div key={label} style={{marginBottom:14}}>
               <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:7}}>
                 <span>{icon}</span>
@@ -757,9 +757,9 @@
           </div>
           <div style={{display:"flex",flexDirection:"column",gap:12,width:"100%",maxWidth:390}}>
             {[
-              {r:"dean",   emoji:"👑",label:"Dean",    desc:"Full hall overview & schedules",col:"#8b5cf6"},
-              {r:"faculty",emoji:"🎓",label:"Faculty", desc:"Your schedule & free halls",   col:"#6366f1"},
-              {r:"student",emoji:"📚",label:"Students",desc:"Find free halls instantly",     col:"#3b82f6"},
+              {r:"dean",   emoji:"👑",label:"Dean",    desc:"Full hall overview & schedules",col:"#f59e0b"},
+              {r:"faculty",emoji:"🎓",label:"Faculty", desc:"Your schedule & free halls",   col:"#ea580c"},
+              {r:"student",emoji:"📚",label:"Students",desc:"Find free halls instantly",     col:"#d97706"},
             ].map(({r,emoji,label,desc,col})=>(
               <button key={r} onClick={()=>r==="student"?setScreen("student"):goLogin(r)}
                 style={{display:"flex",alignItems:"center",gap:14,padding:"17px 20px",borderRadius:16,
@@ -779,7 +779,7 @@
       );
 
       if(screen==="login"){
-        const col=role==="dean"?"#8b5cf6":"#6366f1";
+        const col=role==="dean"?"#f59e0b":"#ea580c";
         return(
           <div style={{minHeight:"100vh",background:THEME.bgBody,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Segoe UI',system-ui,sans-serif",padding:20}}>
             <div style={{width:"100%",maxWidth:380,background:THEME.cardBg,borderRadius:20,padding:32,border:`1px solid ${THEME.cardBorder}`}}>
@@ -862,7 +862,7 @@
                           </div>
                           <div style={{paddingLeft:14,overflow:"hidden"}}>
                             {hasTimetable(hid)
-                              ?<div style={{color:curF?isSel?THEME.highlightSoft:"#a78bfa":"#22c55e",fontSize:10,fontWeight:500,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
+                              ?<div style={{color:curF?isSel?THEME.highlightSoft:"#fb923c":"#22c55e",fontSize:10,fontWeight:500,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
                                 {curF?"👤 "+curF:"✓ Free now"}
                               </div>
                               :<div style={{color:THEME.mutedText,fontSize:10}}>No schedule</div>
@@ -959,8 +959,8 @@
                 </div>
                 <div style={{background:"rgba(0,0,0,0.25)",borderRadius:12,padding:"10px 16px",marginTop:14,display:"flex",gap:28,flexWrap:"wrap"}}>
                   <div><div style={{color:"rgba(255,255,255,0.55)",fontSize:10}}>Free Now</div><div style={{fontSize:22,fontWeight:900}}>{selFloor?freeCount:"—"}</div></div>
-                  <div><div style={{color:"rgba(255,255,255,0.55)",fontSize:10}}>Period</div><div style={{fontSize:14,fontWeight:700,color:"#e9d5ff",marginTop:3}}>{curSlotObj?.label||"—"}</div></div>
-                  <div><div style={{color:"rgba(255,255,255,0.55)",fontSize:10}}>Time</div><div style={{fontSize:12,fontWeight:600,color:"#e9d5ff",marginTop:5}}>{curSlotObj?.time||"Outside hrs"}</div></div>
+                  <div><div style={{color:"rgba(255,255,255,0.55)",fontSize:10}}>Period</div><div style={{fontSize:14,fontWeight:700,color:"#ffedd5",marginTop:3}}>{curSlotObj?.label||"—"}</div></div>
+                  <div><div style={{color:"rgba(255,255,255,0.55)",fontSize:10}}>Time</div><div style={{fontSize:12,fontWeight:600,color:"#ffedd5",marginTop:5}}>{curSlotObj?.time||"Outside hrs"}</div></div>
                 </div>
               </div>
             </div>
