@@ -10,11 +10,11 @@
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background-color: #030712; color: #f8fafc; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
+    body { background-color: #07050f; color: #f8fafc; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #06090f; }
-    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: #334155; }
+    ::-webkit-scrollbar-track { background: #07050f; }
+    ::-webkit-scrollbar-thumb { background: #2b1b54; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #4c2889; }
   </style>
 </head>
 <body>
@@ -377,34 +377,100 @@
     const bBtn=(bg,fg="#fff",extra={})=>({background:bg,border:"none",color:fg,borderRadius:10,cursor:"pointer",fontWeight:700,fontSize:13,transition:"all .15s",...extra});
     const bBadge=(bg,fg,br)=>({background:bg,border:`1px solid ${br}`,color:fg,borderRadius:12,fontSize:11,padding:"2px 9px",fontWeight:600,display:"inline-flex",alignItems:"center",gap:4});
 
-    function DayBar({selDay,setSelDay,color="#7c3aed"}){
+    // Theme Palettes
+    const THEMES = {
+      spaceViolet: {
+        id: "spaceViolet",
+        name: "🌌 Space Violet",
+        bgBody: "#07050f",
+        headerBg: "#0f0921",
+        headerBorder: "#241442",
+        navBorder: "#1e1338",
+        cardBg: "#0f0b24",
+        cardBorder: "#2b1b54",
+        accent: "#8b5cf6",
+        highlight: "#a78bfa",
+        highlightSoft: "#c4b5fd",
+        mutedText: "#7c65ab",
+        sidebarBg: "#090615",
+        sidebarBorder: "#1a1033",
+        selectedRoomBg: "#1e1145",
+        selectedRoomBorder: "#6d28d9",
+        studentBanner: "linear-gradient(135deg, #190a38 0%, #4c1d95 60%, #7c3aed 100%)",
+      },
+      classicDark: {
+        id: "classicDark",
+        name: "🌑 Classic Dark",
+        bgBody: "#030712",
+        headerBg: "#0a0f1a",
+        headerBorder: "#1e293b",
+        navBorder: "#1e293b",
+        cardBg: "#090e1c",
+        cardBorder: "#0f1e30",
+        accent: "#7c3aed",
+        highlight: "#a78bfa",
+        highlightSoft: "#c7d2fe",
+        mutedText: "#475569",
+        sidebarBg: "#06090f",
+        sidebarBorder: "#0f1e30",
+        selectedRoomBg: "#120a2e",
+        selectedRoomBorder: "#5b21b6",
+        studentBanner: "linear-gradient(135deg, #0c3255 0%, #1d4ed8 60%, #0d9488 100%)",
+      }
+    };
+
+    function ThemeSwitcher({currentTheme, setTheme}){
       return(
-        <div style={{background:"#080e1a",borderBottom:"1px solid #1e293b",padding:"8px 18px",display:"flex",gap:6,alignItems:"center",flexShrink:0}}>
-          <span style={{color:"#334155",fontSize:11,marginRight:4}}>Day:</span>
+        <button onClick={()=>setTheme(currentTheme.id==="spaceViolet"?"classicDark":"spaceViolet")}
+          title="Toggle UI Theme"
+          style={{
+            background: currentTheme.id==="spaceViolet"?"#1e1145":"#1e293b",
+            border: `1px solid ${currentTheme.id==="spaceViolet"?"#8b5cf6":"#334155"}`,
+            color: currentTheme.id==="spaceViolet"?"#c4b5fd":"#94a3b8",
+            padding: "5px 11px",
+            borderRadius: 8,
+            cursor: "pointer",
+            fontSize: 11,
+            fontWeight: 600,
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 5,
+            transition: "all 0.2s ease"
+          }}>
+          <span>{currentTheme.id==="spaceViolet"?"🌌":"🌑"}</span>
+          <span>{currentTheme.id==="spaceViolet"?"Space Violet":"Classic Theme"}</span>
+        </button>
+      );
+    }
+
+    function DayBar({selDay,setSelDay,theme}){
+      return(
+        <div style={{background:theme.headerBg,borderBottom:`1px solid ${theme.navBorder}`,padding:"8px 18px",display:"flex",gap:6,alignItems:"center",flexShrink:0}}>
+          <span style={{color:theme.mutedText,fontSize:11,marginRight:4}}>Day:</span>
           {DAYS.map(d=>(
             <button key={d} onClick={()=>setSelDay(d)}
-              style={{...bBtn(selDay===d?color:"transparent",selDay===d?"#fff":"#475569"),
-                padding:"5px 14px",border:`1px solid ${selDay===d?color:"#1e293b"}`}}>
+              style={{...bBtn(selDay===d?theme.accent:"transparent",selDay===d?"#fff":theme.mutedText),
+                padding:"5px 14px",border:`1px solid ${selDay===d?theme.accent:theme.navBorder}`}}>
               {DAY_S[d]}
             </button>
           ))}
-          <span style={{marginLeft:"auto",color:"#1e293b",fontSize:10}}>IST · Auto</span>
+          <span style={{marginLeft:"auto",color:theme.mutedText,fontSize:10,opacity:0.7}}>IST · Auto</span>
         </div>
       );
     }
 
-    function FloorBar({selFloor,setSelFloor,onFloorChange}){
+    function FloorBar({selFloor,setSelFloor,onFloorChange,theme}){
       return(
-        <div style={{background:"#06090f",borderBottom:"1px solid #1e293b",padding:"8px 18px",display:"flex",gap:8,alignItems:"center",flexShrink:0,flexWrap:"wrap"}}>
-          <span style={{color:"#334155",fontSize:11,marginRight:4}}>Floor:</span>
+        <div style={{background:theme.sidebarBg,borderBottom:`1px solid ${theme.navBorder}`,padding:"8px 18px",display:"flex",gap:8,alignItems:"center",flexShrink:0,flexWrap:"wrap"}}>
+          <span style={{color:theme.mutedText,fontSize:11,marginRight:4}}>Floor:</span>
           {[1,2,3,4,5].map(f=>{
             const sel=selFloor===f;
             return(
               <button key={f} onClick={()=>{setSelFloor(f);if(onFloorChange)onFloorChange();}}
-                style={{...bBtn(sel?"#7c3aed":"transparent",sel?"#fff":"#475569"),
-                  padding:"5px 18px",border:`1px solid ${sel?"#7c3aed":"#1e293b"}`,
+                style={{...bBtn(sel?theme.accent:"transparent",sel?"#fff":theme.mutedText),
+                  padding:"5px 18px",border:`1px solid ${sel?theme.accent:theme.navBorder}`,
                   display:"flex",alignItems:"center",gap:5}}>
-                {ordinal(f)} {sel&&<span style={{fontSize:12,color:"#c4b5fd"}}>★</span>}
+                {ordinal(f)} {sel&&<span style={{fontSize:12,color:theme.highlightSoft}}>★</span>}
               </button>
             );
           })}
@@ -412,17 +478,17 @@
       );
     }
 
-    function FloorPicker({selFloor,setSelFloor,onFloorChange,color="#0d9488"}){
+    function FloorPicker({selFloor,setSelFloor,onFloorChange,color="#8b5cf6",theme}){
       return(
         <div style={{marginBottom:14}}>
-          <p style={{color:"#475569",fontSize:11,textTransform:"uppercase",letterSpacing:"0.09em",margin:"0 0 8px"}}>Select Floor</p>
+          <p style={{color:theme.mutedText,fontSize:11,textTransform:"uppercase",letterSpacing:"0.09em",margin:"0 0 8px"}}>Select Floor</p>
           <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:6}}>
             {[1,2,3,4,5].map(f=>{
               const sel=selFloor===f;
               return(
                 <button key={f} onClick={()=>{setSelFloor(f);if(onFloorChange)onFloorChange();}}
-                  style={{...bBtn(sel?color:"#1e293b",sel?"#fff":"#64748b"),
-                    padding:"9px 0",borderRadius:10,border:`1px solid ${sel?color:"#1e293b"}`,
+                  style={{...bBtn(sel?color:theme.cardBg,sel?"#fff":theme.mutedText),
+                    padding:"9px 0",borderRadius:10,border:`1px solid ${sel?color:theme.cardBorder}`,
                     display:"flex",alignItems:"center",justifyContent:"center",gap:5}}>
                   {f}{sel&&<span style={{fontSize:12}}>★</span>}
                 </button>
@@ -433,17 +499,17 @@
       );
     }
 
-    function PeriodSelector({selPid,setSelPid,isLive,setIsLive,curSid}){
+    function PeriodSelector({selPid,setSelPid,isLive,setIsLive,curSid,theme}){
       return(
-        <div style={{background:"#0a0f1a",border:"1px solid #1e293b",borderRadius:12,padding:"11px 14px",marginBottom:14}}>
+        <div style={{background:theme.cardBg,border:`1px solid ${theme.cardBorder}`,borderRadius:12,padding:"11px 14px",marginBottom:14}}>
           <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:9}}>
-            <span style={{color:"#475569",fontSize:11,textTransform:"uppercase",letterSpacing:"0.09em"}}>Period Filter</span>
+            <span style={{color:theme.mutedText,fontSize:11,textTransform:"uppercase",letterSpacing:"0.09em"}}>Period Filter</span>
             <button onClick={()=>{const nl=!isLive;setIsLive(nl);if(nl&&curSid)setSelPid(curSid);}}
               style={{display:"flex",alignItems:"center",gap:5,padding:"4px 10px",borderRadius:8,
-                border:`1px solid ${isLive?"#166534":"#334155"}`,
-                background:isLive?"#052e16":"#1e293b",
-                color:isLive?"#4ade80":"#64748b",cursor:"pointer",fontSize:11,fontWeight:600}}>
-              <span style={{width:6,height:6,borderRadius:"50%",background:isLive?"#22c55e":"#475569",display:"inline-block",boxShadow:isLive?"0 0 5px #22c55e":"none"}}></span>
+                border:`1px solid ${isLive?"#166534":theme.cardBorder}`,
+                background:isLive?"#052e16":theme.cardBg,
+                color:isLive?"#4ade80":theme.mutedText,cursor:"pointer",fontSize:11,fontWeight:600}}>
+              <span style={{width:6,height:6,borderRadius:"50%",background:isLive?"#22c55e":theme.mutedText,display:"inline-block",boxShadow:isLive?"0 0 5px #22c55e":"none"}}></span>
               {isLive?"🔴 Live":"⏸ Manual"}
             </button>
           </div>
@@ -454,9 +520,9 @@
               return(
                 <button key={sl.id} onClick={()=>{setSelPid(sl.id);setIsLive(false);}}
                   style={{padding:"5px 9px",borderRadius:8,cursor:"pointer",fontSize:11,fontWeight:600,position:"relative",
-                    border:`1px solid ${isSel?(isSpec?"#78350f":"#0d9488"):isSpec?"#292215":"#1e293b"}`,
-                    background:isSel?(isSpec?"#1c1208":"#042f2e"):isSpec?"#080604":"#1e293b",
-                    color:isSel?(isSpec?"#fbbf24":"#5eead4"):isSpec?"#4b3000":"#475569"}}>
+                    border:`1px solid ${isSel?(isSpec?"#78350f":theme.accent):isSpec?"#292215":theme.cardBorder}`,
+                    background:isSel?(isSpec?"#1c1208":theme.cardBg):isSpec?"#080604":theme.sidebarBg,
+                    color:isSel?(isSpec?"#fbbf24":theme.highlight):isSpec?"#4b3000":theme.mutedText}}>
                   {sl.label}
                   {isCur&&<span style={{position:"absolute",top:-3,right:-3,width:6,height:6,background:"#22c55e",borderRadius:"50%",boxShadow:"0 0 5px #22c55e"}}></span>}
                 </button>
@@ -467,7 +533,7 @@
       );
     }
 
-    function SchedulePanel({hallId,day,curSlotId}){
+    function SchedulePanel({hallId,day,curSlotId,theme}){
       const [expandedPid,setExpandedPid]=useState(null);
       const hall=HALL_INFO[hallId];
       const lunchSlot=ALL_SLOTS.find(s=>s.ptype==="lunch");
@@ -475,37 +541,37 @@
 
       if(!hasTimetable(hallId)) return(
         <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",height:"100%",gap:16,padding:40}}>
-          <div style={{background:"#0a0f1a",border:"1px solid #1e293b",borderRadius:18,padding:"30px 40px",textAlign:"center",maxWidth:420}}>
+          <div style={{background:theme.cardBg,border:`1px solid ${theme.cardBorder}`,borderRadius:18,padding:"30px 40px",textAlign:"center",maxWidth:420}}>
             <div style={{fontSize:36,marginBottom:12}}>{hall.proj?"📽️":"🏫"}</div>
             <h3 style={{margin:0,fontSize:20,fontWeight:900,color:"#f1f5f9"}}>Hall {hallId}</h3>
-            <p style={{color:"#475569",fontSize:13,margin:"6px 0 16px"}}>{ordinal(hall.floor)} Floor</p>
+            <p style={{color:theme.mutedText,fontSize:13,margin:"6px 0 16px"}}>{ordinal(hall.floor)} Floor</p>
             <div style={{display:"inline-flex",alignItems:"center",gap:8,padding:"8px 18px",borderRadius:10,
-              background:hall.proj?"#042f2e":"#1e293b",border:`1px solid ${hall.proj?"#0d9488":"#334155"}`}}>
+              background:hall.proj?"#1e1145":theme.cardBg,border:`1px solid ${hall.proj?theme.accent:theme.cardBorder}`}}>
               <span style={{fontSize:16}}>{hall.proj?"📽️":"🪑"}</span>
-              <span style={{color:hall.proj?"#5eead4":"#94a3b8",fontWeight:600,fontSize:13}}>
+              <span style={{color:hall.proj?theme.highlightSoft:theme.mutedText,fontWeight:600,fontSize:13}}>
                 {hall.proj?"Projector Available":"No Projector"}
               </span>
             </div>
-            <p style={{color:"#334155",fontSize:12,margin:"20px 0 0"}}>📋 No timetable data available for this hall yet.</p>
+            <p style={{color:theme.mutedText,fontSize:12,margin:"20px 0 0"}}>📋 No timetable data available for this hall yet.</p>
           </div>
         </div>
       );
 
       return(
         <div>
-          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:16,paddingBottom:10,borderBottom:"1px solid #0d1828"}}>
-            <span style={{color:"#475569",fontSize:13,fontWeight:700}}>{DAY_F[day]}</span>
-            <span style={{color:"#1e293b"}}>·</span>
+          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:16,paddingBottom:10,borderBottom:`1px solid ${theme.cardBorder}`}}>
+            <span style={{color:theme.highlight,fontSize:13,fontWeight:700}}>{DAY_F[day]}</span>
+            <span style={{color:theme.cardBorder}}>·</span>
             <span style={{color:"#94a3b8",fontSize:12}}>{hall.cn}</span>
-            <span style={{color:"#1e293b"}}>·</span>
-            <span style={{color:"#475569",fontSize:11}}>Dept. of {hall.dept}</span>
+            <span style={{color:theme.cardBorder}}>·</span>
+            <span style={{color:theme.mutedText,fontSize:11}}>Dept. of {hall.dept}</span>
             <div style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:5}}>
               <div style={{width:6,height:6,borderRadius:"50%",background:"#22c55e",boxShadow:"0 0 5px #22c55e"}}></div>
               <span style={{color:"#22c55e",fontSize:11}}>Live</span>
             </div>
           </div>
 
-          <p style={{color:"#1e3a5f",fontSize:11,margin:"0 0 10px",fontStyle:"italic"}}>
+          <p style={{color:theme.mutedText,fontSize:11,margin:"0 0 10px",fontStyle:"italic"}}>
             Tap a period row to reveal the professor name and details below it.
           </p>
 
@@ -519,11 +585,11 @@
               return(
                 <div key={slot.id}>
                   {slot.id===6&&(
-                    <div style={{background:"#0e0902",border:"1px solid #1f1505",borderRadius:10,
+                    <div style={{background:"#140b02",border:"1px solid #3d2004",borderRadius:10,
                       padding:"9px 18px",marginBottom:5,display:"flex",alignItems:"center",gap:12}}>
                       <span style={{fontSize:16}}>🍱</span>
-                      <span style={{color:"#92400e",fontSize:12,fontWeight:700}}>Lunch Break</span>
-                      <span style={{color:"#3a2002",fontSize:12}}>{lunchSlot?.time}</span>
+                      <span style={{color:"#fbbf24",fontSize:12,fontWeight:700}}>Lunch Break</span>
+                      <span style={{color:"#d97706",fontSize:12}}>{lunchSlot?.time}</span>
                       <span style={{marginLeft:"auto",color:"#22c55e",fontSize:11,fontWeight:600}}>All halls free</span>
                     </div>
                   )}
@@ -532,49 +598,49 @@
                     onClick={()=>setExpandedPid(isExp?null:slot.id)}
                     style={{
                       cursor:"pointer",
-                      background:isCur?"#051210":isExp?"#0a0f1c":"#090e1c",
-                      border:`1.5px solid ${isCur?"#22c55e":isExp?"#3730a3":"#0f1e30"}`,
+                      background:isCur?"#0d0826":isExp?"#130c2e":theme.cardBg,
+                      border:`1.5px solid ${isCur?"#8b5cf6":isExp?theme.accent:theme.cardBorder}`,
                       borderRadius:isExp?"12px 12px 0 0":12,
                       overflow:"hidden",position:"relative",
-                      boxShadow:isCur?"0 0 14px #22c55e18":isExp?"0 0 10px #3730a318":"none",
+                      boxShadow:isCur?`0 0 16px ${theme.accent}30`:isExp?`0 0 10px ${theme.accent}20`:"none",
                       userSelect:"none",
                     }}>
-                    {isCur&&<div style={{position:"absolute",left:0,top:0,bottom:0,width:4,background:"#22c55e"}}></div>}
+                    {isCur&&<div style={{position:"absolute",left:0,top:0,bottom:0,width:4,background:theme.accent}}></div>}
 
                     <div style={{display:"flex",alignItems:"stretch"}}>
                       <div style={{width:68,flexShrink:0,display:"flex",flexDirection:"column",
                         alignItems:"center",justifyContent:"center",
-                        padding:"15px 10px",borderRight:"1px solid #0d1828",
+                        padding:"15px 10px",borderRight:`1px solid ${theme.cardBorder}`,
                         paddingLeft:isCur?14:10}}>
-                        <span style={{fontWeight:900,fontSize:20,color:isCur?"#22c55e":isExp?"#818cf8":"#1e3a5f",lineHeight:1}}>
+                        <span style={{fontWeight:900,fontSize:20,color:isCur?theme.highlight:isExp?theme.highlightSoft:theme.mutedText,lineHeight:1}}>
                           {slot.label}
                         </span>
-                        {isCur&&<div style={{width:7,height:7,background:"#22c55e",borderRadius:"50%",marginTop:5,boxShadow:"0 0 6px #22c55e"}}></div>}
+                        {isCur&&<div style={{width:7,height:7,background:theme.accent,borderRadius:"50%",marginTop:5,boxShadow:`0 0 6px ${theme.accent}`}}></div>}
                       </div>
 
                       <div style={{width:148,flexShrink:0,display:"flex",alignItems:"center",
-                        padding:"15px 14px",borderRight:"1px solid #0d1828"}}>
-                        <span style={{color:"#334155",fontSize:12}}>{slot.time}</span>
+                        padding:"15px 14px",borderRight:`1px solid ${theme.cardBorder}`}}>
+                        <span style={{color:theme.mutedText,fontSize:12}}>{slot.time}</span>
                       </div>
 
                       <div style={{flex:1,minWidth:0,display:"flex",alignItems:"center",padding:"15px 18px"}}>
-                        {e.t==="class"&&<span style={{color:isCur?"#c7d2fe":"#475569",fontSize:13,fontWeight:500,
+                        {e.t==="class"&&<span style={{color:isCur?theme.highlightSoft:"#cbd5e1",fontSize:13,fontWeight:500,
                           overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
-                          {e.c} &nbsp;<span style={{color:"#1e3a5f",fontSize:11}}>{COURSE_NAMES[e.c]||""}</span>
+                          {e.c} &nbsp;<span style={{color:theme.mutedText,fontSize:11}}>{COURSE_NAMES[e.c]||""}</span>
                         </span>}
                         {e.t==="lab"&&<span style={{color:isCur?"#a7f3d0":"#34d399",fontSize:13,fontWeight:500,
                           overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
                           🔬 {e.c} &nbsp;<span style={{color:"#0d9488",fontSize:11}}>{COURSE_NAMES[e.c]||""}</span>
                         </span>}
-                        {e.t==="free"&&<span style={{color:"#22c55e",fontSize:13,fontWeight:600}}>✓ Hall Free {e.n&&<span style={{color:"#1e3a5f",fontSize:11}}>· {e.n}</span>}</span>}
+                        {e.t==="free"&&<span style={{color:"#22c55e",fontSize:13,fontWeight:600}}>✓ Hall Free {e.n&&<span style={{color:theme.mutedText,fontSize:11}}>· {e.n}</span>}</span>}
                       </div>
 
                       <div style={{flexShrink:0,display:"flex",alignItems:"center",gap:8,padding:"15px 16px"}}>
-                        <span style={{color:"#1e3a5f",fontSize:12}}>{isExp?"▲":"▼"}</span>
+                        <span style={{color:theme.mutedText,fontSize:12}}>{isExp?"▲":"▼"}</span>
                         <span style={{fontSize:10,fontWeight:700,padding:"4px 10px",borderRadius:7,whiteSpace:"nowrap",
-                          background:isFree?"#041a0e":"#150404",
+                          background:isFree?"#041a0e":"#1c0808",
                           color:isFree?"#22c55e":"#f87171",
-                          border:`1px solid ${isFree?"#0d4228":"#4a0808"}`}}>
+                          border:`1px solid ${isFree?"#0d4228":"#571212"}`}}>
                           {isFree?(e.t==="lab"?"FREE (LAB)":"FREE"):"BUSY"}
                         </span>
                       </div>
@@ -583,22 +649,22 @@
 
                   {isExp&&(
                     <div style={{
-                      background:"#080d1c",
-                      border:"1.5px solid #3730a3",
-                      borderTop:"1px solid #1e293b",
+                      background:"#11092b",
+                      border:`1.5px solid ${theme.accent}`,
+                      borderTop:`1px solid ${theme.cardBorder}`,
                       borderRadius:"0 0 12px 12px",
                       padding:"12px 20px 14px 86px",
                     }}>
                       {e.t==="class"&&React.createElement(React.Fragment, null,
-                        <div style={{color:"#6b7280",fontSize:10,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:4}}>Professor</div>,
-                        <div style={{color:isCur?"#4ade80":"#a5b4fc",fontSize:14,fontWeight:700,lineHeight:1.4,wordBreak:"break-word"}}>
+                        <div style={{color:theme.mutedText,fontSize:10,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:4}}>Professor</div>,
+                        <div style={{color:isCur?"#4ade80":theme.highlightSoft,fontSize:14,fontWeight:700,lineHeight:1.4,wordBreak:"break-word"}}>
                           {isCur&&<span style={{width:7,height:7,background:"#22c55e",borderRadius:"50%",display:"inline-block",marginRight:7,verticalAlign:"middle",boxShadow:"0 0 5px #22c55e"}}></span>}
                           {e.f}
                         </div>
                       )}
                       {e.t==="lab"&&React.createElement(React.Fragment, null,
                         <div style={{color:"#34d399",fontSize:10,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:4}}>🔬 Laboratory Hour · Hall is FREE</div>,
-                        <div style={{color:isCur?"#4ade80":"#a5b4fc",fontSize:14,fontWeight:700,lineHeight:1.4,wordBreak:"break-word"}}>
+                        <div style={{color:isCur?"#4ade80":theme.highlightSoft,fontSize:14,fontWeight:700,lineHeight:1.4,wordBreak:"break-word"}}>
                           {isCur&&<span style={{width:7,height:7,background:"#22c55e",borderRadius:"50%",display:"inline-block",marginRight:7,verticalAlign:"middle",boxShadow:"0 0 5px #22c55e"}}></span>}
                           {e.f}
                         </div>,
@@ -615,7 +681,7 @@
       );
     }
 
-    function FreeHallsView({day,effectivePid,curSid,floor,role}){
+    function FreeHallsView({day,effectivePid,curSid,floor,role,theme}){
       const slot=ALL_SLOTS.find(s=>s.id===effectivePid);
       const isRest=slot&&(slot.ptype==="break"||slot.ptype==="lunch");
       const outside=!effectivePid;
@@ -629,16 +695,16 @@
       const busy=halls.filter(h=>!h.free);
       return(
         <div>
-          {outside&&<div style={{background:"#0a0f1a",border:"1px solid #1e293b",borderRadius:14,padding:22,textAlign:"center",marginBottom:14}}>
+          {outside&&<div style={{background:theme.cardBg,border:`1px solid ${theme.cardBorder}`,borderRadius:14,padding:22,textAlign:"center",marginBottom:14}}>
             <div style={{fontSize:28,marginBottom:6}}>🌙</div>
-            <p style={{color:"#475569",fontWeight:600,margin:0}}>Outside College Hours</p>
-            <p style={{color:"#1e293b",fontSize:12,margin:"4px 0 0"}}>Select a period above to check availability</p>
+            <p style={{color:theme.mutedText,fontWeight:600,margin:0}}>Outside College Hours</p>
+            <p style={{color:theme.mutedText,fontSize:12,margin:"4px 0 0",opacity:0.8}}>Select a period above to check availability</p>
           </div>}
-          {isRest&&<div style={{background:"#120d03",border:"1px solid #78350f",borderRadius:14,padding:14,textAlign:"center",marginBottom:14}}>
+          {isRest&&<div style={{background:"#170e03",border:"1px solid #78350f",borderRadius:14,padding:14,textAlign:"center",marginBottom:14}}>
             <p style={{color:"#fbbf24",fontWeight:700,margin:0,fontSize:14}}>{slot.ptype==="lunch"?"🍱":"☕"} {slot.label} · All halls are free!</p>
           </div>}
           {[{list:fp,icon:"📽️",label:"Free · With Projector",fg:"#5eead4",bg:"#042f2e",br:"#0d9488"},
-            {list:fn,icon:"🪑",label:"Free · No Projector",  fg:"#93c5fd",bg:"#172554",br:"#1e3a8a"}].map(({list,icon,label,fg,bg,br})=>(
+            {list:fn,icon:"🪑",label:"Free · No Projector",  fg:"#c4b5fd",bg:"#1e1145",br:"#6d28d9"}].map(({list,icon,label,fg,bg,br})=>(
             <div key={label} style={{marginBottom:14}}>
               <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:7}}>
                 <span>{icon}</span>
@@ -646,15 +712,15 @@
                 <span style={{...bBadge(bg,fg,br),marginLeft:"auto"}}>{list.length}</span>
               </div>
               {list.length===0
-                ?<div style={{background:"#0a0f1a",borderRadius:12,padding:12,textAlign:"center",color:"#1e293b",fontSize:13,border:"1px solid #0f1a28"}}>None available</div>
+                ?<div style={{background:theme.cardBg,borderRadius:12,padding:12,textAlign:"center",color:theme.mutedText,fontSize:13,border:`1px solid ${theme.cardBorder}`}}>None available</div>
                 :<div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(130px,1fr))",gap:7}}>
                   {list.map(h=>(
-                    <div key={h.id} style={{background:"#0a0f1a",border:`1px solid ${br}40`,borderRadius:12,padding:"11px 13px"}}>
+                    <div key={h.id} style={{background:theme.cardBg,border:`1px solid ${br}50`,borderRadius:12,padding:"11px 13px"}}>
                       <div style={{fontWeight:800,fontSize:14,color:"#f1f5f9",marginBottom:3}}>Hall {h.id}</div>
                       <div style={{display:"flex",alignItems:"center",gap:5}}>
                         <span style={bBadge("#041a0e","#34d399","#065f46")}>✓ FREE</span>
                       </div>
-                      {!h.hasData&&<div style={{color:"#1e3a5f",fontSize:9,marginTop:4}}>No schedule</div>}
+                      {!h.hasData&&<div style={{color:theme.mutedText,fontSize:9,marginTop:4}}>No schedule</div>}
                     </div>
                   ))}
                 </div>
@@ -665,20 +731,20 @@
             <div>
               <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:7}}>
                 <span style={{color:"#f87171",fontWeight:700,fontSize:12,textTransform:"uppercase",letterSpacing:"0.08em"}}>🔴 Occupied</span>
-                <span style={{...bBadge("#1a0505","#f87171","#7f1d1d"),marginLeft:"auto"}}>{busy.length}</span>
+                <span style={{...bBadge("#1c0808","#f87171","#7f1d1d"),marginLeft:"auto"}}>{busy.length}</span>
               </div>
               <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(130px,1fr))",gap:6}}>
                 {busy.map(h=>{
                   const e=h.hasData?getEntry(h.id,day,effectivePid):null;
                   const courseLabel=e&&e.c?(COURSE_NAMES[e.c]||e.c):null;
                   return(
-                    <div key={h.id} style={{background:"#060808",border:"1px solid #0f1828",borderRadius:12,padding:"11px 13px"}}>
+                    <div key={h.id} style={{background:theme.cardBg,border:`1px solid ${theme.cardBorder}`,borderRadius:12,padding:"11px 13px"}}>
                       <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:3}}>
-                        <div style={{fontWeight:700,fontSize:14,color:"#94a3b8"}}>Hall {h.id}</div>
+                        <div style={{fontWeight:700,fontSize:14,color:theme.mutedText}}>Hall {h.id}</div>
                         <span style={{marginLeft:"auto",fontSize:12}}>{h.proj?"📽️":"🪑"}</span>
                       </div>
-                      <span style={bBadge("#1a0505","#f87171","#7f1d1d")}>✗ BUSY</span>
-                      {courseLabel&&<div style={{color:"#64748b",fontSize:11,marginTop:5,lineHeight:1.3}}>{courseLabel}</div>}
+                      <span style={bBadge("#1c0808","#f87171","#7f1d1d")}>✗ BUSY</span>
+                      {courseLabel&&<div style={{color:theme.mutedText,fontSize:11,marginTop:5,lineHeight:1.3}}>{courseLabel}</div>}
                     </div>
                   );
                 })}
@@ -703,6 +769,13 @@
       const [selPid,   setSelPid]   = useState(()=>getCurSlotId()||1);
       const [pidLive,  setPidLive]  = useState(true);
       const [panelAnim,setPanelAnim]= useState(false);
+      const [themeId,  setThemeId]  = useState("spaceViolet");
+
+      const theme = THEMES[themeId] || THEMES.spaceViolet;
+
+      useEffect(()=>{
+        document.body.style.backgroundColor = theme.bgBody;
+      },[theme]);
 
       useEffect(()=>{
         const t=setInterval(()=>{
@@ -729,28 +802,31 @@
       }
 
       if(screen==="landing") return(
-        <div style={{minHeight:"100vh",background:"#030712",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",fontFamily:"'Segoe UI',system-ui,sans-serif",color:"#f8fafc",padding:24}}>
+        <div style={{minHeight:"100vh",background:theme.bgBody,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",fontFamily:"'Segoe UI',system-ui,sans-serif",color:"#f8fafc",padding:24,position:"relative"}}>
+          <div style={{position:"absolute",top:20,right:20}}>
+            <ThemeSwitcher currentTheme={theme} setTheme={setThemeId}/>
+          </div>
           <div style={{textAlign:"center",marginBottom:40}}>
             <div style={{fontSize:52,marginBottom:6}}>🏫</div>
-            <h1 style={{margin:0,fontSize:36,fontWeight:900,letterSpacing:-1}}>Hall Finder</h1>
-            <p style={{margin:"8px 0 0",color:"#475569",fontSize:14}}>SASTRA Deemed University · SRC, Kumbakonam</p>
-            <p style={{margin:"3px 0 0",color:"#1e293b",fontSize:12}}>Odd Semester 2026–27 · Floors 1 – 5</p>
+            <h1 style={{margin:0,fontSize:36,fontWeight:900,letterSpacing:-1,background:`linear-gradient(135deg,#fff 0%,${theme.highlight} 100%)`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Hall Finder</h1>
+            <p style={{margin:"8px 0 0",color:theme.highlightSoft,fontSize:14}}>SASTRA Deemed University · SRC, Kumbakonam</p>
+            <p style={{margin:"3px 0 0",color:theme.mutedText,fontSize:12}}>Odd Semester 2026–27 · Floors 1 – 5</p>
           </div>
           <div style={{display:"flex",flexDirection:"column",gap:12,width:"100%",maxWidth:390}}>
             {[
-              {r:"dean",   emoji:"👑",label:"Dean",    desc:"Full hall overview & schedules",col:"#7c3aed"},
-              {r:"faculty",emoji:"🎓",label:"Faculty", desc:"Your schedule & free halls",   col:"#0d9488"},
-              {r:"student",emoji:"📚",label:"Students",desc:"Find free halls instantly",     col:"#2563eb"},
+              {r:"dean",   emoji:"👑",label:"Dean",    desc:"Full hall overview & schedules",col:"#8b5cf6"},
+              {r:"faculty",emoji:"🎓",label:"Faculty", desc:"Your schedule & free halls",   col:"#6366f1"},
+              {r:"student",emoji:"📚",label:"Students",desc:"Find free halls instantly",     col:"#3b82f6"},
             ].map(({r,emoji,label,desc,col})=>(
               <button key={r} onClick={()=>r==="student"?setScreen("student"):goLogin(r)}
                 style={{display:"flex",alignItems:"center",gap:14,padding:"17px 20px",borderRadius:16,
-                  border:`1px solid ${col}28`,background:`${col}10`,cursor:"pointer",textAlign:"left"}}
-                onMouseOver={e=>{e.currentTarget.style.background=`${col}25`;e.currentTarget.style.transform="translateY(-2px)";}}
-                onMouseOut={e=>{e.currentTarget.style.background=`${col}10`;e.currentTarget.style.transform="none";}}>
-                <div style={{width:50,height:50,borderRadius:14,background:`${col}20`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:26,flexShrink:0}}>{emoji}</div>
+                  border:`1px solid ${col}35`,background:`${col}15`,cursor:"pointer",textAlign:"left"}}
+                onMouseOver={e=>{e.currentTarget.style.background=`${col}30`;e.currentTarget.style.transform="translateY(-2px)";}}
+                onMouseOut={e=>{e.currentTarget.style.background=`${col}15`;e.currentTarget.style.transform="none";}}>
+                <div style={{width:50,height:50,borderRadius:14,background:`${col}25`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:26,flexShrink:0}}>{emoji}</div>
                 <div style={{flex:1}}>
                   <div style={{color:"#f1f5f9",fontWeight:700,fontSize:16}}>{label}</div>
-                  <div style={{color:"#475569",fontSize:12,marginTop:2}}>{desc}</div>
+                  <div style={{color:theme.mutedText,fontSize:12,marginTop:2}}>{desc}</div>
                 </div>
                 <div style={{color:col,fontSize:24,fontWeight:200}}>›</div>
               </button>
@@ -760,15 +836,18 @@
       );
 
       if(screen==="login"){
-        const col=role==="dean"?"#7c3aed":"#0d9488";
+        const col=role==="dean"?"#8b5cf6":"#6366f1";
         return(
-          <div style={{minHeight:"100vh",background:"#030712",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Segoe UI',system-ui,sans-serif",padding:20}}>
-            <div style={{width:"100%",maxWidth:380,background:"#0a0f1a",borderRadius:20,padding:32,border:"1px solid #1e293b"}}>
-              <button onClick={()=>setScreen("landing")} style={{...bBtn("#0a0f1a","#475569"),padding:"4px 0",marginBottom:24,fontSize:13}}>‹ Back</button>
+          <div style={{minHeight:"100vh",background:theme.bgBody,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Segoe UI',system-ui,sans-serif",padding:20,position:"relative"}}>
+            <div style={{position:"absolute",top:20,right:20}}>
+              <ThemeSwitcher currentTheme={theme} setTheme={setThemeId}/>
+            </div>
+            <div style={{width:"100%",maxWidth:380,background:theme.cardBg,borderRadius:20,padding:32,border:`1px solid ${theme.cardBorder}`}}>
+              <button onClick={()=>setScreen("landing")} style={{...bBtn(theme.cardBg,theme.mutedText),padding:"4px 0",marginBottom:24,fontSize:13}}>‹ Back</button>
               <div style={{textAlign:"center",marginBottom:28}}>
                 <div style={{fontSize:44,marginBottom:8}}>{role==="dean"?"👑":"🎓"}</div>
                 <h2 style={{margin:0,color:"#f1f5f9",fontSize:22,fontWeight:800}}>{role==="dean"?"Dean Login":"Faculty Login"}</h2>
-                <p style={{margin:"6px 0 0",color:"#475569",fontSize:13}}>Enter your passkey to continue</p>
+                <p style={{margin:"6px 0 0",color:theme.mutedText,fontSize:13}}>Enter your passkey to continue</p>
               </div>
               <div style={{position:"relative",marginBottom:pkErr?8:16}}>
                 <input type={showPK?"text":"password"} value={pkInput}
@@ -776,8 +855,8 @@
                   onKeyDown={e=>e.key==="Enter"&&tryLogin()}
                   placeholder="Enter passkey..."
                   style={{width:"100%",padding:"12px 44px 12px 14px",borderRadius:10,
-                    border:`1.5px solid ${pkErr?"#ef4444":"#1e293b"}`,
-                    background:"#1e293b",color:"#f1f5f9",fontSize:15,outline:"none",
+                    border:`1.5px solid ${pkErr?"#ef4444":theme.cardBorder}`,
+                    background:theme.sidebarBg,color:"#f1f5f9",fontSize:15,outline:"none",
                     boxSizing:"border-box",fontFamily:"inherit"}}/>
                 <button onClick={()=>setShowPK(v=>!v)} style={{position:"absolute",right:12,top:"50%",transform:"translateY(-50%)",background:"none",border:"none",cursor:"pointer",fontSize:16}}>
                   {showPK?"🙈":"👁️"}
@@ -791,35 +870,38 @@
       }
 
       if(screen==="dean") return(
-        <div style={{height:"100vh",background:"#030712",display:"flex",flexDirection:"column",fontFamily:"'Segoe UI',system-ui,sans-serif",color:"#f8fafc",overflow:"hidden"}}>
-          <div style={{background:"#0a0f1a",borderBottom:"1px solid #1e293b",padding:"11px 20px",flexShrink:0,display:"flex",alignItems:"flex-start",justifyContent:"space-between"}}>
+        <div style={{height:"100vh",background:theme.bgBody,display:"flex",flexDirection:"column",fontFamily:"'Segoe UI',system-ui,sans-serif",color:"#f8fafc",overflow:"hidden"}}>
+          <div style={{background:theme.headerBg,borderBottom:`1px solid ${theme.headerBorder}`,padding:"11px 20px",flexShrink:0,display:"flex",alignItems:"flex-start",justifyContent:"space-between"}}>
             <div>
-              <div style={{fontSize:20,fontWeight:900,color:"#7c3aed",letterSpacing:3,lineHeight:1}}>SRC</div>
+              <div style={{fontSize:20,fontWeight:900,color:theme.accent,letterSpacing:3,lineHeight:1}}>SRC</div>
               <div style={{fontFamily:"monospace",fontSize:18,fontWeight:700,marginTop:3,color:"#f1f5f9"}}>{tStr}</div>
-              <div style={{fontSize:11,color:"#334155",marginTop:1}}>{dStr}</div>
+              <div style={{fontSize:11,color:theme.mutedText,marginTop:1}}>{dStr}</div>
             </div>
             <div style={{textAlign:"center",paddingTop:2}}>
-              <div style={{color:"#1e3a5f",fontSize:11,marginBottom:2}}>Viewing</div>
-              <div style={{fontSize:17,fontWeight:800,color:"#a78bfa"}}>{DAY_F[selDay]}</div>
+              <div style={{color:theme.mutedText,fontSize:11,marginBottom:2}}>Viewing</div>
+              <div style={{fontSize:17,fontWeight:800,color:theme.highlight}}>{DAY_F[selDay]}</div>
             </div>
-            <button onClick={logout} style={{...bBtn("#1e293b","#64748b"),padding:"8px 16px",border:"1px solid #334155"}}>Logout</button>
+            <div style={{display:"flex",alignItems:"center",gap:10}}>
+              <ThemeSwitcher currentTheme={theme} setTheme={setThemeId}/>
+              <button onClick={logout} style={{...bBtn(theme.cardBg,theme.mutedText),padding:"7px 14px",border:`1px solid ${theme.cardBorder}`}}>Logout</button>
+            </div>
           </div>
-          <DayBar selDay={selDay} setSelDay={setSelDay} color="#7c3aed"/>
-          <FloorBar selFloor={selFloor} setSelFloor={setSelFloor} onFloorChange={()=>setSelRoom(null)}/>
+          <DayBar selDay={selDay} setSelDay={setSelDay} theme={theme}/>
+          <FloorBar selFloor={selFloor} setSelFloor={setSelFloor} onFloorChange={()=>setSelRoom(null)} theme={theme}/>
 
           <div style={{flex:1,display:"flex",overflow:"hidden"}}>
             <div style={{
               width:selRoom?"20%":180,
               minWidth:selRoom?72:180,
               maxWidth:selRoom?140:180,
-              flexShrink:0,borderRight:"1px solid #0f1e30",overflowY:"auto",
-              padding:selRoom?"12px 6px":"12px 10px",background:"#06090f",
+              flexShrink:0,borderRight:`1px solid ${theme.sidebarBorder}`,overflowY:"auto",
+              padding:selRoom?"12px 6px":"12px 10px",background:theme.sidebarBg,
               transition:"width 0.24s ease, min-width 0.24s ease, max-width 0.24s ease, padding 0.24s ease"
             }}>
-              {!selFloor&&<p style={{color:"#1e293b",fontSize:12,textAlign:"center",marginTop:24,lineHeight:1.5}}>Pick a floor<br/>above</p>}
+              {!selFloor&&<p style={{color:theme.mutedText,fontSize:12,textAlign:"center",marginTop:24,lineHeight:1.5}}>Pick a floor<br/>above</p>}
               {selFloor&&!selRoom&&(
                 <React.Fragment>
-                  <p style={{color:"#1e3a5f",fontSize:10,textTransform:"uppercase",letterSpacing:"0.1em",margin:"0 0 8px 4px"}}>
+                  <p style={{color:theme.mutedText,fontSize:10,textTransform:"uppercase",letterSpacing:"0.1em",margin:"0 0 8px 4px"}}>
                     {ordinal(selFloor)} Floor · {floorHalls(selFloor).length} rooms
                   </p>
                   <div style={{display:"flex",flexDirection:"column",gap:5}}>
@@ -832,21 +914,21 @@
                       return(
                         <button key={hid} onClick={()=>setSelRoom(isSel?null:hid)}
                           style={{width:"100%",textAlign:"left",padding:"9px 10px",borderRadius:10,
-                            border:`1px solid ${isSel?"#5b21b6":"#0f1e30"}`,
-                            background:isSel?"#120a2e":"transparent",cursor:"pointer"}}>
+                            border:`1px solid ${isSel?theme.selectedRoomBorder:theme.sidebarBorder}`,
+                            background:isSel?theme.selectedRoomBg:"transparent",cursor:"pointer"}}>
                           <div style={{display:"flex",alignItems:"center",gap:7,marginBottom:3}}>
                             <div style={{width:7,height:7,borderRadius:"50%",flexShrink:0,
-                              background:hasTimetable(hid)?(occ?"#ef4444":"#22c55e"):"#334155",
+                              background:hasTimetable(hid)?(occ?"#ef4444":"#22c55e"):theme.mutedText,
                               boxShadow:hasTimetable(hid)?`0 0 4px ${occ?"#ef4444":"#22c55e"}`:"none"}}></div>
                             <span style={{color:"#e2e8f0",fontWeight:800,fontSize:13}}>Hall {hid}</span>
                             <span style={{marginLeft:"auto",fontSize:10,flexShrink:0}}>{h.proj?"📽️":"🪑"}</span>
                           </div>
                           <div style={{paddingLeft:14,overflow:"hidden"}}>
                             {hasTimetable(hid)
-                              ?<div style={{color:curF?isSel?"#c4b5fd":"#4ade80":"#22c55e",fontSize:10,fontWeight:500,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
+                              ?<div style={{color:curF?isSel?theme.highlightSoft:"#a78bfa":"#22c55e",fontSize:10,fontWeight:500,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
                                 {curF?"👤 "+curF:"✓ Free now"}
                               </div>
-                              :<div style={{color:"#1e293b",fontSize:10}}>No schedule</div>
+                              :<div style={{color:theme.mutedText,fontSize:10}}>No schedule</div>
                             }
                           </div>
                         </button>
@@ -857,7 +939,7 @@
               )}
               {selFloor&&selRoom&&(
                 <React.Fragment>
-                  <button onClick={()=>setSelRoom(null)} style={{width:"100%",textAlign:"center",padding:"6px 4px",marginBottom:8,borderRadius:8,border:"1px solid #1e293b",background:"transparent",color:"#475569",cursor:"pointer",fontSize:14}}>←</button>
+                  <button onClick={()=>setSelRoom(null)} style={{width:"100%",textAlign:"center",padding:"6px 4px",marginBottom:8,borderRadius:8,border:`1px solid ${theme.cardBorder}`,background:"transparent",color:theme.mutedText,cursor:"pointer",fontSize:14}}>←</button>
                   <div style={{display:"flex",flexDirection:"column",gap:5}}>
                     {floorHalls(selFloor).map(hid=>{
                       const h=HALL_INFO[hid];
@@ -868,10 +950,10 @@
                         <button key={hid} onClick={()=>setSelRoom(hid)} title={`Hall ${hid}`}
                           style={{display:"flex",flexDirection:"column",alignItems:"center",gap:3,
                             padding:"8px 2px",borderRadius:10,
-                            border:`1px solid ${isSel?"#5b21b6":"#0f1e30"}`,
-                            background:isSel?"#120a2e":"transparent",cursor:"pointer"}}>
+                            border:`1px solid ${isSel?theme.selectedRoomBorder:theme.sidebarBorder}`,
+                            background:isSel?theme.selectedRoomBg:"transparent",cursor:"pointer"}}>
                           <div style={{width:6,height:6,borderRadius:"50%",flexShrink:0,
-                            background:hasTimetable(hid)?(occ?"#ef4444":"#22c55e"):"#334155",
+                            background:hasTimetable(hid)?(occ?"#ef4444":"#22c55e"):theme.mutedText,
                             boxShadow:hasTimetable(hid)?`0 0 4px ${occ?"#ef4444":"#22c55e"}`:"none"}}></div>
                           <span style={{color:"#e2e8f0",fontWeight:800,fontSize:12}}>{hid}</span>
                           <span style={{fontSize:12}}>{h.proj?"📽️":"🪑"}</span>
@@ -883,16 +965,16 @@
               )}
             </div>
 
-            <div style={{flex:1,overflowY:"auto",padding:selRoom?"20px 16px":"20px 28px",background:"#030712"}}>
+            <div style={{flex:1,overflowY:"auto",padding:selRoom?"20px 16px":"20px 28px",background:theme.bgBody}}>
               {!selRoom?(
                 <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",height:"100%",gap:10,userSelect:"none"}}>
-                  <div style={{fontSize:52,opacity:.1}}>📋</div>
-                  <p style={{color:"#0f1e30",fontSize:16,fontWeight:600,margin:0}}>Select a hall from the left panel</p>
-                  <p style={{color:"#0a1420",fontSize:13,margin:0}}>The schedule will appear here</p>
+                  <div style={{fontSize:52,opacity:.15}}>📋</div>
+                  <p style={{color:theme.mutedText,fontSize:16,fontWeight:600,margin:0}}>Select a hall from the left panel</p>
+                  <p style={{color:theme.mutedText,fontSize:13,margin:0,opacity:0.7}}>The schedule will appear here</p>
                 </div>
               ):(
                 <div style={{opacity:panelAnim?1:0,transform:panelAnim?"translateX(0)":"translateX(24px)",transition:"opacity 0.28s ease, transform 0.28s ease"}}>
-                  <SchedulePanel hallId={selRoom} day={selDay} curSlotId={curSid}/>
+                  <SchedulePanel hallId={selRoom} day={selDay} curSlotId={curSid} theme={theme}/>
                 </div>
               )}
             </div>
@@ -901,22 +983,25 @@
       );
 
       if(screen==="faculty") return(
-        <div style={{minHeight:"100vh",height:"100vh",background:"#030712",display:"flex",flexDirection:"column",fontFamily:"'Segoe UI',system-ui,sans-serif",color:"#f8fafc",overflow:"hidden"}}>
-          <div style={{background:"#0a0f1a",borderBottom:"1px solid #1e293b",padding:"11px 20px",flexShrink:0,display:"flex",alignItems:"flex-start",justifyContent:"space-between"}}>
+        <div style={{minHeight:"100vh",height:"100vh",background:theme.bgBody,display:"flex",flexDirection:"column",fontFamily:"'Segoe UI',system-ui,sans-serif",color:"#f8fafc",overflow:"hidden"}}>
+          <div style={{background:theme.headerBg,borderBottom:`1px solid ${theme.headerBorder}`,padding:"11px 20px",flexShrink:0,display:"flex",alignItems:"flex-start",justifyContent:"space-between"}}>
             <div>
-              <div style={{fontSize:20,fontWeight:900,color:"#0d9488",letterSpacing:3}}>SRC</div>
+              <div style={{fontSize:20,fontWeight:900,color:theme.accent,letterSpacing:3}}>SRC</div>
               <div style={{fontFamily:"monospace",fontSize:18,fontWeight:700,marginTop:3}}>{tStr}</div>
-              <div style={{fontSize:11,color:"#334155",marginTop:1}}>{dStr}</div>
+              <div style={{fontSize:11,color:theme.mutedText,marginTop:1}}>{dStr}</div>
             </div>
-            <button onClick={logout} style={{...bBtn("#1e293b","#64748b"),padding:"8px 16px",border:"1px solid #334155"}}>Logout</button>
+            <div style={{display:"flex",alignItems:"center",gap:10}}>
+              <ThemeSwitcher currentTheme={theme} setTheme={setThemeId}/>
+              <button onClick={logout} style={{...bBtn(theme.cardBg,theme.mutedText),padding:"7px 14px",border:`1px solid ${theme.cardBorder}`}}>Logout</button>
+            </div>
           </div>
-          <DayBar selDay={selDay} setSelDay={setSelDay} color="#0d9488"/>
+          <DayBar selDay={selDay} setSelDay={setSelDay} theme={theme}/>
           <div style={{flex:1,overflowY:"auto",padding:18,maxWidth:820,width:"100%",margin:"0 auto",boxSizing:"border-box"}}>
-            <h3 style={{color:"#1e3a5f",fontSize:11,textTransform:"uppercase",letterSpacing:"0.09em",margin:"0 0 10px"}}>Hall Availability</h3>
-            <PeriodSelector selPid={selPid} setSelPid={setSelPid} isLive={pidLive} setIsLive={setPidLive} curSid={curSid}/>
-            <FloorPicker selFloor={selFloor} setSelFloor={setSelFloor} color="#0d9488"/>
-            {!selFloor&&<p style={{color:"#1e293b",fontSize:13,textAlign:"center",marginTop:16}}>Select a floor above</p>}
-            {selFloor&&<FreeHallsView day={selDay} effectivePid={effPid} curSid={curSid} floor={selFloor} role="faculty"/>}
+            <h3 style={{color:theme.highlight,fontSize:11,textTransform:"uppercase",letterSpacing:"0.09em",margin:"0 0 10px"}}>Hall Availability</h3>
+            <PeriodSelector selPid={selPid} setSelPid={setSelPid} isLive={pidLive} setIsLive={setPidLive} curSid={curSid} theme={theme}/>
+            <FloorPicker selFloor={selFloor} setSelFloor={setSelFloor} color={theme.accent} theme={theme}/>
+            {!selFloor&&<p style={{color:theme.mutedText,fontSize:13,textAlign:"center",marginTop:16}}>Select a floor above</p>}
+            {selFloor&&<FreeHallsView day={selDay} effectivePid={effPid} curSid={curSid} floor={selFloor} role="faculty" theme={theme}/>}
           </div>
         </div>
       );
@@ -925,34 +1010,37 @@
         const freeCount=selFloor?floorHalls(selFloor).filter(hid=>isHallFree(hid,selDay,effPid)||typeof effPid!=="number").length:0;
         const curSlotObj=ALL_SLOTS.find(s=>s.id===effPid);
         return(
-          <div style={{minHeight:"100vh",background:"#030712",display:"flex",flexDirection:"column",fontFamily:"'Segoe UI',system-ui,sans-serif",color:"#f8fafc"}}>
-            <div style={{background:"linear-gradient(135deg,#0c3255 0%,#1d4ed8 60%,#0d9488 100%)",padding:"16px 18px 22px",flexShrink:0}}>
+          <div style={{minHeight:"100vh",background:theme.bgBody,display:"flex",flexDirection:"column",fontFamily:"'Segoe UI',system-ui,sans-serif",color:"#f8fafc"}}>
+            <div style={{background:theme.studentBanner,padding:"16px 18px 22px",flexShrink:0}}>
               <div style={{maxWidth:680,margin:"0 auto"}}>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
                   <div>
                     <div style={{fontSize:22,fontWeight:900,letterSpacing:-0.5}}>🏫 Hall Finder</div>
-                    <div style={{color:"rgba(255,255,255,0.55)",fontSize:12,marginTop:2}}>SASTRA SRC · {DAY_F[selDay]}</div>
+                    <div style={{color:"rgba(255,255,255,0.65)",fontSize:12,marginTop:2}}>SASTRA SRC · {DAY_F[selDay]}</div>
                   </div>
-                  <div style={{textAlign:"right"}}>
+                  <div style={{textAlign:"right",display:"flex",flexDirection:"column",alignItems:"flex-end",gap:6}}>
                     <div style={{fontFamily:"monospace",fontSize:16,fontWeight:700}}>{tStr}</div>
-                    <button onClick={()=>{setScreen("landing");setSelFloor(null);}} style={{...bBtn("rgba(0,0,0,0.25)","rgba(255,255,255,0.6)"),padding:"4px 10px",borderRadius:7,marginTop:5,fontSize:12}}>← Home</button>
+                    <div style={{display:"flex",alignItems:"center",gap:8}}>
+                      <ThemeSwitcher currentTheme={theme} setTheme={setThemeId}/>
+                      <button onClick={()=>{setScreen("landing");setSelFloor(null);}} style={{...bBtn("rgba(0,0,0,0.3)","rgba(255,255,255,0.8)"),padding:"5px 11px",borderRadius:7,fontSize:12}}>← Home</button>
+                    </div>
                   </div>
                 </div>
-                <div style={{background:"rgba(0,0,0,0.22)",borderRadius:12,padding:"10px 16px",marginTop:14,display:"flex",gap:28,flexWrap:"wrap"}}>
-                  <div><div style={{color:"rgba(255,255,255,0.45)",fontSize:10}}>Free Now</div><div style={{fontSize:22,fontWeight:900}}>{selFloor?freeCount:"—"}</div></div>
-                  <div><div style={{color:"rgba(255,255,255,0.45)",fontSize:10}}>Period</div><div style={{fontSize:14,fontWeight:700,color:"#bae6fd",marginTop:3}}>{curSlotObj?.label||"—"}</div></div>
-                  <div><div style={{color:"rgba(255,255,255,0.45)",fontSize:10}}>Time</div><div style={{fontSize:12,fontWeight:600,color:"#bae6fd",marginTop:5}}>{curSlotObj?.time||"Outside hrs"}</div></div>
+                <div style={{background:"rgba(0,0,0,0.25)",borderRadius:12,padding:"10px 16px",marginTop:14,display:"flex",gap:28,flexWrap:"wrap"}}>
+                  <div><div style={{color:"rgba(255,255,255,0.55)",fontSize:10}}>Free Now</div><div style={{fontSize:22,fontWeight:900}}>{selFloor?freeCount:"—"}</div></div>
+                  <div><div style={{color:"rgba(255,255,255,0.55)",fontSize:10}}>Period</div><div style={{fontSize:14,fontWeight:700,color:"#e9d5ff",marginTop:3}}>{curSlotObj?.label||"—"}</div></div>
+                  <div><div style={{color:"rgba(255,255,255,0.55)",fontSize:10}}>Time</div><div style={{fontSize:12,fontWeight:600,color:"#e9d5ff",marginTop:5}}>{curSlotObj?.time||"Outside hrs"}</div></div>
                 </div>
               </div>
             </div>
             <div style={{flex:1,overflowY:"auto",padding:16,maxWidth:680,width:"100%",margin:"0 auto",boxSizing:"border-box"}}>
-              <PeriodSelector selPid={selPid} setSelPid={setSelPid} isLive={pidLive} setIsLive={setPidLive} curSid={curSid}/>
-              <FloorPicker selFloor={selFloor} setSelFloor={setSelFloor} color="#2563eb"/>
-              {!selFloor&&<div style={{textAlign:"center",padding:"36px 0",color:"#1e293b"}}>
+              <PeriodSelector selPid={selPid} setSelPid={setSelPid} isLive={pidLive} setIsLive={setPidLive} curSid={curSid} theme={theme}/>
+              <FloorPicker selFloor={selFloor} setSelFloor={setSelFloor} color={theme.accent} theme={theme}/>
+              {!selFloor&&<div style={{textAlign:"center",padding:"36px 0",color:theme.mutedText}}>
                 <div style={{fontSize:36,marginBottom:10}}>🏢</div>
-                <p style={{fontSize:14,fontWeight:600,margin:0,color:"#1e3a5f"}}>Select a floor above</p>
+                <p style={{fontSize:14,fontWeight:600,margin:0,color:theme.highlight}}>Select a floor above</p>
               </div>}
-              {selFloor&&<FreeHallsView day={selDay} effectivePid={effPid} curSid={curSid} floor={selFloor} role="student"/>}
+              {selFloor&&<FreeHallsView day={selDay} effectivePid={effPid} curSid={curSid} floor={selFloor} role="student" theme={theme}/>}
             </div>
           </div>
         );
