@@ -824,7 +824,22 @@
         <div style={{minHeight:"100vh",background:"transparent",position:"relative",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",fontFamily:"'Segoe UI',system-ui,sans-serif",color:"#f8fafc",padding:24,zIndex:1}}>
           <VideoBg />
           <div style={{textAlign:"center",marginBottom:36,zIndex:2}}>
-            <div style={{fontSize:52,marginBottom:6}}>🏫</div>
+            <div style={{display:"flex",justifyContent:"center",alignItems:"center",marginBottom:14}}>
+              <img 
+                src="web/sastra_logo_glow.png" 
+                alt="SASTRA Logo" 
+                style={{
+                  height:100,
+                  width:"auto",
+                  objectFit:"contain",
+                  filter:"drop-shadow(0 0 20px rgba(139,92,246,0.5)) drop-shadow(0 0 8px rgba(167,139,250,0.3))",
+                  transition:"transform 0.3s ease",
+                }}
+                onMouseOver={e=>e.currentTarget.style.transform="scale(1.04)"}
+                onMouseOut={e=>e.currentTarget.style.transform="scale(1)"}
+                onError={e=>{e.currentTarget.src='sastra_logo_glow.png';}}
+              />
+            </div>
             <h1 style={{margin:0,fontSize:38,fontWeight:900,letterSpacing:-1,background:`linear-gradient(135deg,#fff 0%,${THEME.highlight} 100%)`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Hall Finder</h1>
             <p style={{margin:"10px 0 0",color:THEME.highlightSoft,fontSize:14,fontWeight:800,letterSpacing:"0.06em",lineHeight:1.5,textTransform:"uppercase"}}>
               SASTRA DEEMED UNIVERSITY<br/>
