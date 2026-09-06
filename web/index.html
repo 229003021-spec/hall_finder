@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hall Finder · SASTRA SRC Kumbakonam</title>
-  <link rel="icon" href="web/favicon.png" type="image/png">
+  <title>Hall Finder · SASTRA DEEMED UNIVERSITY</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='28' fill='%238b5cf6'/><text x='50%' y='70%' font-family='system-ui, -apple-system, sans-serif' font-size='68' font-weight='900' fill='%23ffffff' text-anchor='middle'>S</text></svg>" type="image/svg+xml">
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -396,6 +396,79 @@
       studentBanner: "linear-gradient(135deg, #190a38 0%, #4c1d95 60%, #7c3aed 100%)",
     };
 
+    function VideoBg() {
+      const canvasRef = React.useRef(null);
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let animId;
+        let w = canvas.width = window.innerWidth;
+        let h = canvas.height = window.innerHeight;
+
+        const onResize = () => {
+          if (!canvas) return;
+          w = canvas.width = window.innerWidth;
+          h = canvas.height = window.innerHeight;
+        };
+        window.addEventListener('resize', onResize);
+
+        const pts = Array.from({ length: 50 }, () => ({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          r: Math.random() * 2 + 0.5,
+          dx: (Math.random() - 0.5) * 0.5,
+          dy: (Math.random() - 0.5) * 0.5,
+          a: Math.random() * 0.6 + 0.2
+        }));
+
+        const draw = () => {
+          ctx.clearRect(0, 0, w, h);
+          pts.forEach(p => {
+            p.x += p.dx; p.y += p.dy;
+            if (p.x < 0) p.x = w; if (p.x > w) p.x = 0;
+            if (p.y < 0) p.y = h; if (p.y > h) p.y = 0;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(167, 139, 250, ${p.a})`;
+            ctx.shadowBlur = 8;
+            ctx.shadowColor = '#8b5cf6';
+            ctx.fill();
+          });
+          animId = requestAnimationFrame(draw);
+        };
+        draw();
+        return () => {
+          window.removeEventListener('resize', onResize);
+          cancelAnimationFrame(animId);
+        };
+      }, []);
+
+      return (
+        <div style={{
+          position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh",
+          overflow: "hidden", zIndex: 0, pointerEvents: "none"
+        }}>
+          <canvas ref={canvasRef} style={{
+            position: "absolute", top: 0, left: 0, width: "100%", height: "100%",
+            zIndex: 1, background: "transparent"
+          }} />
+          <video autoPlay loop muted playsInline style={{
+            position: "absolute", top: 0, left: 0, width: "100%", height: "100%",
+            objectFit: "cover", zIndex: 0, filter: "brightness(0.35) contrast(1.15) saturate(1.3)"
+          }}>
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-stars-in-space-1610-large.mp4" type="video/mp4" />
+            <source src="https://cdn.coverr.co/videos/coverr-digital-lines-and-dots-5412/1080p.mp4" type="video/mp4" />
+          </video>
+          <div style={{
+            position: "absolute", inset: 0, zIndex: 2,
+            background: "radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.18) 0%, rgba(7, 5, 15, 0.85) 75%)",
+            backdropFilter: "blur(2px)"
+          }}></div>
+        </div>
+      );
+    }
+
     function DayBar({selDay,setSelDay}){
       return(
         <div style={{background:THEME.headerBg,borderBottom:`1px solid ${THEME.navBorder}`,padding:"8px 18px",display:"flex",gap:6,alignItems:"center",flexShrink:0}}>
@@ -748,25 +821,29 @@
       }
 
       if(screen==="landing") return(
-        <div style={{minHeight:"100vh",background:THEME.bgBody,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",fontFamily:"'Segoe UI',system-ui,sans-serif",color:"#f8fafc",padding:24}}>
-          <div style={{textAlign:"center",marginBottom:40}}>
+        <div style={{minHeight:"100vh",background:"transparent",position:"relative",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",fontFamily:"'Segoe UI',system-ui,sans-serif",color:"#f8fafc",padding:24,zIndex:1}}>
+          <VideoBg />
+          <div style={{textAlign:"center",marginBottom:36,zIndex:2}}>
             <div style={{fontSize:52,marginBottom:6}}>🏫</div>
-            <h1 style={{margin:0,fontSize:36,fontWeight:900,letterSpacing:-1,background:`linear-gradient(135deg,#fff 0%,${THEME.highlight} 100%)`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Hall Finder</h1>
-            <p style={{margin:"8px 0 0",color:THEME.highlightSoft,fontSize:14}}>SASTRA Deemed University · SRC, Kumbakonam</p>
-            <p style={{margin:"3px 0 0",color:THEME.mutedText,fontSize:12}}>Odd Semester 2026–27 · Floors 1 – 5</p>
+            <h1 style={{margin:0,fontSize:38,fontWeight:900,letterSpacing:-1,background:`linear-gradient(135deg,#fff 0%,${THEME.highlight} 100%)`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Hall Finder</h1>
+            <p style={{margin:"10px 0 0",color:THEME.highlightSoft,fontSize:14,fontWeight:800,letterSpacing:"0.06em",lineHeight:1.5,textTransform:"uppercase"}}>
+              SASTRA DEEMED UNIVERSITY<br/>
+              <span style={{fontSize:12,color:"#c4b5fd",fontWeight:700,letterSpacing:"0.08em"}}>SRC KUMBAKONAM</span>
+            </p>
+            <p style={{margin:"6px 0 0",color:THEME.mutedText,fontSize:12}}>Odd Semester 2026–27 · Floors 1 – 5</p>
           </div>
-          <div style={{display:"flex",flexDirection:"column",gap:12,width:"100%",maxWidth:390}}>
+          <div style={{display:"flex",flexDirection:"column",gap:12,width:"100%",maxWidth:390,zIndex:2,background:"rgba(15,11,36,0.65)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",padding:24,borderRadius:24,border:"1px solid rgba(139,92,246,0.3)",boxShadow:"0 20px 50px rgba(0,0,0,0.6), 0 0 30px rgba(139,92,246,0.15)"}}>
             {[
               {r:"dean",   emoji:"👑",label:"Dean",    desc:"Full hall overview & schedules",col:"#8b5cf6"},
               {r:"faculty",emoji:"🎓",label:"Faculty", desc:"Your schedule & free halls",   col:"#6366f1"},
               {r:"student",emoji:"📚",label:"Students",desc:"Find free halls instantly",     col:"#3b82f6"},
             ].map(({r,emoji,label,desc,col})=>(
               <button key={r} onClick={()=>r==="student"?setScreen("student"):goLogin(r)}
-                style={{display:"flex",alignItems:"center",gap:14,padding:"17px 20px",borderRadius:16,
-                  border:`1px solid ${col}35`,background:`${col}15`,cursor:"pointer",textAlign:"left"}}
-                onMouseOver={e=>{e.currentTarget.style.background=`${col}30`;e.currentTarget.style.transform="translateY(-2px)";}}
-                onMouseOut={e=>{e.currentTarget.style.background=`${col}15`;e.currentTarget.style.transform="none";}}>
-                <div style={{width:50,height:50,borderRadius:14,background:`${col}25`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:26,flexShrink:0}}>{emoji}</div>
+                style={{display:"flex",alignItems:"center",gap:14,padding:"16px 20px",borderRadius:16,
+                  border:`1px solid ${col}40`,background:`${col}18`,cursor:"pointer",textAlign:"left",transition:"all 0.2s ease"}}
+                onMouseOver={e=>{e.currentTarget.style.background=`${col}35`;e.currentTarget.style.transform="translateY(-2px)";}}
+                onMouseOut={e=>{e.currentTarget.style.background=`${col}18`;e.currentTarget.style.transform="none";}}>
+                <div style={{width:48,height:48,borderRadius:14,background:`${col}30`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,flexShrink:0}}>{emoji}</div>
                 <div style={{flex:1}}>
                   <div style={{color:"#f1f5f9",fontWeight:700,fontSize:16}}>{label}</div>
                   <div style={{color:THEME.mutedText,fontSize:12,marginTop:2}}>{desc}</div>
@@ -781,9 +858,10 @@
       if(screen==="login"){
         const col=role==="dean"?"#8b5cf6":"#6366f1";
         return(
-          <div style={{minHeight:"100vh",background:THEME.bgBody,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Segoe UI',system-ui,sans-serif",padding:20}}>
-            <div style={{width:"100%",maxWidth:380,background:THEME.cardBg,borderRadius:20,padding:32,border:`1px solid ${THEME.cardBorder}`}}>
-              <button onClick={()=>setScreen("landing")} style={{...bBtn(THEME.cardBg,THEME.mutedText),padding:"4px 0",marginBottom:24,fontSize:13}}>‹ Back</button>
+          <div style={{minHeight:"100vh",background:"transparent",position:"relative",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Segoe UI',system-ui,sans-serif",padding:20,zIndex:1}}>
+            <VideoBg />
+            <div style={{width:"100%",maxWidth:380,background:"rgba(15,11,36,0.75)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",borderRadius:24,padding:32,border:"1px solid rgba(139,92,246,0.35)",boxShadow:"0 20px 50px rgba(0,0,0,0.6)",zIndex:2}}>
+              <button onClick={()=>setScreen("landing")} style={{...bBtn("rgba(255,255,255,0.05)",THEME.mutedText),padding:"5px 12px",marginBottom:20,fontSize:13,border:"1px solid rgba(255,255,255,0.1)"}}>‹ Back</button>
               <div style={{textAlign:"center",marginBottom:28}}>
                 <div style={{fontSize:44,marginBottom:8}}>{role==="dean"?"👑":"🎓"}</div>
                 <h2 style={{margin:0,color:"#f1f5f9",fontSize:22,fontWeight:800}}>{role==="dean"?"Dean Login":"Faculty Login"}</h2>
@@ -795,15 +873,15 @@
                   onKeyDown={e=>e.key==="Enter"&&tryLogin()}
                   placeholder="Enter passkey..."
                   style={{width:"100%",padding:"12px 44px 12px 14px",borderRadius:10,
-                    border:`1.5px solid ${pkErr?"#ef4444":THEME.cardBorder}`,
-                    background:THEME.sidebarBg,color:"#f1f5f9",fontSize:15,outline:"none",
+                    border:`1.5px solid ${pkErr?"#ef4444":"rgba(139,92,246,0.4)"}`,
+                    background:"rgba(9,6,21,0.8)",color:"#f1f5f9",fontSize:15,outline:"none",
                     boxSizing:"border-box",fontFamily:"inherit"}}/>
                 <button onClick={()=>setShowPK(v=>!v)} style={{position:"absolute",right:12,top:"50%",transform:"translateY(-50%)",background:"none",border:"none",cursor:"pointer",fontSize:16}}>
                   {showPK?"🙈":"👁️"}
                 </button>
               </div>
               {pkErr&&<p style={{color:"#ef4444",fontSize:13,textAlign:"center",margin:"0 0 14px"}}>❌ Incorrect passkey. Try again.</p>}
-              <button onClick={tryLogin} style={{...bBtn(col),width:"100%",padding:13,fontSize:15,borderRadius:10}}>Login →</button>
+              <button onClick={tryLogin} style={{...bBtn(col),width:"100%",padding:13,fontSize:15,borderRadius:10,boxShadow:`0 0 20px ${col}50`}}>Login →</button>
             </div>
           </div>
         );
