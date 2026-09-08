@@ -64,6 +64,23 @@
     const HALL_INFO = _DATA_UNPACKED.HI;
     const SCH = _DATA_UNPACKED.SCH;
 
+    const ALL_SLOTS = [
+      {id:1,    label:"P1",    time:"8:45 – 9:45 AM",   start:[8,45], end:[9,45], ptype:"period"},
+      {id:2,    label:"P2",    time:"9:45 – 10:45 AM",  start:[9,45], end:[10,45],ptype:"period"},
+      {id:"b1", label:"Break", time:"10:45 – 11:00 AM", start:[10,45],end:[11,0], ptype:"break"},
+      {id:3,    label:"P3",    time:"11:00 AM – 12 PM", start:[11,0], end:[12,0], ptype:"period"},
+      {id:4,    label:"P4",    time:"12:00 – 1:00 PM",  start:[12,0], end:[13,0], ptype:"period"},
+      {id:"ln", label:"Lunch", time:"1:00 – 2:00 PM",   start:[13,0], end:[14,0], ptype:"lunch"},
+      {id:6,    label:"P6",    time:"2:00 – 3:00 PM",   start:[14,0], end:[15,0], ptype:"period"},
+      {id:"b2", label:"Break", time:"3:00 – 3:15 PM",   start:[15,0], end:[15,15],ptype:"break"},
+      {id:7,    label:"P7",    time:"3:15 – 4:15 PM",   start:[15,15],end:[16,15],ptype:"period"},
+      {id:8,    label:"P8",    time:"4:15 – 5:15 PM",   start:[16,15],end:[17,15],ptype:"period"},
+    ];
+
+    const DAYS=["MON","TUE","WED","THU","FRI"];
+    const DAY_S={MON:"Mon",TUE:"Tue",WED:"Wed",THU:"Thu",FRI:"Fri"};
+    const DAY_F={MON:"Monday",TUE:"Tuesday",WED:"Wednesday",THU:"Thursday",FRI:"Friday"};
+
     const toMins=([h,m])=>h*60+m;
     const detectDay=()=>{const d=["SUN","MON","TUE","WED","THU","FRI","SAT"][new Date().getDay()];return DAYS.includes(d)?d:"MON";};
     const getCurSlotId=()=>{const m=new Date().getHours()*60+new Date().getMinutes();for(const s of ALL_SLOTS)if(m>=toMins(s.start)&&m<toMins(s.end))return s.id;return null;};
