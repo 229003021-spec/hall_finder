@@ -538,11 +538,11 @@
                 <span style={{...bBadge("#1c0808","#f87171","#7f1d1d"),marginLeft:"auto"}}>{busy.length}</span>
               </div>
               <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(130px,1fr))",gap:6}}>
-                {busy.map(h=>{
+                {busy.map((h, idx)=>{
                   const e=h.hasData?getEntry(h.id,day,effectivePid):null;
                   const courseLabel=e&&e.c?(COURSE_NAMES[e.c]||e.c):null;
                   return(
-                    <div key={h.id} style={{background:THEME.cardBg,border:`1px solid ${THEME.cardBorder}`,borderRadius:12,padding:"11px 13px"}}>
+                    <div key={h.id} className="hall-card-anim" style={{animationDelay:`${idx * 0.04}s`,background:THEME.cardBg,border:`1px solid ${THEME.cardBorder}`,borderRadius:12,padding:"11px 13px"}}>
                       <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:3}}>
                         <div style={{fontWeight:700,fontSize:14,color:THEME.mutedText}}>Hall {h.id}</div>
                         <span style={{marginLeft:"auto",fontSize:12}}>{h.proj?"📽️":"🪑"}</span>
@@ -682,23 +682,42 @@
       }
 
       if(screen==="dean") return(
-        <div style={{height:"100vh",background:THEME.bgBody,display:"flex",flexDirection:"column",fontFamily:"'Segoe UI',system-ui,sans-serif",color:"#f8fafc",overflow:"hidden"}}>
-          <div style={{background:THEME.headerBg,borderBottom:`1px solid ${THEME.headerBorder}`,padding:"11px 20px",flexShrink:0,display:"flex",alignItems:"flex-start",justifyContent:"space-between"}}>
-            <div>
-              <div style={{fontSize:20,fontWeight:900,color:THEME.accent,letterSpacing:3,lineHeight:1}}>SRC</div>
-              <div style={{fontFamily:"monospace",fontSize:18,fontWeight:700,marginTop:3,color:"#f1f5f9"}}>{tStr}</div>
-              <div style={{fontSize:11,color:THEME.mutedText,marginTop:1}}>{dStr}</div>
-            </div>
-            <div style={{textAlign:"center",paddingTop:2}}>
-              <div style={{color:THEME.mutedText,fontSize:11,marginBottom:2}}>Viewing</div>
-              <div style={{fontSize:17,fontWeight:800,color:THEME.highlight}}>{DAY_F[selDay]}</div>
-            </div>
-            <button onClick={logout} style={{...bBtn(THEME.cardBg,THEME.mutedText),padding:"7px 14px",border:`1px solid ${THEME.cardBorder}`}}>Logout</button>
-          </div>
-          <DayBar selDay={selDay} setSelDay={setSelDay}/>
-          <FloorBar selFloor={selFloor} setSelFloor={setSelFloor} onFloorChange={()=>setSelRoom(null)}/>
+        <div className="student-takeover-bg">
+          <div style={{position:"fixed",top:-100,left:"50%",transform:"translateX(-50%)",width:700,height:350,background:"radial-gradient(ellipse at center, rgba(139,92,246,0.35) 0%, rgba(0,0,0,0) 70%)",pointerEvents:"none",zIndex:0}}></div>
 
-          <div style={{flex:1,display:"flex",overflow:"hidden"}}>
+          <div className="student-banner-anim" style={{background:THEME.headerBg,borderBottom:`1px solid ${THEME.headerBorder}`,padding:"12px 20px",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"space-between",position:"relative",zIndex:1,boxShadow:"0 10px 30px rgba(0,0,0,0.5)"}}>
+            <div style={{display:"flex",alignItems:"center",gap:12}}>
+              <div style={{fontSize:24}}>👑</div>
+              <div>
+                <div style={{display:"flex",alignItems:"center",gap:8}}>
+                  <div style={{fontSize:18,fontWeight:900,color:"#f1f5f9",letterSpacing:1}}>DEAN PORTAL</div>
+                  <span style={{background:"rgba(139,92,246,0.3)",border:"1px solid rgba(167,139,250,0.4)",color:"#c4b5fd",fontSize:10,fontWeight:800,padding:"2px 8px",borderRadius:20,letterSpacing:"0.06em",textTransform:"uppercase"}}>FULL OVERVIEW</span>
+                </div>
+                <div style={{fontSize:11,color:THEME.mutedText,marginTop:2}}>SASTRA DEEMED UNIVERSITY · SRC KUMBAKONAM</div>
+              </div>
+            </div>
+            
+            <div style={{textAlign:"center"}}>
+              <div style={{fontFamily:"monospace",fontSize:16,fontWeight:700,color:"#e9d5ff"}}>{tStr}</div>
+              <div style={{fontSize:11,color:THEME.highlight,fontWeight:700}}>{DAY_F[selDay]}</div>
+            </div>
+
+            <button onClick={logout} 
+              style={{...bBtn("rgba(255,255,255,0.08)",THEME.mutedText),padding:"7px 16px",borderRadius:20,border:`1px solid ${THEME.cardBorder}`,backdropFilter:"blur(8px)",transition:"all 0.2s ease"}}
+              onMouseOver={e=>e.currentTarget.style.background="rgba(255,255,255,0.18)"}
+              onMouseOut={e=>e.currentTarget.style.background="rgba(255,255,255,0.08)"}>
+              Logout 🔒
+            </button>
+          </div>
+
+          <div className="student-period-anim" style={{position:"relative",zIndex:1}}>
+            <DayBar selDay={selDay} setSelDay={setSelDay}/>
+          </div>
+          <div className="student-floor-anim" style={{position:"relative",zIndex:1}}>
+            <FloorBar selFloor={selFloor} setSelFloor={setSelFloor} onFloorChange={()=>setSelRoom(null)}/>
+          </div>
+
+          <div className="student-content-anim" style={{flex:1,display:"flex",overflow:"hidden",position:"relative",zIndex:1}}>
             <div style={{
               width:selRoom?"20%":180,
               minWidth:selRoom?72:180,
@@ -714,17 +733,17 @@
                     {ordinal(selFloor)} Floor · {floorHalls(selFloor).length} rooms
                   </p>
                   <div style={{display:"flex",flexDirection:"column",gap:5}}>
-                    {floorHalls(selFloor).map(hid=>{
+                    {floorHalls(selFloor).map((hid, idx)=>{
                       const h=HALL_INFO[hid];
                       const isSel=selRoom===hid;
                       const curE=typeof curSid==="number"&&hasTimetable(hid)?getEntry(hid,selDay,curSid):null;
                       const curF=curE&&curE.t==="class"?curE.f:null;
                       const occ=curE&&curE.t==="class";
                       return(
-                        <button key={hid} onClick={()=>setSelRoom(isSel?null:hid)}
-                          style={{width:"100%",textAlign:"left",padding:"9px 10px",borderRadius:10,
-                            border:`1px solid ${isSel?THEME.selectedRoomBorder:THEME.sidebarBorder}`,
-                            background:isSel?THEME.selectedRoomBg:"transparent",cursor:"pointer"}}>
+                        <button key={hid} className="hall-card-anim" style={{animationDelay:`${idx * 0.03}s`,width:"100%",textAlign:"left",padding:"9px 10px",borderRadius:10,
+                          border:`1px solid ${isSel?THEME.selectedRoomBorder:THEME.sidebarBorder}`,
+                          background:isSel?THEME.selectedRoomBg:"transparent",cursor:"pointer",transition:"all 0.15s ease"}}
+                          onClick={()=>setSelRoom(isSel?null:hid)}>
                           <div style={{display:"flex",alignItems:"center",gap:7,marginBottom:3}}>
                             <div style={{width:7,height:7,borderRadius:"50%",flexShrink:0,
                               background:hasTimetable(hid)?(occ?"#ef4444":"#22c55e"):THEME.mutedText,
@@ -777,7 +796,7 @@
             <div style={{flex:1,overflowY:"auto",padding:selRoom?"20px 16px":"20px 28px",background:THEME.bgBody}}>
               {!selRoom?(
                 <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",height:"100%",gap:10,userSelect:"none"}}>
-                  <div style={{fontSize:52,opacity:.15}}>📋</div>
+                  <div style={{fontSize:52,opacity:.15,filter:"drop-shadow(0 0 10px rgba(139,92,246,0.5))"}}>📋</div>
                   <p style={{color:THEME.mutedText,fontSize:16,fontWeight:600,margin:0}}>Select a hall from the left panel</p>
                   <p style={{color:THEME.mutedText,fontSize:13,margin:0,opacity:0.7}}>The schedule will appear here</p>
                 </div>
@@ -792,22 +811,55 @@
       );
 
       if(screen==="faculty") return(
-        <div style={{minHeight:"100vh",height:"100vh",background:THEME.bgBody,display:"flex",flexDirection:"column",fontFamily:"'Segoe UI',system-ui,sans-serif",color:"#f8fafc",overflow:"hidden"}}>
-          <div style={{background:THEME.headerBg,borderBottom:`1px solid ${THEME.headerBorder}`,padding:"11px 20px",flexShrink:0,display:"flex",alignItems:"flex-start",justifyContent:"space-between"}}>
-            <div>
-              <div style={{fontSize:20,fontWeight:900,color:THEME.accent,letterSpacing:3}}>SRC</div>
-              <div style={{fontFamily:"monospace",fontSize:18,fontWeight:700,marginTop:3}}>{tStr}</div>
-              <div style={{fontSize:11,color:THEME.mutedText,marginTop:1}}>{dStr}</div>
+        <div className="student-takeover-bg">
+          <div style={{position:"fixed",top:-100,left:"50%",transform:"translateX(-50%)",width:700,height:350,background:"radial-gradient(ellipse at center, rgba(99,102,241,0.3) 0%, rgba(0,0,0,0) 70%)",pointerEvents:"none",zIndex:0}}></div>
+
+          <div className="student-banner-anim" style={{background:THEME.headerBg,borderBottom:`1px solid ${THEME.headerBorder}`,padding:"14px 20px",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"space-between",position:"relative",zIndex:1,boxShadow:"0 10px 30px rgba(0,0,0,0.5)"}}>
+            <div style={{display:"flex",alignItems:"center",gap:12}}>
+              <div style={{fontSize:24}}>🎓</div>
+              <div>
+                <div style={{display:"flex",alignItems:"center",gap:8}}>
+                  <div style={{fontSize:18,fontWeight:900,color:"#f1f5f9",letterSpacing:1}}>FACULTY PORTAL</div>
+                  <span style={{background:"rgba(99,102,241,0.3)",border:"1px solid rgba(129,140,248,0.4)",color:"#c7d2fe",fontSize:10,fontWeight:800,padding:"2px 8px",borderRadius:20,letterSpacing:"0.06em",textTransform:"uppercase"}}>AVAILABILITY CHECK</span>
+                </div>
+                <div style={{fontSize:11,color:THEME.mutedText,marginTop:2}}>SASTRA DEEMED UNIVERSITY · SRC KUMBAKONAM</div>
+              </div>
             </div>
-            <button onClick={logout} style={{...bBtn(THEME.cardBg,THEME.mutedText),padding:"7px 14px",border:`1px solid ${THEME.cardBorder}`}}>Logout</button>
+
+            <div style={{textAlign:"center"}}>
+              <div style={{fontFamily:"monospace",fontSize:16,fontWeight:700,color:"#c7d2fe"}}>{tStr}</div>
+              <div style={{fontSize:11,color:THEME.highlight,fontWeight:700}}>{DAY_F[selDay]}</div>
+            </div>
+
+            <button onClick={logout} 
+              style={{...bBtn("rgba(255,255,255,0.08)",THEME.mutedText),padding:"7px 16px",borderRadius:20,border:`1px solid ${THEME.cardBorder}`,backdropFilter:"blur(8px)",transition:"all 0.2s ease"}}
+              onMouseOver={e=>e.currentTarget.style.background="rgba(255,255,255,0.18)"}
+              onMouseOut={e=>e.currentTarget.style.background="rgba(255,255,255,0.08)"}>
+              Logout 🔒
+            </button>
           </div>
-          <DayBar selDay={selDay} setSelDay={setSelDay}/>
-          <div style={{flex:1,overflowY:"auto",padding:18,maxWidth:820,width:"100%",margin:"0 auto",boxSizing:"border-box"}}>
-            <h3 style={{color:THEME.highlight,fontSize:11,textTransform:"uppercase",letterSpacing:"0.09em",margin:"0 0 10px"}}>Hall Availability</h3>
-            <PeriodSelector selPid={selPid} setSelPid={setSelPid} isLive={pidLive} setIsLive={setPidLive} curSid={curSid}/>
-            <FloorPicker selFloor={selFloor} setSelFloor={setSelFloor} color={THEME.accent}/>
-            {!selFloor&&<p style={{color:THEME.mutedText,fontSize:13,textAlign:"center",marginTop:16}}>Select a floor above</p>}
-            {selFloor&&<FreeHallsView day={selDay} effectivePid={effPid} curSid={curSid} floor={selFloor} role="faculty"/>}
+
+          <div className="student-period-anim" style={{position:"relative",zIndex:1}}>
+            <DayBar selDay={selDay} setSelDay={setSelDay}/>
+          </div>
+
+          <div className="student-content-anim" style={{flex:1,overflowY:"auto",padding:20,maxWidth:820,width:"100%",margin:"0 auto",boxSizing:"border-box",position:"relative",zIndex:1}}>
+            <h3 style={{color:THEME.highlight,fontSize:11,textTransform:"uppercase",letterSpacing:"0.09em",margin:"0 0 12px",display:"flex",alignItems:"center",gap:6}}>
+              <span>🏛️</span> <span>Hall Availability Overview</span>
+            </h3>
+            <div className="student-period-anim">
+              <PeriodSelector selPid={selPid} setSelPid={setSelPid} isLive={pidLive} setIsLive={setPidLive} curSid={curSid}/>
+            </div>
+            <div className="student-floor-anim">
+              <FloorPicker selFloor={selFloor} setSelFloor={setSelFloor} color={THEME.accent}/>
+            </div>
+            {!selFloor&&(
+              <div style={{textAlign:"center",padding:"42px 20px",color:THEME.mutedText,background:"rgba(15,11,36,0.45)",borderRadius:20,border:`1px solid ${THEME.cardBorder}`,backdropFilter:"blur(12px)",marginTop:14}}>
+                <div style={{fontSize:40,marginBottom:10,filter:"drop-shadow(0 0 10px rgba(99,102,241,0.5))"}}>🏢</div>
+                <p style={{fontSize:15,fontWeight:700,margin:0,color:THEME.highlight}}>Select a floor above to check vacant & occupied halls</p>
+              </div>
+            )}
+            {selFloor&&<FreeHallsView key={`${selFloor}-${effPid}`} day={selDay} effectivePid={effPid} curSid={curSid} floor={selFloor} role="faculty"/>}
           </div>
         </div>
       );
