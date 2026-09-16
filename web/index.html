@@ -15,6 +15,64 @@
     ::-webkit-scrollbar-track { background: #07050f; }
     ::-webkit-scrollbar-thumb { background: #2b1b54; border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: #4c2889; }
+
+    @keyframes studentTakeover {
+      0% { opacity: 0; transform: scale(0.96); filter: blur(8px); }
+      100% { opacity: 1; transform: scale(1); filter: blur(0); }
+    }
+
+    @keyframes slideInFromTop {
+      0% { opacity: 0; transform: translateY(-28px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideInFromBottom {
+      0% { opacity: 0; transform: translateY(28px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes cardPopIn {
+      0% { opacity: 0; transform: translateY(18px) scale(0.94); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .student-takeover-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: radial-gradient(circle at 50% 0%, #1e0938 0%, #07050f 80%);
+      animation: studentTakeover 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .student-banner-anim {
+      animation: slideInFromTop 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both;
+    }
+
+    .student-period-anim {
+      animation: slideInFromBottom 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+    }
+
+    .student-floor-anim {
+      animation: slideInFromBottom 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
+    }
+
+    .student-content-anim {
+      animation: slideInFromBottom 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
+    }
+
+    .hall-card-anim {
+      animation: cardPopIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .hall-card-anim:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 10px 25px rgba(139, 92, 246, 0.25), 0 0 12px rgba(167, 139, 250, 0.2);
+      border-color: rgba(167, 139, 250, 0.6) !important;
+      transition: all 0.2s ease;
+    }
   </style>
 </head>
 <body>
@@ -460,8 +518,8 @@
               {list.length===0
                 ?<div style={{background:THEME.cardBg,borderRadius:12,padding:12,textAlign:"center",color:THEME.mutedText,fontSize:13,border:`1px solid ${THEME.cardBorder}`}}>None available</div>
                 :<div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(130px,1fr))",gap:7}}>
-                  {list.map(h=>(
-                    <div key={h.id} style={{background:THEME.cardBg,border:`1px solid ${br}50`,borderRadius:12,padding:"11px 13px"}}>
+                  {list.map((h, idx)=>(
+                    <div key={h.id} className="hall-card-anim" style={{animationDelay:`${idx * 0.04}s`,background:THEME.cardBg,border:`1px solid ${br}50`,borderRadius:12,padding:"11px 13px"}}>
                       <div style={{fontWeight:800,fontSize:14,color:"#f1f5f9",marginBottom:3}}>Hall {h.id}</div>
                       <div style={{display:"flex",alignItems:"center",gap:5}}>
                         <span style={bBadge("#041a0e","#34d399","#065f46")}>✓ FREE</span>
@@ -758,34 +816,67 @@
         const freeCount=selFloor?floorHalls(selFloor).filter(hid=>isHallFree(hid,selDay,effPid)||typeof effPid!=="number").length:0;
         const curSlotObj=ALL_SLOTS.find(s=>s.id===effPid);
         return(
-          <div style={{minHeight:"100vh",background:THEME.bgBody,display:"flex",flexDirection:"column",fontFamily:"'Segoe UI',system-ui,sans-serif",color:"#f8fafc"}}>
-            <div style={{background:THEME.studentBanner,padding:"16px 18px 22px",flexShrink:0}}>
-              <div style={{maxWidth:680,margin:"0 auto"}}>
+          <div className="student-takeover-bg">
+            <div style={{position:"fixed",top:-100,left:"50%",transform:"translateX(-50%)",width:700,height:350,background:"radial-gradient(ellipse at center, rgba(139,92,246,0.3) 0%, rgba(0,0,0,0) 70%)",pointerEvents:"none",zIndex:0}}></div>
+            
+            <div className="student-banner-anim" style={{background:THEME.studentBanner,padding:"20px 20px 24px",flexShrink:0,position:"relative",zIndex:1,boxShadow:"0 10px 30px rgba(0,0,0,0.6)",borderBottom:"1px solid rgba(139,92,246,0.35)"}}>
+              <div style={{maxWidth:720,margin:"0 auto"}}>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
                   <div>
-                    <div style={{fontSize:22,fontWeight:900,letterSpacing:-0.5}}>🏫 Hall Finder</div>
-                    <div style={{color:"rgba(255,255,255,0.65)",fontSize:12,marginTop:2}}>SASTRA SRC · {DAY_F[selDay]}</div>
+                    <div style={{display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
+                      <span style={{fontSize:26}}>🏫</span>
+                      <span style={{fontSize:24,fontWeight:900,letterSpacing:-0.5,background:"linear-gradient(135deg, #ffffff 0%, #e9d5ff 100%)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Hall Finder</span>
+                      <span style={{background:"rgba(139,92,246,0.35)",border:"1px solid rgba(167,139,250,0.5)",color:"#e9d5ff",fontSize:10,fontWeight:800,padding:"3px 10px",borderRadius:20,letterSpacing:"0.06em",textTransform:"uppercase",boxShadow:"0 0 12px rgba(139,92,246,0.4)"}}>STUDENT PORTAL</span>
+                    </div>
+                    <div style={{color:"rgba(255,255,255,0.7)",fontSize:12,marginTop:5,fontWeight:600}}>SASTRA DEEMED UNIVERSITY · SRC KUMBAKONAM · {DAY_F[selDay]}</div>
                   </div>
                   <div style={{textAlign:"right"}}>
-                    <div style={{fontFamily:"monospace",fontSize:16,fontWeight:700}}>{tStr}</div>
-                    <button onClick={()=>{setScreen("landing");setSelFloor(null);}} style={{...bBtn("rgba(0,0,0,0.3)","rgba(255,255,255,0.8)"),padding:"5px 11px",borderRadius:7,marginTop:5,fontSize:12}}>← Home</button>
+                    <div style={{fontFamily:"monospace",fontSize:16,fontWeight:700,color:"#e9d5ff"}}>{tStr}</div>
+                    <button onClick={()=>{setScreen("landing");setSelFloor(null);}} 
+                      style={{...bBtn("rgba(0,0,0,0.4)","rgba(255,255,255,0.9)"),padding:"6px 14px",borderRadius:20,marginTop:6,fontSize:12,border:"1px solid rgba(255,255,255,0.25)",backdropFilter:"blur(8px)",display:"inline-flex",alignItems:"center",gap:5,transition:"all 0.2s ease"}}
+                      onMouseOver={e=>e.currentTarget.style.background="rgba(255,255,255,0.2)"}
+                      onMouseOut={e=>e.currentTarget.style.background="rgba(0,0,0,0.4)"}>
+                      <span>←</span> <span>Home</span>
+                    </button>
                   </div>
                 </div>
-                <div style={{background:"rgba(0,0,0,0.25)",borderRadius:12,padding:"10px 16px",marginTop:14,display:"flex",gap:28,flexWrap:"wrap"}}>
-                  <div><div style={{color:"rgba(255,255,255,0.55)",fontSize:10}}>Free Now</div><div style={{fontSize:22,fontWeight:900}}>{selFloor?freeCount:"—"}</div></div>
-                  <div><div style={{color:"rgba(255,255,255,0.55)",fontSize:10}}>Period</div><div style={{fontSize:14,fontWeight:700,color:"#e9d5ff",marginTop:3}}>{curSlotObj?.label||"—"}</div></div>
-                  <div><div style={{color:"rgba(255,255,255,0.55)",fontSize:10}}>Time</div><div style={{fontSize:12,fontWeight:600,color:"#e9d5ff",marginTop:5}}>{curSlotObj?.time||"Outside hrs"}</div></div>
+
+                <div style={{background:"rgba(15,11,36,0.65)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",borderRadius:16,padding:"14px 20px",marginTop:16,display:"flex",gap:28,flexWrap:"wrap",border:"1px solid rgba(139,92,246,0.3)",boxShadow:"0 8px 24px rgba(0,0,0,0.4)"}}>
+                  <div>
+                    <div style={{color:"rgba(255,255,255,0.55)",fontSize:10,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.05em"}}>Free Halls Now</div>
+                    <div style={{fontSize:24,fontWeight:900,color:selFloor?"#4ade80":"#e2e8f0"}}>{selFloor?freeCount:"—"}</div>
+                  </div>
+                  <div style={{width:1,background:"rgba(255,255,255,0.15)",margin:"2px 0"}}></div>
+                  <div>
+                    <div style={{color:"rgba(255,255,255,0.55)",fontSize:10,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.05em"}}>Active Period</div>
+                    <div style={{fontSize:14,fontWeight:700,color:"#e9d5ff",marginTop:4}}>{curSlotObj?.label||"—"}</div>
+                  </div>
+                  <div style={{width:1,background:"rgba(255,255,255,0.15)",margin:"2px 0"}}></div>
+                  <div>
+                    <div style={{color:"rgba(255,255,255,0.55)",fontSize:10,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.05em"}}>Time Window</div>
+                    <div style={{fontSize:12,fontWeight:600,color:"#c4b5fd",marginTop:5}}>{curSlotObj?.time||"Outside hrs"}</div>
+                  </div>
                 </div>
               </div>
             </div>
-            <div style={{flex:1,overflowY:"auto",padding:16,maxWidth:680,width:"100%",margin:"0 auto",boxSizing:"border-box"}}>
-              <PeriodSelector selPid={selPid} setSelPid={setSelPid} isLive={pidLive} setIsLive={setPidLive} curSid={curSid}/>
-              <FloorPicker selFloor={selFloor} setSelFloor={setSelFloor} color={THEME.accent}/>
-              {!selFloor&&<div style={{textAlign:"center",padding:"36px 0",color:THEME.mutedText}}>
-                <div style={{fontSize:36,marginBottom:10}}>🏢</div>
-                <p style={{fontSize:14,fontWeight:600,margin:0,color:THEME.highlight}}>Select a floor above</p>
-              </div>}
-              {selFloor&&<FreeHallsView day={selDay} effectivePid={effPid} curSid={curSid} floor={selFloor} role="student"/>}
+
+            <div style={{flex:1,padding:20,maxWidth:720,width:"100%",margin:"0 auto",boxSizing:"border-box",position:"relative",zIndex:1}}>
+              <div className="student-period-anim">
+                <PeriodSelector selPid={selPid} setSelPid={setSelPid} isLive={pidLive} setIsLive={setPidLive} curSid={curSid}/>
+              </div>
+              <div className="student-floor-anim">
+                <FloorPicker selFloor={selFloor} setSelFloor={setSelFloor} color={THEME.accent}/>
+              </div>
+              <div className="student-content-anim">
+                {!selFloor&&(
+                  <div style={{textAlign:"center",padding:"48px 20px",color:THEME.mutedText,background:"rgba(15,11,36,0.45)",borderRadius:20,border:`1px solid ${THEME.cardBorder}`,backdropFilter:"blur(12px)",marginTop:10}}>
+                    <div style={{fontSize:42,marginBottom:12,filter:"drop-shadow(0 0 12px rgba(139,92,246,0.5))"}}>🏢</div>
+                    <p style={{fontSize:16,fontWeight:700,margin:0,color:THEME.highlight}}>Select a floor above to view free halls</p>
+                    <p style={{fontSize:12,color:THEME.mutedText,marginTop:6}}>Find vacant classrooms & projector halls instantly</p>
+                  </div>
+                )}
+                {selFloor&&<FreeHallsView key={`${selFloor}-${effPid}`} day={selDay} effectivePid={effPid} curSid={curSid} floor={selFloor} role="student"/>}
+              </div>
             </div>
           </div>
         );
