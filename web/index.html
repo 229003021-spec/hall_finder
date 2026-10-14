@@ -83,7 +83,7 @@
   <div id="root"></div>
 
   <script type="text/babel">
-    const { useState, useEffect } = React;
+    const { useState, useEffect, useRef } = React;
 
     // Cryptographically Hashed Passkeys (SHA-256) - Plaintext passwords are hidden from repository
     const DEAN_HASH = "b5d4045c3f466fa91fe2cc6abe79232a1a57cdf104f7a26e716e0a1e2789df78";
@@ -501,6 +501,34 @@
       );
     }
 
+    class ErrorBoundary extends React.Component {
+      constructor(props) {
+        super(props);
+        this.state = { hasError: false, error: null };
+      }
+      static getDerivedStateFromError(error) {
+        return { hasError: true, error };
+      }
+      componentDidCatch(error, errorInfo) {
+        console.error("ErrorBoundary caught an error:", error, errorInfo);
+      }
+      render() {
+        if (this.state.hasError) {
+          return (
+            <div style={{padding: 24, background: "rgba(239,68,68,0.1)", border: "1px solid #ef4444", borderRadius: 16, textAlign: "center", color: "#fca5a5", margin: "20px auto", maxWidth: 500}}>
+              <div style={{fontSize: 32, marginBottom: 8}}>⚠️</div>
+              <h3 style={{color: "#f87171", fontSize: 16, fontWeight: 800, margin: "0 0 6px"}}>Something went wrong rendering this view</h3>
+              <p style={{fontSize: 12, color: "#cbd5e1", margin: "0 0 14px"}}>Please try selecting another floor or reload.</p>
+              <button onClick={() => this.setState({ hasError: false, error: null })} style={{background: "#7c3aed", color: "#fff", border: "none", borderRadius: 8, padding: "8px 18px", fontSize: 12, fontWeight: 700, cursor: "pointer"}}>
+                ↻ Try Again
+              </button>
+            </div>
+          );
+        }
+        return this.props.children;
+      }
+    }
+
     function ReservationModal({targetHid, day, effectivePid, onClose, onApplySwap}){
       const [mode, setMode] = useState("swap"); // "swap" | "extra"
       const [swapFromHid, setSwapFromHid] = useState("");
@@ -808,7 +836,7 @@
     function FreeHallsView({day,effectivePid,curSid,floor,role,onApplySwap}){
       const [expandedBusyHid, setExpandedBusyHid] = useState(null);
       const [resModalHid, setResModalHid] = useState(null);
-      const clickTimers = useRef({});
+      const clickTimers = React.useRef ? React.useRef({}) : { current: {} };
 
       const handleBusyClick = (e, hid) => {
         const now = Date.now();
@@ -1431,7 +1459,7 @@
                 </button>
               </div>
             )}
-            {selFloor&&<FreeHallsView key={`${selFloor}-${effPid}-${swapVersion}`} day={selDay} effectivePid={effPid} curSid={curSid} floor={selFloor} role="faculty" onApplySwap={handleApplySwap}/>}
+            {selFloor&&<ErrorBoundary><FreeHallsView key={`${selFloor}-${effPid}-${swapVersion}`} day={selDay} effectivePid={effPid} curSid={curSid} floor={selFloor} role="faculty" onApplySwap={handleApplySwap}/></ErrorBoundary>}
           </div>
           {renderToast()}
         </div>
@@ -1504,7 +1532,7 @@
                     <p style={{fontSize:12,color:THEME.mutedText,marginTop:6}}>Find vacant classrooms & projector halls instantly</p>
                   </div>
                 )}
-                {selFloor&&<FreeHallsView key={`${selFloor}-${effPid}-${swapVersion}`} day={selDay} effectivePid={effPid} curSid={curSid} floor={selFloor} role="student"/>}
+                {selFloor&&<ErrorBoundary><FreeHallsView key={`${selFloor}-${effPid}-${swapVersion}`} day={selDay} effectivePid={effPid} curSid={curSid} floor={selFloor} role="student"/></ErrorBoundary>}
               </div>
             </div>
             {renderToast()}
