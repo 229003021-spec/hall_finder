@@ -163,6 +163,7 @@
 
     // Daily persistence key & helpers (Swaps strictly persist only until the end of the current working day)
     const STORAGE_KEY_DAILY_SWAPS = "HALL_FINDER_DAILY_SWAPS";
+    const SERVER_SYNC_URL = "https://ntfy.sh/sastra_src_hall_finder_live_229003021";
 
     function getTodayDateStr() {
       const d = new Date();
@@ -187,6 +188,57 @@
       }
     }
 
+    // Sync swaps to cloud server (persists across all devices: mobile, laptop, desktop)
+    async function syncSwapsToServer(swaps) {
+      try {
+        const today = getTodayDateStr();
+        const payload = JSON.stringify({
+          date: today,
+          day: detectDay(),
+          expiresAt: getEndOfDayTimestamp(),
+          swaps: swaps || []
+        });
+        await fetch(SERVER_SYNC_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: payload
+        });
+      } catch (err) {
+        console.warn("Server sync error:", err);
+      }
+    }
+
+    // Fetch latest swaps from cloud server
+    async function fetchServerSwaps() {
+      try {
+        const res = await fetch(`${SERVER_SYNC_URL}/json?poll=1&since=24h`, {
+          headers: { "Accept": "application/json" }
+        });
+        if (!res.ok) return null;
+        const raw = await res.text();
+        const lines = raw.split("\n");
+        let lastMsg = null;
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i].trim();
+          if (!line) continue;
+          try {
+            const obj = JSON.parse(line);
+            if (obj && obj.event === "message" && obj.message) {
+              lastMsg = JSON.parse(obj.message);
+            }
+          } catch (e) {}
+        }
+        const today = getTodayDateStr();
+        if (lastMsg && lastMsg.date === today && Date.now() <= (lastMsg.expiresAt || Infinity)) {
+          return Array.isArray(lastMsg.swaps) ? lastMsg.swaps : [];
+        }
+        return null;
+      } catch (err) {
+        console.warn("Fetch server swaps error:", err);
+        return null;
+      }
+    }
+
     function applySingleSwapToSCH(swap) {
       const { type, day, effectivePid, targetHid } = swap;
       if (!SCH[targetHid]) SCH[targetHid] = {};
@@ -202,18 +254,37 @@
 
         SCH[targetHid][day][effectivePid] = curFrom;
         SCH[fromHid][day][effectivePid] = curTarget;
+      } else if (type === "free_move") {
+        const { fromHid } = swap;
+        if (!SCH[fromHid]) SCH[fromHid] = {};
+        if (!SCH[fromHid][day]) SCH[fromHid][day] = {};
+
+        const curFrom = SCH[fromHid][day][effectivePid] ? { ...SCH[fromHid][day][effectivePid] } : { t: "free", n: "" };
+
+        // Move class into the free target hall
+        SCH[targetHid][day][effectivePid] = {
+          ...curFrom,
+          n: `Moved from Hall ${fromHid}`
+        };
+
+        // Vacate fromHid and mark as free
+        SCH[fromHid][day][effectivePid] = {
+          t: "free",
+          n: `Vacated to Hall ${targetHid}`
+        };
       } else if (type === "extra") {
         const { freeShiftHid, faculty, courseCode, courseName } = swap;
-        if (!SCH[freeShiftHid]) SCH[freeShiftHid] = {};
-        if (!SCH[freeShiftHid][day]) SCH[freeShiftHid][day] = {};
-
         const curTarget = SCH[targetHid][day][effectivePid] ? { ...SCH[targetHid][day][effectivePid] } : { t: "free", n: "" };
 
-        // Regular class shifts to free hall
-        SCH[freeShiftHid][day][effectivePid] = {
-          ...curTarget,
-          n: `Shifted from Hall ${targetHid}`
-        };
+        if (freeShiftHid) {
+          if (!SCH[freeShiftHid]) SCH[freeShiftHid] = {};
+          if (!SCH[freeShiftHid][day]) SCH[freeShiftHid][day] = {};
+          // Regular class shifts to free hall
+          SCH[freeShiftHid][day][effectivePid] = {
+            ...curTarget,
+            n: `Shifted from Hall ${targetHid}`
+          };
+        }
 
         // Extra class takes target hall
         SCH[targetHid][day][effectivePid] = {
@@ -262,19 +333,21 @@
       try {
         if (!swaps || swaps.length === 0) {
           localStorage.removeItem(STORAGE_KEY_DAILY_SWAPS);
-          return;
+        } else {
+          const today = getTodayDateStr();
+          const data = {
+            date: today,
+            day: detectDay(),
+            expiresAt: getEndOfDayTimestamp(),
+            swaps: swaps
+          };
+          localStorage.setItem(STORAGE_KEY_DAILY_SWAPS, JSON.stringify(data));
         }
-        const today = getTodayDateStr();
-        const data = {
-          date: today,
-          day: detectDay(),
-          expiresAt: getEndOfDayTimestamp(),
-          swaps: swaps
-        };
-        localStorage.setItem(STORAGE_KEY_DAILY_SWAPS, JSON.stringify(data));
       } catch (err) {
         console.error("Error saving daily swaps:", err);
       }
+      // Also broadcast and persist to cloud server for mobile & laptop synchronization
+      syncSwapsToServer(swaps);
     }
 
     // On initial load, apply any active daily swaps for today
@@ -658,7 +731,8 @@
     }
 
     function ReservationModal({targetHid, day, effectivePid, onClose, onApplySwap}){
-      const [mode, setMode] = useState("swap"); // "swap" | "extra"
+      const targetIsFree = isHallFree(targetHid, day, effectivePid);
+      const [mode, setMode] = useState(targetIsFree ? "move" : "swap"); // "swap" | "move" | "extra"
       const [swapFromHid, setSwapFromHid] = useState("");
       const [freeShiftHid, setFreeShiftHid] = useState("");
       const [extraFaculty, setExtraFaculty] = useState("");
@@ -679,7 +753,7 @@
       // Find all free halls across all floors at this instance (excluding target)
       const allFreeHalls = Object.keys(HALL_INFO).filter(id => id !== targetHid && isHallFree(id, day, effectivePid)).sort((a,b)=>+a-+b);
 
-      // Other occupied halls (for swap suggestion/input)
+      // Occupied halls (for user selection to move/swap from)
       const otherOccupiedHalls = Object.keys(HALL_INFO).filter(id => id !== targetHid && !isHallFree(id, day, effectivePid)).sort((a,b)=>+a-+b);
 
       // Handle Course Code input
@@ -703,7 +777,30 @@
           setErrorMsg(`Reservations & swapping are strictly permitted for today (${DAY_F[todayDay]}) only. Swapping for ${DAY_F[day]} is not allowed.`);
           return;
         }
-        if (mode === "swap") {
+
+        if (targetIsFree && mode === "move") {
+          const fromHid = swapFromHid.trim();
+          if (!fromHid) {
+            setErrorMsg("Please enter or select your dealing Hall number (YYY) to move from.");
+            return;
+          }
+          if (fromHid === targetHid) {
+            setErrorMsg("Cannot move a hall into itself. Please specify another hall.");
+            return;
+          }
+          if (!HALL_INFO[fromHid]) {
+            setErrorMsg(`Hall ${fromHid} does not exist in the system.`);
+            return;
+          }
+          onApplySwap({
+            type: "free_move",
+            targetHid,
+            fromHid,
+            day,
+            effectivePid
+          });
+          onClose();
+        } else if (!targetIsFree && mode === "swap") {
           const fromHid = swapFromHid.trim();
           if (!fromHid) {
             setErrorMsg("Please enter or select your dealing Hall number (YYY).");
@@ -727,7 +824,7 @@
           onClose();
         } else {
           // Extra class
-          if (!freeShiftHid) {
+          if (!targetIsFree && !freeShiftHid) {
             setErrorMsg("Please select a Free Hall to shift the regular class into.");
             return;
           }
@@ -742,7 +839,7 @@
           onApplySwap({
             type: "extra",
             targetHid,
-            freeShiftHid,
+            freeShiftHid: targetIsFree ? null : freeShiftHid,
             faculty: extraFaculty.trim(),
             courseCode: extraCourseCode.trim(),
             courseName: extraCourseName.trim() || COURSE_NAMES[extraCourseCode.trim()] || extraCourseCode.trim(),
@@ -755,28 +852,40 @@
 
       return(
         <div style={{position:"fixed",top:0,left:0,right:0,bottom:0,background:"rgba(4,2,14,0.85)",backdropFilter:"blur(10px)",WebkitBackdropFilter:"blur(10px)",zIndex:9999,display:"flex",alignItems:"center",justifyContent:"center",padding:16}}>
-          <div className="hall-card-anim" style={{background:"#0e0924",border:"1.5px solid #8b5cf6",borderRadius:20,maxWidth:520,width:"100%",maxHeight:"92vh",overflowY:"auto",padding:"24px 26px",boxShadow:"0 20px 60px rgba(0,0,0,0.8), 0 0 30px rgba(139,92,246,0.25)",boxSizing:"border-box"}}>
+          <div className="hall-card-anim" style={{background:"#0e0924",border:`1.5px solid ${targetIsFree?"#10b981":"#8b5cf6"}`,borderRadius:20,maxWidth:520,width:"100%",maxHeight:"92vh",overflowY:"auto",padding:"24px 26px",boxShadow:`0 20px 60px rgba(0,0,0,0.8), 0 0 30px ${targetIsFree?"rgba(16,185,129,0.25)":"rgba(139,92,246,0.25)"}`,boxSizing:"border-box"}}>
             
             {/* Header */}
             <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:16}}>
               <div>
                 <div style={{display:"flex",alignItems:"center",gap:8}}>
-                  <span style={{fontSize:22}}>🏛️</span>
-                  <span style={{fontSize:18,fontWeight:900,color:"#f8fafc"}}>Hall Reservation & Swapping</span>
+                  <span style={{fontSize:22}}>{targetIsFree ? "📅" : "🏛️"}</span>
+                  <span style={{fontSize:18,fontWeight:900,color:"#f8fafc"}}>
+                    {targetIsFree ? `Reserve Free Hall ${targetHid}` : "Hall Reservation & Swapping"}
+                  </span>
                 </div>
                 <div style={{color:THEME.mutedText,fontSize:12,marginTop:3}}>
-                  Target: <strong style={{color:"#a78bfa"}}>Hall {targetHid}</strong> · {targetHallInfo.proj ? "📽️ Projector Available" : "🪑 No Projector"} · {slot?.label} ({slot?.time})
+                  Target: <strong style={{color:targetIsFree?"#34d399":"#a78bfa"}}>Hall {targetHid}</strong> · {targetHallInfo.proj ? "📽️ Projector Available" : "🪑 No Projector"} · {slot?.label} ({slot?.time})
                 </div>
               </div>
               <button onClick={onClose} style={{background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.15)",color:"#cbd5e1",borderRadius:10,width:32,height:32,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",fontSize:15,fontWeight:700}}>✕</button>
             </div>
 
-            {/* Current Occupant Details */}
-            <div style={{background:"#170b22",border:"1px solid #3b1854",borderRadius:12,padding:"10px 14px",marginBottom:16}}>
-              <div style={{fontSize:10,color:"#f87171",fontWeight:800,textTransform:"uppercase",letterSpacing:"0.06em",marginBottom:3}}>Currently Dealing in Hall {targetHid}</div>
-              <div style={{fontSize:13,fontWeight:700,color:"#fecaca"}}>👤 {targetFac}</div>
-              <div style={{fontSize:11,color:"#e2e8f0",marginTop:2}}>📘 {targetCourseName} {targetCourseCode ? `(${targetCourseCode})` : ""}</div>
-            </div>
+            {/* Current Occupant / Availability Details */}
+            {targetIsFree ? (
+              <div style={{background:"#052219",border:"1px solid #059669",borderRadius:12,padding:"10px 14px",marginBottom:16}}>
+                <div style={{fontSize:10,color:"#34d399",fontWeight:800,textTransform:"uppercase",letterSpacing:"0.06em",marginBottom:3}}>Hall {targetHid} Status</div>
+                <div style={{fontSize:13,fontWeight:700,color:"#6ee7b7"}}>✓ Currently Free & Available for this Period</div>
+                <div style={{fontSize:11,color:"#a7f3d0",marginTop:2}}>
+                  You can move your class here (vacating your current hall) or book an extra class.
+                </div>
+              </div>
+            ) : (
+              <div style={{background:"#170b22",border:"1px solid #3b1854",borderRadius:12,padding:"10px 14px",marginBottom:16}}>
+                <div style={{fontSize:10,color:"#f87171",fontWeight:800,textTransform:"uppercase",letterSpacing:"0.06em",marginBottom:3}}>Currently Dealing in Hall {targetHid}</div>
+                <div style={{fontSize:13,fontWeight:700,color:"#fecaca"}}>👤 {targetFac}</div>
+                <div style={{fontSize:11,color:"#e2e8f0",marginTop:2}}>📘 {targetCourseName} {targetCourseCode ? `(${targetCourseCode})` : ""}</div>
+              </div>
+            )}
 
             {/* Day Restriction Alert */}
             {!isAllowedToday&&(
@@ -792,33 +901,110 @@
             )}
 
             {/* Choice Tabs */}
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:18}}>
-              <button onClick={()=>{setMode("swap");setErrorMsg("");}}
-                style={{
-                  padding:"10px 8px",borderRadius:12,cursor:"pointer",fontWeight:700,fontSize:12,
-                  display:"flex",alignItems:"center",justifyContent:"center",gap:6,
-                  background:mode==="swap"?"linear-gradient(135deg, #6d28d9, #8b5cf6)":"rgba(255,255,255,0.04)",
-                  border:`1px solid ${mode==="swap"?"#a78bfa":"#2b1b54"}`,
-                  color:mode==="swap"?"#fff":THEME.mutedText,
-                  transition:"all 0.15s ease"
-                }}>
-                <span>🔄</span> <span>1. Sacrifice & Swap</span>
-              </button>
-              <button onClick={()=>{setMode("extra");setErrorMsg("");}}
-                style={{
-                  padding:"10px 8px",borderRadius:12,cursor:"pointer",fontWeight:700,fontSize:12,
-                  display:"flex",alignItems:"center",justifyContent:"center",gap:6,
-                  background:mode==="extra"?"linear-gradient(135deg, #0d9488, #14b8a6)":"rgba(255,255,255,0.04)",
-                  border:`1px solid ${mode==="extra"?"#2dd4bf":"#2b1b54"}`,
-                  color:mode==="extra"?"#fff":THEME.mutedText,
-                  transition:"all 0.15s ease"
-                }}>
-                <span>➕</span> <span>2. Extra Class</span>
-              </button>
-            </div>
+            {targetIsFree ? (
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:18}}>
+                <button onClick={()=>{setMode("move");setErrorMsg("");}}
+                  style={{
+                    padding:"10px 8px",borderRadius:12,cursor:"pointer",fontWeight:700,fontSize:12,
+                    display:"flex",alignItems:"center",justifyContent:"center",gap:6,
+                    background:mode==="move"?"linear-gradient(135deg, #059669, #10b981)":"rgba(255,255,255,0.04)",
+                    border:`1px solid ${mode==="move"?"#34d399":"#2b1b54"}`,
+                    color:mode==="move"?"#fff":THEME.mutedText,
+                    transition:"all 0.15s ease"
+                  }}>
+                  <span>📅</span> <span>1. Move Class (Vacate Hall)</span>
+                </button>
+                <button onClick={()=>{setMode("extra");setErrorMsg("");}}
+                  style={{
+                    padding:"10px 8px",borderRadius:12,cursor:"pointer",fontWeight:700,fontSize:12,
+                    display:"flex",alignItems:"center",justifyContent:"center",gap:6,
+                    background:mode==="extra"?"linear-gradient(135deg, #0d9488, #14b8a6)":"rgba(255,255,255,0.04)",
+                    border:`1px solid ${mode==="extra"?"#2dd4bf":"#2b1b54"}`,
+                    color:mode==="extra"?"#fff":THEME.mutedText,
+                    transition:"all 0.15s ease"
+                  }}>
+                  <span>➕</span> <span>2. Extra Class</span>
+                </button>
+              </div>
+            ) : (
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:18}}>
+                <button onClick={()=>{setMode("swap");setErrorMsg("");}}
+                  style={{
+                    padding:"10px 8px",borderRadius:12,cursor:"pointer",fontWeight:700,fontSize:12,
+                    display:"flex",alignItems:"center",justifyContent:"center",gap:6,
+                    background:mode==="swap"?"linear-gradient(135deg, #6d28d9, #8b5cf6)":"rgba(255,255,255,0.04)",
+                    border:`1px solid ${mode==="swap"?"#a78bfa":"#2b1b54"}`,
+                    color:mode==="swap"?"#fff":THEME.mutedText,
+                    transition:"all 0.15s ease"
+                  }}>
+                  <span>🔄</span> <span>1. Sacrifice & Swap</span>
+                </button>
+                <button onClick={()=>{setMode("extra");setErrorMsg("");}}
+                  style={{
+                    padding:"10px 8px",borderRadius:12,cursor:"pointer",fontWeight:700,fontSize:12,
+                    display:"flex",alignItems:"center",justifyContent:"center",gap:6,
+                    background:mode==="extra"?"linear-gradient(135deg, #0d9488, #14b8a6)":"rgba(255,255,255,0.04)",
+                    border:`1px solid ${mode==="extra"?"#2dd4bf":"#2b1b54"}`,
+                    color:mode==="extra"?"#fff":THEME.mutedText,
+                    transition:"all 0.15s ease"
+                  }}>
+                  <span>➕</span> <span>2. Extra Class</span>
+                </button>
+              </div>
+            )}
 
-            {/* Mode 1: Sacrifice & Exchange (Hall Swap) */}
-            {mode==="swap"&&(
+            {/* Target is Free: Mode 1 - Move My Class Here (Vacate Hall) */}
+            {targetIsFree && mode==="move" && (
+              <div style={{animation:"fadeIn 0.2s ease-out"}}>
+                <p style={{fontSize:12,color:"#cbd5e1",lineHeight:1.4,marginBottom:12}}>
+                  Move your class from your assigned hall <strong>(YYY)</strong> into free <strong>Hall {targetHid}</strong>. Your vacated hall will be marked free for others.
+                </p>
+
+                <div style={{marginBottom:14}}>
+                  <label style={{display:"block",color:"#34d399",fontSize:11,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.05em",marginBottom:6}}>
+                    Your Current Assigned Hall Number (YYY)
+                  </label>
+                  <input 
+                    type="text" 
+                    placeholder="e.g. 407, 106, 212"
+                    value={swapFromHid}
+                    onChange={e=>setSwapFromHid(e.target.value.trim())}
+                    style={{width:"100%",background:"#07050f",border:"1.5px solid #059669",borderRadius:10,padding:"10px 14px",color:"#fff",fontSize:14,fontWeight:700,boxSizing:"border-box",outline:"none"}}
+                  />
+                  {otherOccupiedHalls.length>0&&(
+                    <div style={{marginTop:8}}>
+                      <div style={{fontSize:10,color:THEME.mutedText,marginBottom:4}}>Quick pick from occupied halls at this time:</div>
+                      <div style={{display:"flex",flexWrap:"wrap",gap:4,maxHeight:65,overflowY:"auto"}}>
+                        {otherOccupiedHalls.slice(0, 10).map(hid=>(
+                          <button key={hid} type="button" onClick={()=>setSwapFromHid(hid)}
+                            style={{background:swapFromHid===hid?"#059669":"#1c1236",border:`1px solid ${swapFromHid===hid?"#10b981":"#3b2269"}`,color:swapFromHid===hid?"#fff":"#c4b5fd",borderRadius:6,padding:"3px 8px",fontSize:10,fontWeight:700,cursor:"pointer"}}>
+                            Hall {hid} {HALL_INFO[hid]?.proj?"📽️":""}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Preview of Free Move */}
+                {fromHallInfo&&(
+                  <div style={{background:"#08201d",border:"1px solid #059669",borderRadius:12,padding:"12px 14px",marginBottom:14,fontSize:11,lineHeight:1.5}}>
+                    <div style={{color:"#34d399",fontWeight:800,textTransform:"uppercase",fontSize:10,marginBottom:6}}>
+                      ⚡ Proposed Reservation Preview:
+                    </div>
+                    <div style={{color:"#e2e8f0"}}>
+                      • <strong>Hall {targetHid}</strong> (Free Hall) will now be handled by: <span style={{color:"#4ade80",fontWeight:700}}>{fromFac}</span> ({fromCourseName})
+                    </div>
+                    <div style={{color:"#e2e8f0",marginTop:4}}>
+                      • <strong>Hall {swapFromHid}</strong> will be vacated and marked as: <span style={{color:"#34d399",fontWeight:700}}>✓ FREE</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Target is Occupied: Mode 1 - Sacrifice & Exchange (Hall Swap) */}
+            {!targetIsFree && mode==="swap" && (
               <div style={{animation:"fadeIn 0.2s ease-out"}}>
                 <p style={{fontSize:12,color:"#cbd5e1",lineHeight:1.4,marginBottom:12}}>
                   Swap your assigned hall <strong>(YYY)</strong> with <strong>Hall {targetHid}</strong> for this period. Details and professors will smoothly exchange.
@@ -867,32 +1053,37 @@
               </div>
             )}
 
-            {/* Mode 2: Extra Class (Shift Regular to Free Hall) */}
+            {/* Mode 2: Extra Class */}
             {mode==="extra"&&(
               <div style={{animation:"fadeIn 0.2s ease-out"}}>
                 <p style={{fontSize:12,color:"#cbd5e1",lineHeight:1.4,marginBottom:12}}>
-                  Take an extra class in <strong>Hall {targetHid}</strong>. The regular class dealing here will be shifted to an available free hall.
+                  {targetIsFree 
+                    ? <span>Schedule an extra class in free <strong>Hall {targetHid}</strong>. No other class needs to shift.</span>
+                    : <span>Take an extra class in <strong>Hall {targetHid}</strong>. The regular class dealing here will be shifted to an available free hall.</span>
+                  }
                 </p>
 
-                <div style={{marginBottom:12}}>
-                  <label style={{display:"block",color:"#5eead4",fontSize:11,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.05em",marginBottom:6}}>
-                    Select Free Hall to Shift Regular Class Into:
-                  </label>
-                  <select 
-                    value={freeShiftHid}
-                    onChange={e=>setFreeShiftHid(e.target.value)}
-                    style={{width:"100%",background:"#07050f",border:"1.5px solid #0d9488",borderRadius:10,padding:"10px 12px",color:"#fff",fontSize:13,fontWeight:600,boxSizing:"border-box",outline:"none"}}>
-                    <option value="">-- Choose from {allFreeHalls.length} Available Free Halls --</option>
-                    {allFreeHalls.map(hid=>{
-                      const h = HALL_INFO[hid] || {};
-                      return(
-                        <option key={hid} value={hid}>
-                          Hall {hid} (Floor {h.floor} · {h.proj ? "📽️ Projector Available" : "🪑 No Projector"})
-                        </option>
-                      );
-                    })}
-                  </select>
-                </div>
+                {!targetIsFree && (
+                  <div style={{marginBottom:12}}>
+                    <label style={{display:"block",color:"#5eead4",fontSize:11,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.05em",marginBottom:6}}>
+                      Select Free Hall to Shift Regular Class Into:
+                    </label>
+                    <select 
+                      value={freeShiftHid}
+                      onChange={e=>setFreeShiftHid(e.target.value)}
+                      style={{width:"100%",background:"#07050f",border:"1.5px solid #0d9488",borderRadius:10,padding:"10px 12px",color:"#fff",fontSize:13,fontWeight:600,boxSizing:"border-box",outline:"none"}}>
+                      <option value="">-- Choose from {allFreeHalls.length} Available Free Halls --</option>
+                      {allFreeHalls.map(hid=>{
+                        const h = HALL_INFO[hid] || {};
+                        return(
+                          <option key={hid} value={hid}>
+                            Hall {hid} (Floor {h.floor} · {h.proj ? "📽️ Projector Available" : "🪑 No Projector"})
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
+                )}
 
                 <div style={{marginBottom:12}}>
                   <label style={{display:"block",color:"#c4b5fd",fontSize:11,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.05em",marginBottom:6}}>
@@ -937,19 +1128,19 @@
                 </div>
 
                 {/* Preview */}
-                {freeShiftHid&&(
-                  <div style={{background:"#08201d",border:"1px solid #0d9488",borderRadius:12,padding:"10px 14px",marginBottom:14,fontSize:11,lineHeight:1.4}}>
-                    <div style={{color:"#2dd4bf",fontWeight:800,textTransform:"uppercase",fontSize:10,marginBottom:4}}>
-                      ⚡ Extra Class Shift Summary:
-                    </div>
-                    <div style={{color:"#e2e8f0"}}>
-                      • <strong>Hall {targetHid}</strong>: Extra class handled by <span style={{color:"#5eead4",fontWeight:700}}>{extraFaculty || "You"}</span> ({extraCourseCode || "Course"})
-                    </div>
+                <div style={{background:"#08201d",border:"1px solid #0d9488",borderRadius:12,padding:"10px 14px",marginBottom:14,fontSize:11,lineHeight:1.4}}>
+                  <div style={{color:"#2dd4bf",fontWeight:800,textTransform:"uppercase",fontSize:10,marginBottom:4}}>
+                    ⚡ Extra Class Summary:
+                  </div>
+                  <div style={{color:"#e2e8f0"}}>
+                    • <strong>Hall {targetHid}</strong>: Extra class handled by <span style={{color:"#5eead4",fontWeight:700}}>{extraFaculty || "You"}</span> ({extraCourseName || extraCourseCode || "Course"})
+                  </div>
+                  {!targetIsFree && freeShiftHid && (
                     <div style={{color:"#e2e8f0",marginTop:4}}>
                       • <strong>Hall {freeShiftHid}</strong>: Regular class shifted here (<span style={{color:"#fca5a5"}}>{targetFac}</span> — {targetCourseName})
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             )}
 
@@ -969,13 +1160,13 @@
                 disabled={!isAllowedToday}
                 style={{
                   flex:1.5,padding:"10px",borderRadius:12,border:"none",
-                  background:!isAllowedToday?"#334155":mode==="swap"?"linear-gradient(135deg, #7c3aed, #6d28d9)":"linear-gradient(135deg, #0d9488, #0f766e)",
+                  background:!isAllowedToday?"#334155":targetIsFree&&mode==="move"?"linear-gradient(135deg, #059669, #10b981)":mode==="swap"?"linear-gradient(135deg, #7c3aed, #6d28d9)":"linear-gradient(135deg, #0d9488, #0f766e)",
                   color:!isAllowedToday?"#94a3b8":"#fff",fontSize:12,fontWeight:800,
                   cursor:!isAllowedToday?"not-allowed":"pointer",
                   boxShadow:!isAllowedToday?"none":"0 4px 15px rgba(0,0,0,0.4)",
                   opacity:!isAllowedToday?0.6:1
                 }}>
-                {!isAllowedToday ? `Locked for ${DAY_S[day]}` : mode==="swap" ? "Confirm Hall Exchange" : "Confirm Extra Class"}
+                {!isAllowedToday ? `Locked for ${DAY_S[day]}` : targetIsFree&&mode==="move" ? `Confirm Move into Hall ${targetHid}` : mode==="swap" ? "Confirm Hall Exchange" : "Confirm Extra Class"}
               </button>
             </div>
 
@@ -984,10 +1175,149 @@
       );
     }
 
+    function SwappedClassesModal({ activeSwaps, onRevertSingle, onClose, canRevert = true }) {
+      const todayDay = detectDay();
+      return (
+        <div style={{
+          position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+          background: "rgba(4,2,14,0.85)", backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)",
+          zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: 16
+        }}>
+          <div className="hall-card-anim" style={{
+            background: "#0e0924", border: "1.5px solid #8b5cf6", borderRadius: 20,
+            maxWidth: 540, width: "100%", maxHeight: "88vh", overflowY: "auto",
+            padding: "22px 24px", boxShadow: "0 20px 60px rgba(0,0,0,0.8), 0 0 30px rgba(139,92,246,0.25)",
+            boxSizing: "border-box"
+          }}>
+            {/* Header */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, borderBottom: "1px solid #2b1b54", paddingBottom: 12 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <span style={{ fontSize: 24 }}>🔄</span>
+                <div>
+                  <div style={{ fontSize: 18, fontWeight: 900, color: "#f8fafc" }}>Swapped Classes</div>
+                  <div style={{ fontSize: 11, color: THEME.mutedText, marginTop: 2 }}>
+                    Active Room Exchanges & Reservations for Today ({DAY_F[todayDay]})
+                  </div>
+                </div>
+              </div>
+              <button onClick={onClose} style={{
+                background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)",
+                color: "#cbd5e1", borderRadius: 10, width: 32, height: 32, display: "flex",
+                alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: 15, fontWeight: 700
+              }}>✕</button>
+            </div>
+
+            {/* List */}
+            {activeSwaps.length === 0 ? (
+              <div style={{ textAlign: "center", padding: "36px 16px", color: THEME.mutedText }}>
+                <div style={{ fontSize: 38, marginBottom: 10 }}>✨</div>
+                <div style={{ fontSize: 15, fontWeight: 700, color: "#e2e8f0" }}>No Swapped Classes Today</div>
+                <div style={{ fontSize: 12, marginTop: 4 }}>All classrooms are currently following their regular timetable.</div>
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                <div style={{ fontSize: 11, color: "#c4b5fd", marginBottom: 2 }}>
+                  {canRevert 
+                    ? "Each reservation can be individually reverted without affecting other faculty members' swapped classes:"
+                    : "The following classroom modifications are currently active today:"
+                  }
+                </div>
+                {activeSwaps.map((s, idx) => {
+                  const slot = ALL_SLOTS.find(sl => sl.id === s.effectivePid);
+                  return (
+                    <div key={s.id || idx} style={{
+                      background: "#140c2e", border: "1px solid #3b2269", borderRadius: 12,
+                      padding: "12px 14px", display: "flex", flexDirection: "column", gap: 8
+                    }}>
+                      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8 }}>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontSize: 13, fontWeight: 800, color: "#f8fafc", lineHeight: 1.4 }}>
+                            {s.type === "swap" ? "🔄 Hall Exchange" : s.type === "free_move" ? "📅 Free Hall Reservation" : "➕ Extra Class"}
+                          </div>
+                          <div style={{ fontSize: 12, color: "#cbd5e1", marginTop: 3 }}>
+                            {s.desc}
+                          </div>
+                          <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 6, flexWrap: "wrap" }}>
+                            {slot && (
+                              <span style={{ background: "rgba(139,92,246,0.2)", border: "1px solid rgba(139,92,246,0.4)", color: "#c4b5fd", fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 8 }}>
+                                ⏰ {slot.label} ({slot.time})
+                              </span>
+                            )}
+                            <span style={{ color: THEME.mutedText, fontSize: 10 }}>
+                              🕒 {s.time || "Today"}
+                            </span>
+                          </div>
+                        </div>
+
+                        {canRevert && (
+                          <button 
+                            onClick={() => onRevertSingle(s.id)}
+                            style={{
+                              background: "rgba(239,68,68,0.18)",
+                              border: "1px solid #ef4444",
+                              color: "#fca5a5",
+                              borderRadius: 8,
+                              padding: "6px 12px",
+                              fontSize: 11,
+                              fontWeight: 700,
+                              cursor: "pointer",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: 5,
+                              flexShrink: 0,
+                              transition: "all 0.15s ease"
+                            }}
+                            onMouseOver={e => e.currentTarget.style.background = "rgba(239,68,68,0.3)"}
+                            onMouseOut={e => e.currentTarget.style.background = "rgba(239,68,68,0.18)"}
+                            title="Revert only this swap"
+                          >
+                            <span>↺</span> <span>Revert</span>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            <div style={{ marginTop: 16, paddingTop: 12, borderTop: "1px solid #241442", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div style={{ color: THEME.mutedText, fontSize: 11 }}>
+                ☁️ Synced across all devices (Mobile & Laptop) · Resets at midnight
+              </div>
+              <button onClick={onClose} style={{
+                background: "rgba(255,255,255,0.08)", border: `1px solid ${THEME.cardBorder}`,
+                color: "#e2e8f0", padding: "6px 16px", borderRadius: 10, fontSize: 12, fontWeight: 700, cursor: "pointer"
+              }}>
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     function FreeHallsView({day,effectivePid,curSid,floor,role,onApplySwap}){
       const [expandedBusyHid, setExpandedBusyHid] = useState(null);
+      const [expandedFreeHid, setExpandedFreeHid] = useState(null);
       const [resModalHid, setResModalHid] = useState(null);
       const clickTimers = React.useRef ? React.useRef({}) : { current: {} };
+
+      const handleFreeClick = (e, hid) => {
+        if (role !== "faculty" || outside || isRest) return;
+        const now = Date.now();
+        const times = (clickTimers.current[hid] || []).filter(t => now - t < 700);
+        times.push(now);
+        clickTimers.current[hid] = times;
+
+        if (e.detail >= 3 || times.length >= 3) {
+          clickTimers.current[hid] = [];
+          setResModalHid(hid);
+          return;
+        }
+
+        setExpandedFreeHid(expandedFreeHid === hid ? null : hid);
+      };
 
       const handleBusyClick = (e, hid) => {
         const now = Date.now();
@@ -1037,15 +1367,88 @@
               {list.length===0
                 ?<div style={{background:THEME.cardBg,borderRadius:12,padding:12,textAlign:"center",color:THEME.mutedText,fontSize:13,border:`1px solid ${THEME.cardBorder}`}}>None available</div>
                 :<div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(130px,1fr))",gap:7}}>
-                  {list.map((h, idx)=>(
-                    <div key={h.id} className="hall-card-anim" style={{animationDelay:`${idx * 0.04}s`,background:THEME.cardBg,border:`1px solid ${br}50`,borderRadius:12,padding:"11px 13px"}}>
-                      <div style={{fontWeight:800,fontSize:14,color:"#f1f5f9",marginBottom:3}}>Hall {h.id}</div>
-                      <div style={{display:"flex",alignItems:"center",gap:5}}>
-                        <span style={bBadge("#041a0e","#34d399","#065f46")}>✓ FREE</span>
+                  {list.map((h, idx)=>{
+                    const isExpFree = (role === "faculty" && expandedFreeHid === h.id);
+                    return(
+                      <div key={h.id} className="hall-card-anim" 
+                        onClick={(ev)=>handleFreeClick(ev, h.id)}
+                        style={{
+                          animationDelay:`${idx * 0.04}s`,
+                          background:isExpFree?"#06281e":THEME.cardBg,
+                          border:`1px solid ${isExpFree?"#10b981":br+"50"}`,
+                          borderRadius:12,
+                          padding:"11px 13px",
+                          cursor:(role==="faculty"&&!outside&&!isRest)?"pointer":"default",
+                          transition:"all 0.2s ease",
+                          boxShadow:isExpFree?"0 0 12px rgba(16,185,129,0.3)":"none"
+                        }}>
+                        <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:3}}>
+                          <div style={{fontWeight:800,fontSize:14,color:isExpFree?"#6ee7b7":"#f1f5f9"}}>Hall {h.id}</div>
+                          <span style={{marginLeft:"auto",fontSize:12}}>{h.proj?"📽️":"🪑"}</span>
+                        </div>
+
+                        {/* Reserve Option Popover for Free Halls in Faculty view */}
+                        {isExpFree&&(
+                          <div style={{
+                            background:"#052219",
+                            border:"1px solid #059669",
+                            borderRadius:8,
+                            padding:"6px 8px",
+                            margin:"4px 0 6px",
+                            animation:"fadeIn 0.2s ease-out"
+                          }}>
+                            <div style={{color:"#34d399",fontSize:9,textTransform:"uppercase",fontWeight:800,letterSpacing:"0.05em",marginBottom:3}}>
+                              Available Slot
+                            </div>
+                            {day === detectDay() ? (
+                              <button 
+                                type="button"
+                                onClick={(ev)=>{ev.stopPropagation(); setResModalHid(h.id);}}
+                                style={{
+                                  width:"100%",
+                                  background:"linear-gradient(135deg, #059669, #10b981)",
+                                  border:"none",
+                                  borderRadius:6,
+                                  color:"#fff",
+                                  fontSize:10,
+                                  fontWeight:800,
+                                  padding:"5px 8px",
+                                  cursor:"pointer",
+                                  display:"flex",
+                                  alignItems:"center",
+                                  justifyContent:"center",
+                                  gap:5,
+                                  boxShadow:"0 2px 8px rgba(16,185,129,0.35)"
+                                }}>
+                                <span>📅</span> <span>Reserve / Move Here</span>
+                              </button>
+                            ) : (
+                              <div style={{
+                                padding:"4px 6px",
+                                background:"rgba(239,68,68,0.12)",
+                                border:"1px solid rgba(239,68,68,0.3)",
+                                borderRadius:6,
+                                color:"#fca5a5",
+                                fontSize:9,
+                                fontWeight:700,
+                                textAlign:"center"
+                              }}>
+                                🔒 Only allowed Today ({DAY_F[detectDay()]})
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        <div style={{display:"flex",alignItems:"center",gap:5}}>
+                          <span style={bBadge("#041a0e","#34d399","#065f46")}>✓ FREE</span>
+                          {role==="faculty"&&!outside&&!isRest&&(
+                            <span style={{fontSize:10,color:THEME.mutedText,marginLeft:"auto"}}>{isExpFree?"▲":"▼"}</span>
+                          )}
+                        </div>
+                        {!h.hasData&&<div style={{color:THEME.mutedText,fontSize:9,marginTop:4}}>No schedule</div>}
                       </div>
-                      {!h.hasData&&<div style={{color:THEME.mutedText,fontSize:9,marginTop:4}}>No schedule</div>}
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               }
             </div>
@@ -1179,6 +1582,7 @@
       const [panelAnim,setPanelAnim]= useState(false);
       const [swapVersion, setSwapVersion] = useState(0);
       const [activeSwaps, setActiveSwaps] = useState(() => loadDailySwaps());
+      const [showSwappedModal, setShowSwappedModal] = useState(false);
       const [toastMsg, setToastMsg] = useState(null);
 
       useEffect(()=>{
@@ -1188,8 +1592,11 @@
         }
       }, [toastMsg]);
 
-      // Cross-tab synchronization via localStorage storage event
+      // Cloud server synchronization (SSE + fetch + poll + visibility change + storage event)
       useEffect(() => {
+        let isMounted = true;
+
+        // 1. Cross-tab synchronization via localStorage storage event
         const handleStorageChange = (e) => {
           if (e.key === STORAGE_KEY_DAILY_SWAPS) {
             const updated = loadDailySwaps();
@@ -1199,7 +1606,102 @@
           }
         };
         window.addEventListener("storage", handleStorageChange);
-        return () => window.removeEventListener("storage", handleStorageChange);
+
+        // 2. Fetch latest server state on app mount
+        fetchServerSwaps().then(serverSwaps => {
+          if (!isMounted) return;
+          if (serverSwaps && Array.isArray(serverSwaps)) {
+            setActiveSwaps(prev => {
+              if (JSON.stringify(prev) !== JSON.stringify(serverSwaps)) {
+                applySwapsList(serverSwaps);
+                setSwapVersion(v => v + 1);
+                return serverSwaps;
+              }
+              return prev;
+            });
+          }
+        });
+
+        // 3. Connect to live Server-Sent Events (SSE) for instant cross-device updates
+        let es = null;
+        try {
+          es = new EventSource(`${SERVER_SYNC_URL}/sse`);
+          es.onmessage = (event) => {
+            if (!isMounted || !event.data) return;
+            try {
+              const obj = JSON.parse(event.data);
+              if (obj && obj.event === "message" && obj.message) {
+                const payload = JSON.parse(obj.message);
+                const today = getTodayDateStr();
+                if (payload && payload.date === today && Date.now() <= (payload.expiresAt || Infinity)) {
+                  const newSwaps = Array.isArray(payload.swaps) ? payload.swaps : [];
+                  setActiveSwaps(prev => {
+                    if (JSON.stringify(prev) !== JSON.stringify(newSwaps)) {
+                      applySwapsList(newSwaps);
+                      setSwapVersion(v => v + 1);
+                      return newSwaps;
+                    }
+                    return prev;
+                  });
+                  try {
+                    if (newSwaps.length === 0) {
+                      localStorage.removeItem(STORAGE_KEY_DAILY_SWAPS);
+                    } else {
+                      localStorage.setItem(STORAGE_KEY_DAILY_SWAPS, JSON.stringify(payload));
+                    }
+                  } catch (e) {}
+                }
+              }
+            } catch (err) {}
+          };
+        } catch (err) {
+          console.warn("SSE connection error:", err);
+        }
+
+        // 4. Background polling every 12 seconds as a reliable backup
+        const pollTimer = setInterval(() => {
+          fetchServerSwaps().then(serverSwaps => {
+            if (!isMounted) return;
+            if (serverSwaps && Array.isArray(serverSwaps)) {
+              setActiveSwaps(prev => {
+                if (JSON.stringify(prev) !== JSON.stringify(serverSwaps)) {
+                  applySwapsList(serverSwaps);
+                  setSwapVersion(v => v + 1);
+                  return serverSwaps;
+                }
+                return prev;
+              });
+            }
+          });
+        }, 12000);
+
+        // 5. Instant check on visibility change (when unlocking mobile or switching browser tabs)
+        const handleVisibilityChange = () => {
+          if (document.visibilityState === "visible") {
+            fetchServerSwaps().then(serverSwaps => {
+              if (!isMounted) return;
+              if (serverSwaps && Array.isArray(serverSwaps)) {
+                setActiveSwaps(prev => {
+                  if (JSON.stringify(prev) !== JSON.stringify(serverSwaps)) {
+                    applySwapsList(serverSwaps);
+                    setSwapVersion(v => v + 1);
+                    return serverSwaps;
+                  }
+                  return prev;
+                });
+              }
+            });
+          }
+        };
+        document.addEventListener("visibilitychange", handleVisibilityChange);
+
+        return () => {
+          isMounted = false;
+          window.removeEventListener("storage", handleStorageChange);
+          document.removeEventListener("visibilitychange", handleVisibilityChange);
+          if (es) es.close();
+          clearInterval(pollTimer);
+        };
       }, []);
 
       const handleApplySwap = (payload) => {
@@ -1215,8 +1717,14 @@
         let desc = "";
         if (type === "swap") {
           desc = `Exchanged Hall ${targetHid} ↔ Hall ${payload.fromHid}`;
+        } else if (type === "free_move") {
+          desc = `Moved class from Hall ${payload.fromHid} → Hall ${targetHid} (Hall ${payload.fromHid} vacated)`;
         } else {
-          desc = `Extra Class in Hall ${targetHid} (${payload.courseCode}). Regular class shifted to Hall ${payload.freeShiftHid}.`;
+          if (payload.freeShiftHid) {
+            desc = `Extra Class in Hall ${targetHid} (${payload.courseCode}). Regular class shifted to Hall ${payload.freeShiftHid}.`;
+          } else {
+            desc = `Extra Class booked in Free Hall ${targetHid} (${payload.courseCode}).`;
+          }
         }
 
         const swapRecord = {
@@ -1232,17 +1740,11 @@
         setToastMsg({ 
           text: type === "swap" 
             ? `✓ Successfully exchanged Hall ${targetHid} with Hall ${payload.fromHid} (Active until end of day)!` 
-            : `✓ Extra Class booked in Hall ${targetHid}! Regular class shifted to Hall ${payload.freeShiftHid}.`, 
+            : type === "free_move"
+            ? `✓ Booked Free Hall ${targetHid}! Class moved from Hall ${payload.fromHid} (now vacated & free).`
+            : `✓ Extra Class booked in Hall ${targetHid}!`, 
           type: "success" 
         });
-        setSwapVersion(v => v + 1);
-      };
-
-      const handleRevertAll = () => {
-        resetSCHToPristine();
-        setActiveSwaps([]);
-        saveDailySwaps([]);
-        setToastMsg({ text: "↺ All temporary swaps have been reverted.", type: "info" });
         setSwapVersion(v => v + 1);
       };
 
@@ -1251,7 +1753,7 @@
         applySwapsList(updatedSwaps);
         setActiveSwaps(updatedSwaps);
         saveDailySwaps(updatedSwaps);
-        setToastMsg({ text: "↺ Reservation reverted.", type: "info" });
+        setToastMsg({ text: "↺ Reservation reverted successfully.", type: "info" });
         setSwapVersion(v => v + 1);
       };
 
@@ -1429,12 +1931,48 @@
               <div style={{fontSize:11,color:THEME.highlight,fontWeight:700}}>{DAY_F[selDay]}</div>
             </div>
 
-            <button onClick={logout} 
-              style={{...bBtn("rgba(255,255,255,0.08)",THEME.mutedText),padding:"7px 16px",borderRadius:20,border:`1px solid ${THEME.cardBorder}`,backdropFilter:"blur(8px)",transition:"all 0.2s ease"}}
-              onMouseOver={e=>e.currentTarget.style.background="rgba(255,255,255,0.18)"}
-              onMouseOut={e=>e.currentTarget.style.background="rgba(255,255,255,0.08)"}>
-              Logout 🔒
-            </button>
+            <div style={{display:"flex",alignItems:"center",gap:10}}>
+              <button 
+                onClick={()=>setShowSwappedModal(true)}
+                style={{
+                  background: activeSwaps.length>0?"rgba(139,92,246,0.25)":"rgba(255,255,255,0.06)",
+                  border: `1.5px solid ${activeSwaps.length>0?"#8b5cf6":THEME.cardBorder}`,
+                  color: activeSwaps.length>0?"#f8fafc":THEME.mutedText,
+                  padding: "7px 14px",
+                  borderRadius: 20,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 7,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  boxShadow: activeSwaps.length>0?"0 0 12px rgba(139,92,246,0.3)":"none",
+                  transition: "all 0.15s ease"
+                }}
+                title="View Swapped Classes for Today">
+                <span style={{fontSize:14}}>🔄</span>
+                <span>Swapped Classes</span>
+                {activeSwaps.length>0&&(
+                  <span style={{
+                    background:"#8b5cf6",
+                    color:"#fff",
+                    borderRadius:10,
+                    padding:"1px 7px",
+                    fontSize:10,
+                    fontWeight:800
+                  }}>
+                    {activeSwaps.length}
+                  </span>
+                )}
+              </button>
+
+              <button onClick={logout} 
+                style={{...bBtn("rgba(255,255,255,0.08)",THEME.mutedText),padding:"7px 16px",borderRadius:20,border:`1px solid ${THEME.cardBorder}`,backdropFilter:"blur(8px)",transition:"all 0.2s ease"}}
+                onMouseOver={e=>e.currentTarget.style.background="rgba(255,255,255,0.18)"}
+                onMouseOut={e=>e.currentTarget.style.background="rgba(255,255,255,0.08)"}>
+                Logout 🔒
+              </button>
+            </div>
           </div>
 
           <div className="student-period-anim" style={{position:"relative",zIndex:1}}>
@@ -1530,20 +2068,20 @@
                           <span style={{fontSize:20}}>⚡</span>
                           <span style={{color:"#f8fafc",fontWeight:800,fontSize:14}}>Today's Active Reservations ({activeSwaps.length})</span>
                         </div>
-                        <button onClick={handleRevertAll} style={{background:"rgba(239,68,68,0.2)",border:"1px solid #ef4444",color:"#fca5a5",borderRadius:8,padding:"4px 10px",fontSize:11,fontWeight:700,cursor:"pointer"}}>
-                          ↺ Revert All
+                        <button onClick={()=>setShowSwappedModal(true)} style={{background:"rgba(139,92,246,0.25)",border:"1px solid #8b5cf6",color:"#c4b5fd",borderRadius:8,padding:"4px 10px",fontSize:11,fontWeight:700,cursor:"pointer"}}>
+                          🔍 View All
                         </button>
                       </div>
                       <div style={{display:"flex",flexDirection:"column",gap:6,maxHeight:160,overflowY:"auto"}}>
                         {activeSwaps.map(s=>(
                           <div key={s.id} style={{background:"#11092b",border:"1px solid #3b2269",borderRadius:8,padding:"7px 10px",fontSize:11,color:"#e2e8f0",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
                             <span>• {s.desc} <span style={{color:"#a78bfa",fontSize:10}}>({s.time||DAY_F[s.day]})</span></span>
-                            <button onClick={()=>handleRevertSingle(s.id)} style={{background:"none",border:"none",color:"#f87171",cursor:"pointer",fontSize:12,fontWeight:700}} title="Revert this reservation">✕</button>
+                            <button onClick={()=>handleRevertSingle(s.id)} style={{background:"rgba(239,68,68,0.2)",border:"1px solid rgba(239,68,68,0.4)",color:"#fca5a5",borderRadius:6,padding:"2px 8px",cursor:"pointer",fontSize:10,fontWeight:700}} title="Revert this reservation">↺ Revert</button>
                           </div>
                         ))}
                       </div>
                       <div style={{color:"#c4b5fd",fontSize:10,marginTop:8,opacity:0.8}}>
-                        ℹ️ Automatically active until end of day (midnight).
+                        ℹ️ Each reservation can be individually reverted. Automatically resets at midnight.
                       </div>
                     </div>
                   )}
@@ -1558,6 +2096,15 @@
               )}
             </div>
           </div>
+          {showSwappedModal&&(
+            <SwappedClassesModal 
+              activeSwaps={activeSwaps}
+              onRevertSingle={handleRevertSingle}
+              onClose={()=>setShowSwappedModal(false)}
+              canRevert={true}
+            />
+          )}
+          {renderToast()}
         </div>
       );
 
@@ -1582,12 +2129,48 @@
               <div style={{fontSize:11,color:THEME.highlight,fontWeight:700}}>{DAY_F[selDay]}</div>
             </div>
 
-            <button onClick={logout} 
-              style={{...bBtn("rgba(255,255,255,0.08)",THEME.mutedText),padding:"7px 16px",borderRadius:20,border:`1px solid ${THEME.cardBorder}`,backdropFilter:"blur(8px)",transition:"all 0.2s ease"}}
-              onMouseOver={e=>e.currentTarget.style.background="rgba(255,255,255,0.18)"}
-              onMouseOut={e=>e.currentTarget.style.background="rgba(255,255,255,0.08)"}>
-              Logout 🔒
-            </button>
+            <div style={{display:"flex",alignItems:"center",gap:10}}>
+              <button 
+                onClick={()=>setShowSwappedModal(true)}
+                style={{
+                  background: activeSwaps.length>0?"rgba(139,92,246,0.25)":"rgba(255,255,255,0.06)",
+                  border: `1.5px solid ${activeSwaps.length>0?"#8b5cf6":THEME.cardBorder}`,
+                  color: activeSwaps.length>0?"#f8fafc":THEME.mutedText,
+                  padding: "7px 14px",
+                  borderRadius: 20,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 7,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  boxShadow: activeSwaps.length>0?"0 0 12px rgba(139,92,246,0.3)":"none",
+                  transition: "all 0.15s ease"
+                }}
+                title="View Swapped Classes for Today">
+                <span style={{fontSize:14}}>🔄</span>
+                <span>Swapped Classes</span>
+                {activeSwaps.length>0&&(
+                  <span style={{
+                    background:"#8b5cf6",
+                    color:"#fff",
+                    borderRadius:10,
+                    padding:"1px 7px",
+                    fontSize:10,
+                    fontWeight:800
+                  }}>
+                    {activeSwaps.length}
+                  </span>
+                )}
+              </button>
+
+              <button onClick={logout} 
+                style={{...bBtn("rgba(255,255,255,0.08)",THEME.mutedText),padding:"7px 16px",borderRadius:20,border:`1px solid ${THEME.cardBorder}`,backdropFilter:"blur(8px)",transition:"all 0.2s ease"}}
+                onMouseOver={e=>e.currentTarget.style.background="rgba(255,255,255,0.18)"}
+                onMouseOut={e=>e.currentTarget.style.background="rgba(255,255,255,0.08)"}>
+                Logout 🔒
+              </button>
+            </div>
           </div>
 
           <div className="student-period-anim" style={{position:"relative",zIndex:1}}>
@@ -1646,23 +2229,34 @@
                     </div>
                   </div>
                 </div>
-                <button onClick={handleRevertAll} style={{
-                  background:"rgba(239,68,68,0.2)",
-                  border:"1px solid #ef4444",
-                  color:"#fca5a5",
+                <button onClick={()=>setShowSwappedModal(true)} style={{
+                  background:"rgba(139,92,246,0.3)",
+                  border:"1px solid #8b5cf6",
+                  color:"#e9d5ff",
                   borderRadius:8,
-                  padding:"5px 12px",
+                  padding:"6px 14px",
                   fontSize:11,
                   fontWeight:700,
                   cursor:"pointer",
+                  display:"flex",
+                  alignItems:"center",
+                  gap:5,
                   transition:"all 0.15s ease"
                 }}>
-                  ↺ Revert All
+                  <span>🔄</span> <span>Manage / Revert Swaps</span>
                 </button>
               </div>
             )}
             {selFloor&&<ErrorBoundary><FreeHallsView key={`${selFloor}-${effPid}-${swapVersion}`} day={selDay} effectivePid={effPid} curSid={curSid} floor={selFloor} role="faculty" onApplySwap={handleApplySwap}/></ErrorBoundary>}
           </div>
+          {showSwappedModal&&(
+            <SwappedClassesModal 
+              activeSwaps={activeSwaps}
+              onRevertSingle={handleRevertSingle}
+              onClose={()=>setShowSwappedModal(false)}
+              canRevert={true}
+            />
+          )}
           {renderToast()}
         </div>
       );
@@ -1686,9 +2280,16 @@
                     <div style={{color:"rgba(255,255,255,0.7)",fontSize:12,marginTop:5,fontWeight:600}}>
                       SASTRA DEEMED UNIVERSITY · SRC KUMBAKONAM · {DAY_F[selDay]}
                       {activeSwaps.length>0&&selDay===detectDay()&&(
-                        <span style={{marginLeft:8,background:"rgba(74,222,128,0.15)",border:"1px solid rgba(74,222,128,0.4)",color:"#4ade80",fontSize:10,fontWeight:700,padding:"2px 8px",borderRadius:12}}>
-                          ⚡ Daily Swaps Reflected
-                        </span>
+                        <button 
+                          onClick={()=>setShowSwappedModal(true)}
+                          style={{
+                            marginLeft:8,background:"rgba(74,222,128,0.15)",border:"1px solid rgba(74,222,128,0.4)",
+                            color:"#4ade80",fontSize:10,fontWeight:700,padding:"2px 8px",borderRadius:12,cursor:"pointer",
+                            display:"inline-flex",alignItems:"center",gap:4
+                          }}
+                          title="View today's relocated and swapped classes">
+                          <span>⚡</span> <span>{activeSwaps.length} Swapped Class{activeSwaps.length>1?"es":""} Reflected</span>
+                        </button>
                       )}
                     </div>
                   </div>
@@ -1744,6 +2345,14 @@
                 {selFloor&&<ErrorBoundary><FreeHallsView key={`${selFloor}-${effPid}-${swapVersion}`} day={selDay} effectivePid={effPid} curSid={curSid} floor={selFloor} role="student"/></ErrorBoundary>}
               </div>
             </div>
+            {showSwappedModal&&(
+              <SwappedClassesModal 
+                activeSwaps={activeSwaps}
+                onRevertSingle={handleRevertSingle}
+                onClose={()=>setShowSwappedModal(false)}
+                canRevert={false}
+              />
+            )}
             {renderToast()}
           </div>
         );
