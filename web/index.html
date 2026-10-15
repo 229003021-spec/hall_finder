@@ -40,6 +40,12 @@
       100% { opacity: 1; transform: translateY(0) scale(1); }
     }
 
+    html, body {
+      overflow-x: hidden;
+      max-width: 100vw;
+      width: 100%;
+    }
+
     .student-takeover-bg {
       position: fixed;
       inset: 0;
@@ -49,6 +55,181 @@
       display: flex;
       flex-direction: column;
       overflow-y: auto;
+      overflow-x: hidden;
+      max-width: 100vw;
+      width: 100%;
+    }
+
+    /* Desktop defaults for portal headers */
+    .faculty-badge-desktop {
+      display: inline-block;
+    }
+    .faculty-timer-mobile {
+      display: none;
+    }
+    .faculty-timer-center {
+      display: block;
+      text-align: center;
+    }
+    .faculty-actions-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .faculty-btn-swapped {
+      padding: 7px 14px;
+      font-size: 12px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    .faculty-btn-logout {
+      padding: 7px 16px;
+      font-size: 12px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    .dean-badge-desktop {
+      display: inline-block;
+    }
+    .dean-timer-mobile {
+      display: none;
+    }
+    .dean-timer-center {
+      display: block;
+      text-align: center;
+    }
+    .dean-actions-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .dean-btn-swapped {
+      padding: 7px 14px;
+      font-size: 12px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    .dean-btn-logout {
+      padding: 7px 16px;
+      font-size: 12px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    /* Mobile only layout optimization (<= 680px) */
+    @media (max-width: 680px) {
+      .faculty-header-bar {
+        padding: 10px 12px !important;
+        align-items: center !important;
+      }
+      .faculty-title-text {
+        font-size: 15px !important;
+      }
+      .faculty-badge-desktop {
+        display: none !important;
+      }
+      .faculty-timer-mobile {
+        display: inline-flex !important;
+        align-items: center;
+        background: rgba(139, 92, 246, 0.22);
+        border: 1px solid rgba(167, 139, 250, 0.35);
+        color: #e9d5ff;
+        font-size: 10px;
+        font-weight: 800;
+        padding: 2px 7px;
+        border-radius: 10px;
+        font-family: monospace;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+      }
+      .faculty-timer-center {
+        display: none !important;
+      }
+      .faculty-actions-container {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-end !important;
+        gap: 6px !important;
+        flex-shrink: 0;
+      }
+      .faculty-btn-swapped {
+        padding: 5px 10px !important;
+        font-size: 11px !important;
+        border-radius: 14px !important;
+        gap: 5px !important;
+      }
+      .faculty-btn-logout {
+        padding: 4px 12px !important;
+        font-size: 10px !important;
+        border-radius: 12px !important;
+      }
+
+      /* Dean Portal mobile */
+      .dean-header-bar {
+        padding: 10px 12px !important;
+      }
+      .dean-title-text {
+        font-size: 15px !important;
+      }
+      .dean-badge-desktop {
+        display: none !important;
+      }
+      .dean-timer-mobile {
+        display: inline-flex !important;
+        align-items: center;
+        background: rgba(139, 92, 246, 0.22);
+        border: 1px solid rgba(167, 139, 250, 0.35);
+        color: #e9d5ff;
+        font-size: 10px;
+        font-weight: 800;
+        padding: 2px 7px;
+        border-radius: 10px;
+        font-family: monospace;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+      }
+      .dean-timer-center {
+        display: none !important;
+      }
+      .dean-actions-container {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-end !important;
+        gap: 6px !important;
+        flex-shrink: 0;
+      }
+      .dean-btn-swapped {
+        padding: 5px 10px !important;
+        font-size: 11px !important;
+        border-radius: 14px !important;
+        gap: 5px !important;
+      }
+      .dean-btn-logout {
+        padding: 4px 12px !important;
+        font-size: 10px !important;
+        border-radius: 12px !important;
+      }
+
+      /* Student Portal mobile */
+      .student-header-pad {
+        padding: 14px 12px 16px !important;
+      }
+      .student-metrics-bar {
+        gap: 8px !important;
+        padding: 10px 10px !important;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr 1fr !important;
+        text-align: center;
+      }
+      .student-metric-divider {
+        display: none !important;
+      }
+      .student-swaps-btn-wrap {
+        display: block !important;
+        margin-top: 5px !important;
+        margin-left: 0 !important;
+      }
     }
 
     .student-banner-anim {
@@ -450,16 +631,16 @@
 
     function DayBar({selDay,setSelDay}){
       return(
-        <div style={{background:THEME.headerBg,borderBottom:`1px solid ${THEME.navBorder}`,padding:"8px 18px",display:"flex",gap:6,alignItems:"center",flexShrink:0}}>
-          <span style={{color:THEME.mutedText,fontSize:11,marginRight:4}}>Day:</span>
+        <div style={{background:THEME.headerBg,borderBottom:`1px solid ${THEME.navBorder}`,padding:"8px 14px",display:"flex",gap:6,alignItems:"center",flexShrink:0,overflowX:"auto",WebkitOverflowScrolling:"touch",maxWidth:"100vw"}}>
+          <span style={{color:THEME.mutedText,fontSize:11,marginRight:4,flexShrink:0}}>Day:</span>
           {DAYS.map(d=>(
             <button key={d} onClick={()=>setSelDay(d)}
               style={{...bBtn(selDay===d?THEME.accent:"transparent",selDay===d?"#fff":THEME.mutedText),
-                padding:"5px 14px",border:`1px solid ${selDay===d?THEME.accent:THEME.navBorder}`}}>
+                padding:"5px 12px",border:`1px solid ${selDay===d?THEME.accent:THEME.navBorder}`,flexShrink:0}}>
               {DAY_S[d]}
             </button>
           ))}
-          <span style={{marginLeft:"auto",color:THEME.mutedText,fontSize:10,opacity:0.7}}>IST · Auto</span>
+          <span style={{marginLeft:"auto",color:THEME.mutedText,fontSize:10,opacity:0.7,flexShrink:0}}>IST · Auto</span>
         </div>
       );
     }
@@ -1909,55 +2090,55 @@
         <div className="student-takeover-bg">
           <div style={{position:"fixed",top:-100,left:"50%",transform:"translateX(-50%)",width:700,height:350,background:"radial-gradient(ellipse at center, rgba(139,92,246,0.35) 0%, rgba(0,0,0,0) 70%)",pointerEvents:"none",zIndex:0}}></div>
 
-          <div className="student-banner-anim" style={{background:THEME.headerBg,borderBottom:`1px solid ${THEME.headerBorder}`,padding:"12px 20px",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"space-between",position:"relative",zIndex:1,boxShadow:"0 10px 30px rgba(0,0,0,0.5)"}}>
-            <div style={{display:"flex",alignItems:"center",gap:12}}>
-              <div style={{fontSize:24}}>👑</div>
-              <div>
-                <div style={{display:"flex",alignItems:"center",gap:8}}>
-                  <div style={{fontSize:18,fontWeight:900,color:"#f1f5f9",letterSpacing:1}}>DEAN PORTAL</div>
-                  <span style={{background:"rgba(139,92,246,0.3)",border:"1px solid rgba(167,139,250,0.4)",color:"#c4b5fd",fontSize:10,fontWeight:800,padding:"2px 8px",borderRadius:20,letterSpacing:"0.06em",textTransform:"uppercase"}}>FULL OVERVIEW</span>
+          <div className="student-banner-anim dean-header-bar" style={{background:THEME.headerBg,borderBottom:`1px solid ${THEME.headerBorder}`,padding:"12px 20px",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"space-between",position:"relative",zIndex:1,boxShadow:"0 10px 30px rgba(0,0,0,0.5)"}}>
+            <div style={{display:"flex",alignItems:"center",gap:10,minWidth:0}}>
+              <div style={{fontSize:24,flexShrink:0}}>👑</div>
+              <div style={{minWidth:0}}>
+                <div style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
+                  <div className="dean-title-text" style={{fontSize:18,fontWeight:900,color:"#f1f5f9",letterSpacing:1,whiteSpace:"nowrap"}}>DEAN PORTAL</div>
+                  <span className="dean-badge-desktop" style={{background:"rgba(139,92,246,0.3)",border:"1px solid rgba(167,139,250,0.4)",color:"#c4b5fd",fontSize:10,fontWeight:800,padding:"2px 8px",borderRadius:20,letterSpacing:"0.06em",textTransform:"uppercase"}}>FULL OVERVIEW</span>
+                  <span className="dean-timer-mobile">
+                    ⏰ {tStr} · {DAY_F[selDay]}
+                  </span>
                   {activeSwaps.length>0&&(
                     <span style={{background:"rgba(245,158,11,0.2)",border:"1px solid #f59e0b",color:"#fbbf24",fontSize:10,fontWeight:800,padding:"2px 8px",borderRadius:12}}>
                       ⚡ {activeSwaps.length} Active Swap{activeSwaps.length>1?"s":""} Today
                     </span>
                   )}
                 </div>
-                <div style={{fontSize:11,color:THEME.mutedText,marginTop:2}}>SASTRA DEEMED UNIVERSITY · SRC KUMBAKONAM</div>
+                <div style={{fontSize:11,color:THEME.mutedText,marginTop:2,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>SASTRA DEEMED UNIVERSITY · SRC KUMBAKONAM</div>
               </div>
             </div>
             
-            <div style={{textAlign:"center"}}>
+            <div className="dean-timer-center">
               <div style={{fontFamily:"monospace",fontSize:16,fontWeight:700,color:"#e9d5ff"}}>{tStr}</div>
               <div style={{fontSize:11,color:THEME.highlight,fontWeight:700}}>{DAY_F[selDay]}</div>
             </div>
 
-            <div style={{display:"flex",alignItems:"center",gap:10}}>
+            <div className="dean-actions-container">
               <button 
                 onClick={()=>setShowSwappedModal(true)}
+                className="dean-btn-swapped"
                 style={{
                   background: activeSwaps.length>0?"rgba(139,92,246,0.25)":"rgba(255,255,255,0.06)",
                   border: `1.5px solid ${activeSwaps.length>0?"#8b5cf6":THEME.cardBorder}`,
                   color: activeSwaps.length>0?"#f8fafc":THEME.mutedText,
-                  padding: "7px 14px",
-                  borderRadius: 20,
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
-                  gap: 7,
-                  fontSize: 12,
                   fontWeight: 700,
                   boxShadow: activeSwaps.length>0?"0 0 12px rgba(139,92,246,0.3)":"none",
                   transition: "all 0.15s ease"
                 }}
                 title="View Swapped Classes for Today">
-                <span style={{fontSize:14}}>🔄</span>
+                <span style={{fontSize:13}}>🔄</span>
                 <span>Swapped Classes</span>
                 {activeSwaps.length>0&&(
                   <span style={{
                     background:"#8b5cf6",
                     color:"#fff",
                     borderRadius:10,
-                    padding:"1px 7px",
+                    padding:"1px 6px",
                     fontSize:10,
                     fontWeight:800
                   }}>
@@ -1967,7 +2148,8 @@
               </button>
 
               <button onClick={logout} 
-                style={{...bBtn("rgba(255,255,255,0.08)",THEME.mutedText),padding:"7px 16px",borderRadius:20,border:`1px solid ${THEME.cardBorder}`,backdropFilter:"blur(8px)",transition:"all 0.2s ease"}}
+                className="dean-btn-logout"
+                style={{...bBtn("rgba(255,255,255,0.08)",THEME.mutedText),border:`1px solid ${THEME.cardBorder}`,backdropFilter:"blur(8px)",transition:"all 0.2s ease"}}
                 onMouseOver={e=>e.currentTarget.style.background="rgba(255,255,255,0.18)"}
                 onMouseOut={e=>e.currentTarget.style.background="rgba(255,255,255,0.08)"}>
                 Logout 🔒
@@ -2112,50 +2294,50 @@
         <div className="student-takeover-bg">
           <div style={{position:"fixed",top:-100,left:"50%",transform:"translateX(-50%)",width:700,height:350,background:"radial-gradient(ellipse at center, rgba(99,102,241,0.3) 0%, rgba(0,0,0,0) 70%)",pointerEvents:"none",zIndex:0}}></div>
 
-          <div className="student-banner-anim" style={{background:THEME.headerBg,borderBottom:`1px solid ${THEME.headerBorder}`,padding:"14px 20px",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"space-between",position:"relative",zIndex:1,boxShadow:"0 10px 30px rgba(0,0,0,0.5)"}}>
-            <div style={{display:"flex",alignItems:"center",gap:12}}>
-              <div style={{fontSize:24}}>🎓</div>
-              <div>
-                <div style={{display:"flex",alignItems:"center",gap:8}}>
-                  <div style={{fontSize:18,fontWeight:900,color:"#f1f5f9",letterSpacing:1}}>FACULTY PORTAL</div>
-                  <span style={{background:"rgba(99,102,241,0.3)",border:"1px solid rgba(129,140,248,0.4)",color:"#c7d2fe",fontSize:10,fontWeight:800,padding:"2px 8px",borderRadius:20,letterSpacing:"0.06em",textTransform:"uppercase"}}>AVAILABILITY CHECK</span>
+          <div className="student-banner-anim faculty-header-bar" style={{background:THEME.headerBg,borderBottom:`1px solid ${THEME.headerBorder}`,padding:"14px 20px",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"space-between",position:"relative",zIndex:1,boxShadow:"0 10px 30px rgba(0,0,0,0.5)"}}>
+            <div style={{display:"flex",alignItems:"center",gap:10,minWidth:0}}>
+              <div style={{fontSize:24,flexShrink:0}}>🎓</div>
+              <div style={{minWidth:0}}>
+                <div style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
+                  <div className="faculty-title-text" style={{fontSize:18,fontWeight:900,color:"#f1f5f9",letterSpacing:1,whiteSpace:"nowrap"}}>FACULTY PORTAL</div>
+                  <span className="faculty-badge-desktop" style={{background:"rgba(99,102,241,0.3)",border:"1px solid rgba(129,140,248,0.4)",color:"#c7d2fe",fontSize:10,fontWeight:800,padding:"2px 8px",borderRadius:20,letterSpacing:"0.06em",textTransform:"uppercase"}}>AVAILABILITY CHECK</span>
+                  <span className="faculty-timer-mobile">
+                    ⏰ {tStr} · {DAY_F[selDay]}
+                  </span>
                 </div>
-                <div style={{fontSize:11,color:THEME.mutedText,marginTop:2}}>SASTRA DEEMED UNIVERSITY · SRC KUMBAKONAM</div>
+                <div style={{fontSize:11,color:THEME.mutedText,marginTop:2,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>SASTRA DEEMED UNIVERSITY · SRC KUMBAKONAM</div>
               </div>
             </div>
 
-            <div style={{textAlign:"center"}}>
+            <div className="faculty-timer-center">
               <div style={{fontFamily:"monospace",fontSize:16,fontWeight:700,color:"#c7d2fe"}}>{tStr}</div>
               <div style={{fontSize:11,color:THEME.highlight,fontWeight:700}}>{DAY_F[selDay]}</div>
             </div>
 
-            <div style={{display:"flex",alignItems:"center",gap:10}}>
+            <div className="faculty-actions-container">
               <button 
                 onClick={()=>setShowSwappedModal(true)}
+                className="faculty-btn-swapped"
                 style={{
                   background: activeSwaps.length>0?"rgba(139,92,246,0.25)":"rgba(255,255,255,0.06)",
                   border: `1.5px solid ${activeSwaps.length>0?"#8b5cf6":THEME.cardBorder}`,
                   color: activeSwaps.length>0?"#f8fafc":THEME.mutedText,
-                  padding: "7px 14px",
-                  borderRadius: 20,
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
-                  gap: 7,
-                  fontSize: 12,
                   fontWeight: 700,
                   boxShadow: activeSwaps.length>0?"0 0 12px rgba(139,92,246,0.3)":"none",
                   transition: "all 0.15s ease"
                 }}
                 title="View Swapped Classes for Today">
-                <span style={{fontSize:14}}>🔄</span>
+                <span style={{fontSize:13}}>🔄</span>
                 <span>Swapped Classes</span>
                 {activeSwaps.length>0&&(
                   <span style={{
                     background:"#8b5cf6",
                     color:"#fff",
                     borderRadius:10,
-                    padding:"1px 7px",
+                    padding:"1px 6px",
                     fontSize:10,
                     fontWeight:800
                   }}>
@@ -2165,7 +2347,8 @@
               </button>
 
               <button onClick={logout} 
-                style={{...bBtn("rgba(255,255,255,0.08)",THEME.mutedText),padding:"7px 16px",borderRadius:20,border:`1px solid ${THEME.cardBorder}`,backdropFilter:"blur(8px)",transition:"all 0.2s ease"}}
+                className="faculty-btn-logout"
+                style={{...bBtn("rgba(255,255,255,0.08)",THEME.mutedText),border:`1px solid ${THEME.cardBorder}`,backdropFilter:"blur(8px)",transition:"all 0.2s ease"}}
                 onMouseOver={e=>e.currentTarget.style.background="rgba(255,255,255,0.18)"}
                 onMouseOut={e=>e.currentTarget.style.background="rgba(255,255,255,0.08)"}>
                 Logout 🔒
@@ -2268,35 +2451,37 @@
           <div className="student-takeover-bg">
             <div style={{position:"fixed",top:-100,left:"50%",transform:"translateX(-50%)",width:700,height:350,background:"radial-gradient(ellipse at center, rgba(139,92,246,0.3) 0%, rgba(0,0,0,0) 70%)",pointerEvents:"none",zIndex:0}}></div>
             
-            <div className="student-banner-anim" style={{background:THEME.studentBanner,padding:"20px 20px 24px",flexShrink:0,position:"relative",zIndex:1,boxShadow:"0 10px 30px rgba(0,0,0,0.6)",borderBottom:"1px solid rgba(139,92,246,0.35)"}}>
+            <div className="student-banner-anim student-header-pad" style={{background:THEME.studentBanner,padding:"20px 20px 24px",flexShrink:0,position:"relative",zIndex:1,boxShadow:"0 10px 30px rgba(0,0,0,0.6)",borderBottom:"1px solid rgba(139,92,246,0.35)"}}>
               <div style={{maxWidth:720,margin:"0 auto"}}>
-                <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
-                  <div>
-                    <div style={{display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
-                      <span style={{fontSize:26}}>🏫</span>
-                      <span style={{fontSize:24,fontWeight:900,letterSpacing:-0.5,background:"linear-gradient(135deg, #ffffff 0%, #e9d5ff 100%)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Hall Finder</span>
-                      <span style={{background:"rgba(139,92,246,0.35)",border:"1px solid rgba(167,139,250,0.5)",color:"#e9d5ff",fontSize:10,fontWeight:800,padding:"3px 10px",borderRadius:20,letterSpacing:"0.06em",textTransform:"uppercase",boxShadow:"0 0 12px rgba(139,92,246,0.4)"}}>STUDENT PORTAL</span>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:10}}>
+                  <div style={{minWidth:0}}>
+                    <div style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
+                      <span style={{fontSize:24}}>🏫</span>
+                      <span style={{fontSize:22,fontWeight:900,letterSpacing:-0.5,background:"linear-gradient(135deg, #ffffff 0%, #e9d5ff 100%)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Hall Finder</span>
+                      <span style={{background:"rgba(139,92,246,0.35)",border:"1px solid rgba(167,139,250,0.5)",color:"#e9d5ff",fontSize:10,fontWeight:800,padding:"3px 8px",borderRadius:20,letterSpacing:"0.06em",textTransform:"uppercase",boxShadow:"0 0 12px rgba(139,92,246,0.4)"}}>STUDENT PORTAL</span>
                     </div>
-                    <div style={{color:"rgba(255,255,255,0.7)",fontSize:12,marginTop:5,fontWeight:600}}>
+                    <div style={{color:"rgba(255,255,255,0.7)",fontSize:11,marginTop:4,fontWeight:600}}>
                       SASTRA DEEMED UNIVERSITY · SRC KUMBAKONAM · {DAY_F[selDay]}
                       {activeSwaps.length>0&&selDay===detectDay()&&(
-                        <button 
-                          onClick={()=>setShowSwappedModal(true)}
-                          style={{
-                            marginLeft:8,background:"rgba(74,222,128,0.15)",border:"1px solid rgba(74,222,128,0.4)",
-                            color:"#4ade80",fontSize:10,fontWeight:700,padding:"2px 8px",borderRadius:12,cursor:"pointer",
-                            display:"inline-flex",alignItems:"center",gap:4
-                          }}
-                          title="View today's relocated and swapped classes">
-                          <span>⚡</span> <span>{activeSwaps.length} Swapped Class{activeSwaps.length>1?"es":""} Reflected</span>
-                        </button>
+                        <span className="student-swaps-btn-wrap">
+                          <button 
+                            onClick={()=>setShowSwappedModal(true)}
+                            style={{
+                              marginLeft:8,background:"rgba(74,222,128,0.15)",border:"1px solid rgba(74,222,128,0.4)",
+                              color:"#4ade80",fontSize:10,fontWeight:700,padding:"2px 8px",borderRadius:12,cursor:"pointer",
+                              display:"inline-flex",alignItems:"center",gap:4
+                            }}
+                            title="View today's relocated and swapped classes">
+                            <span>⚡</span> <span>{activeSwaps.length} Swapped Class{activeSwaps.length>1?"es":""} Reflected</span>
+                          </button>
+                        </span>
                       )}
                     </div>
                   </div>
-                  <div style={{textAlign:"right"}}>
-                    <div style={{fontFamily:"monospace",fontSize:16,fontWeight:700,color:"#e9d5ff"}}>{tStr}</div>
+                  <div style={{textAlign:"right",flexShrink:0}}>
+                    <div style={{fontFamily:"monospace",fontSize:15,fontWeight:700,color:"#e9d5ff"}}>{tStr}</div>
                     <button onClick={()=>{setScreen("landing");setSelFloor(null);}} 
-                      style={{...bBtn("rgba(0,0,0,0.4)","rgba(255,255,255,0.9)"),padding:"6px 14px",borderRadius:20,marginTop:6,fontSize:12,border:"1px solid rgba(255,255,255,0.25)",backdropFilter:"blur(8px)",display:"inline-flex",alignItems:"center",gap:5,transition:"all 0.2s ease"}}
+                      style={{...bBtn("rgba(0,0,0,0.4)","rgba(255,255,255,0.9)"),padding:"5px 12px",borderRadius:20,marginTop:5,fontSize:11,border:"1px solid rgba(255,255,255,0.25)",backdropFilter:"blur(8px)",display:"inline-flex",alignItems:"center",gap:4,transition:"all 0.2s ease"}}
                       onMouseOver={e=>e.currentTarget.style.background="rgba(255,255,255,0.2)"}
                       onMouseOut={e=>e.currentTarget.style.background="rgba(0,0,0,0.4)"}>
                       <span>←</span> <span>Home</span>
@@ -2304,20 +2489,20 @@
                   </div>
                 </div>
 
-                <div style={{background:"rgba(15,11,36,0.65)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",borderRadius:16,padding:"14px 20px",marginTop:16,display:"flex",gap:28,flexWrap:"wrap",border:"1px solid rgba(139,92,246,0.3)",boxShadow:"0 8px 24px rgba(0,0,0,0.4)"}}>
+                <div className="student-metrics-bar" style={{background:"rgba(15,11,36,0.65)",backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",borderRadius:16,padding:"14px 20px",marginTop:14,display:"flex",gap:24,alignItems:"center",border:"1px solid rgba(139,92,246,0.3)",boxShadow:"0 8px 24px rgba(0,0,0,0.4)"}}>
                   <div>
                     <div style={{color:"rgba(255,255,255,0.55)",fontSize:10,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.05em"}}>Free Halls Now</div>
-                    <div style={{fontSize:24,fontWeight:900,color:selFloor?"#4ade80":"#e2e8f0"}}>{selFloor?freeCount:"—"}</div>
+                    <div style={{fontSize:22,fontWeight:900,color:selFloor?"#4ade80":"#e2e8f0"}}>{selFloor?freeCount:"—"}</div>
                   </div>
-                  <div style={{width:1,background:"rgba(255,255,255,0.15)",margin:"2px 0"}}></div>
+                  <div className="student-metric-divider" style={{width:1,height:28,background:"rgba(255,255,255,0.15)"}}></div>
                   <div>
                     <div style={{color:"rgba(255,255,255,0.55)",fontSize:10,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.05em"}}>Active Period</div>
-                    <div style={{fontSize:14,fontWeight:700,color:"#e9d5ff",marginTop:4}}>{curSlotObj?.label||"—"}</div>
+                    <div style={{fontSize:13,fontWeight:700,color:"#e9d5ff",marginTop:2}}>{curSlotObj?.label||"—"}</div>
                   </div>
-                  <div style={{width:1,background:"rgba(255,255,255,0.15)",margin:"2px 0"}}></div>
+                  <div className="student-metric-divider" style={{width:1,height:28,background:"rgba(255,255,255,0.15)"}}></div>
                   <div>
                     <div style={{color:"rgba(255,255,255,0.55)",fontSize:10,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.05em"}}>Time Window</div>
-                    <div style={{fontSize:12,fontWeight:600,color:"#c4b5fd",marginTop:5}}>{curSlotObj?.time||"Outside hrs"}</div>
+                    <div style={{fontSize:11,fontWeight:600,color:"#c4b5fd",marginTop:3}}>{curSlotObj?.time||"Outside hrs"}</div>
                   </div>
                 </div>
               </div>
