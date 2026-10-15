@@ -372,8 +372,16 @@
       const e=getEntry(hid,day,sid);
       return !e||e.t==="free"||e.t==="lab"||e.t==="lunch";
     };
-    const floorHalls=f=>Object.keys(HALL_INFO).filter(id=>HALL_INFO[id].floor===f).sort((a,b)=>+a-+b);
-    const ordinal=n=>n+(n===1?"st":n===2?"nd":n===3?"rd":"th");
+    const floorHalls=f=>Object.keys(HALL_INFO).filter(id=>Number(HALL_INFO[id].floor)===Number(f)).sort((a,b)=>String(a).localeCompare(String(b), undefined, {numeric: true}));
+    const ordinal=n=>Number(n)===0?"Ground":n+(Number(n)===1?"st":Number(n)===2?"nd":Number(n)===3?"rd":"th");
+    const getAvailableFloors=()=>{
+      const fls=new Set([1,2,3,4,5]);
+      Object.values(HALL_INFO).forEach(h=>{
+        if(typeof h.floor==="number") fls.add(h.floor);
+        else if(h.floor!==undefined&&!isNaN(parseInt(h.floor))) fls.add(parseInt(h.floor));
+      });
+      return Array.from(fls).sort((a,b)=>a-b);
+    };
     const bBtn=(bg,fg="#fff",extra={})=>({background:bg,border:"none",color:fg,borderRadius:10,cursor:"pointer",fontWeight:700,fontSize:13,transition:"all .15s",...extra});
     const bBadge=(bg,fg,br)=>({background:bg,border:`1px solid ${br}`,color:fg,borderRadius:12,fontSize:11,padding:"2px 9px",fontWeight:600,display:"inline-flex",alignItems:"center",gap:4});
 
@@ -684,11 +692,12 @@
     }
 
     function FloorBar({selFloor,setSelFloor,onFloorChange}){
+      const availableFloors = getAvailableFloors();
       return(
         <div style={{background:THEME.sidebarBg,borderBottom:`1px solid ${THEME.navBorder}`,padding:"8px 18px",display:"flex",gap:8,alignItems:"center",flexShrink:0,flexWrap:"wrap"}}>
           <span style={{color:THEME.mutedText,fontSize:11,marginRight:4}}>Floor:</span>
-          {[1,2,3,4,5].map(f=>{
-            const sel=selFloor===f;
+          {availableFloors.map(f=>{
+            const sel=Number(selFloor)===Number(f);
             return(
               <button key={f} onClick={()=>{setSelFloor(f);if(onFloorChange)onFloorChange();}}
                 style={{...bBtn(sel?THEME.accent:"transparent",sel?"#fff":THEME.mutedText),
@@ -703,18 +712,19 @@
     }
 
     function FloorPicker({selFloor,setSelFloor,onFloorChange,color="#8b5cf6"}){
+      const availableFloors = getAvailableFloors();
       return(
         <div style={{marginBottom:14}}>
           <p style={{color:THEME.mutedText,fontSize:11,textTransform:"uppercase",letterSpacing:"0.09em",margin:"0 0 8px"}}>Select Floor</p>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:6}}>
-            {[1,2,3,4,5].map(f=>{
-              const sel=selFloor===f;
+          <div style={{display:"grid",gridTemplateColumns:`repeat(${Math.min(availableFloors.length, 6)}, 1fr)`,gap:6}}>
+            {availableFloors.map(f=>{
+              const sel=Number(selFloor)===Number(f);
               return(
                 <button key={f} onClick={()=>{setSelFloor(f);if(onFloorChange)onFloorChange();}}
                   style={{...bBtn(sel?color:THEME.cardBg,sel?"#fff":THEME.mutedText),
                     padding:"9px 0",borderRadius:10,border:`1px solid ${sel?color:THEME.cardBorder}`,
                     display:"flex",alignItems:"center",justifyContent:"center",gap:5}}>
-                  {f}{sel&&<span style={{fontSize:12}}>★</span>}
+                  {Number(f)===0 ? "G" : f}{sel&&<span style={{fontSize:12}}>★</span>}
                 </button>
               );
             })}
@@ -1812,7 +1822,10 @@
       const [isAdminAuth, setIsAdminAuth] = useState(false);
 
       const [showAdminPortal, setShowAdminPortal] = useState(false);
-      const [adminFloor, setAdminFloor] = useState(1);
+      const [adminFloor, setAdminFloor] = useState(1); // 1..5 or "hall"
+      const [adminHallInput, setAdminHallInput] = useState("");
+      const [adminNewHallFloor, setAdminNewHallFloor] = useState("1");
+      const [adminNewHallProj, setAdminNewHallProj] = useState(false);
       const [uploadedFile, setUploadedFile] = useState(null);
       const [parsedUpload, setParsedUpload] = useState(null);
       const [uploadError, setUploadError] = useState(null);
@@ -2118,6 +2131,56 @@
         URL.revokeObjectURL(url);
       }
 
+      function downloadHallTemplate(hid, floorNum, hasProj) {
+        const cleanHid = String(hid).trim();
+        if (!cleanHid) return;
+        const existingSched = SCH[cleanHid] || {};
+        const floor = HALL_INFO[cleanHid]?.floor !== undefined ? Number(HALL_INFO[cleanHid].floor) : (floorNum !== undefined && floorNum !== "" ? Number(floorNum) : 1);
+        const proj = HALL_INFO[cleanHid]?.proj !== undefined ? Boolean(HALL_INFO[cleanHid].proj) : (hasProj !== undefined ? Boolean(hasProj) : false);
+
+        const hallCN = {};
+        if (SCH[cleanHid]) {
+          Object.values(SCH[cleanHid]).forEach(daySlots => {
+            Object.values(daySlots).forEach(slot => {
+              if (slot && slot.c && COURSE_NAMES[slot.c]) {
+                hallCN[slot.c] = COURSE_NAMES[slot.c];
+              }
+            });
+          });
+        }
+
+        let sched = existingSched;
+        if (!SCH[cleanHid] || Object.keys(existingSched).length === 0) {
+          sched = {};
+          DAYS.forEach(day => {
+            sched[day] = {};
+            ALL_SLOTS.forEach(slot => {
+              sched[day][String(slot.id)] = { t: "free", n: "" };
+            });
+          });
+        }
+
+        const exportPayload = {
+          hall: cleanHid,
+          floor: floor,
+          proj: proj,
+          description: `Timetable Data for Hall ${cleanHid} (${ordinal(floor)} Floor)`,
+          exportedAt: new Date().toISOString(),
+          CN: hallCN,
+          schedule: sched
+        };
+
+        const blob = new Blob([JSON.stringify(exportPayload, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `hall_${cleanHid}_timetable.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+
       function downloadFullBackup() {
         const full = {
           CN: COURSE_NAMES,
@@ -2135,7 +2198,7 @@
         URL.revokeObjectURL(url);
       }
 
-      function handleJsonFileUpload(file, targetFloor) {
+      function handleJsonFileUpload(file, targetFloor, specificHallInfo) {
         setUploadError(null);
         setParsedUpload(null);
         setCommitLog([]);
@@ -2147,16 +2210,113 @@
           return;
         }
 
+        const isHallMode = targetFloor === "hall" || !!specificHallInfo;
+        if (isHallMode && (!specificHallInfo || !specificHallInfo.hid)) {
+          setUploadError("Please select or enter a hall number first before uploading.");
+          return;
+        }
+
         const reader = new FileReader();
         reader.onload = (e) => {
           try {
             const rawText = e.target.result;
             const json = JSON.parse(rawText);
 
-            let rawSCH = {};
             let rawCN = json.CN || {};
             let rawHI = json.HI || {};
 
+            if (isHallMode) {
+              const targetHid = String(specificHallInfo.hid).trim();
+              const targetFloorVal = Number(specificHallInfo.floor);
+              const targetProjVal = Boolean(specificHallInfo.proj);
+
+              // Extract schedule for single hall
+              let hallSched = null;
+              if (json.schedule && typeof json.schedule === "object") {
+                hallSched = json.schedule;
+              } else if (json.SCH && typeof json.SCH === "object") {
+                hallSched = json.SCH[targetHid] || Object.values(json.SCH)[0];
+              } else if (json[targetHid] && typeof json[targetHid] === "object") {
+                hallSched = json[targetHid];
+              } else if (DAYS.some(d => json[d] || json[DAY_F[d]])) {
+                hallSched = json;
+              } else if (typeof json === "object" && Object.keys(json).length > 0) {
+                const firstVal = Object.values(json)[0];
+                if (typeof firstVal === "object" && DAYS.some(d => firstVal[d] || firstVal[DAY_F[d]])) {
+                  hallSched = firstVal;
+                }
+              }
+
+              if (!hallSched || typeof hallSched !== "object") {
+                setUploadError(`Could not find a valid schedule for Hall ${targetHid} in the uploaded JSON. Expected days like "Monday" or "MON" with period slots.`);
+                return;
+              }
+
+              let totalSlots = 0;
+              let freeSlots = 0;
+              let classSlots = 0;
+              let labSlots = 0;
+              const validHallsToUpdate = { [targetHid]: {} };
+              const newCourseCodesFound = [];
+              const warnings = [];
+
+              DAYS.forEach(day => {
+                const fullDayName = DAY_F[day];
+                const dayObj = hallSched[day] || hallSched[fullDayName] || hallSched[day.toLowerCase()] || hallSched[fullDayName.toLowerCase()] || {};
+                validHallsToUpdate[targetHid][day] = {};
+
+                ALL_SLOTS.forEach(slot => {
+                  const sid = String(slot.id);
+                  const entry = dayObj[sid] || dayObj[slot.label] || dayObj["Period " + sid] || { t: "free", n: "" };
+                  validHallsToUpdate[targetHid][day][sid] = entry;
+                  totalSlots++;
+
+                  if (entry.t === "free" || !entry.t) freeSlots++;
+                  else if (entry.t === "lab") labSlots++;
+                  else classSlots++;
+
+                  if (entry.c) {
+                    if (entry.n && !rawCN[entry.c]) rawCN[entry.c] = entry.n;
+                    if (!COURSE_NAMES[entry.c] && !rawCN[entry.c] && !newCourseCodesFound.includes(entry.c)) {
+                      newCourseCodesFound.push(entry.c);
+                    }
+                  }
+                });
+              });
+
+              rawHI[targetHid] = {
+                floor: targetFloorVal,
+                proj: targetProjVal
+              };
+
+              setParsedUpload({
+                fileName: file.name,
+                mode: "hall",
+                targetHall: targetHid,
+                targetFloor: targetFloorVal,
+                targetProj: targetProjVal,
+                isNewHall: specificHallInfo.isNew,
+                hallsToUpdate: validHallsToUpdate,
+                hallList: [targetHid],
+                newCN: rawCN,
+                newHI: rawHI,
+                stats: {
+                  hallCount: 1,
+                  totalSlots,
+                  freeSlots,
+                  classSlots,
+                  labSlots,
+                  newCourses: newCourseCodesFound
+                },
+                warnings
+              });
+              setSelectedPreviewHall(targetHid);
+              setUploadedFile(file);
+              return;
+            }
+
+            // Existing Floor Mode (Floors 1-5)
+            let rawSCH = {};
             if (json.SCH && typeof json.SCH === "object") {
               rawSCH = json.SCH;
             } else if (json.halls && typeof json.halls === "object") {
@@ -2183,8 +2343,8 @@
             const warnings = [];
 
             hallKeys.forEach(hid => {
-              const hFloor = HALL_INFO[hid]?.floor || parseInt(String(hid).charAt(0));
-              if (hFloor === targetFloor || targetFloorHalls.includes(hid)) {
+              const hFloor = HALL_INFO[hid]?.floor !== undefined ? Number(HALL_INFO[hid].floor) : parseInt(String(hid).charAt(0));
+              if (hFloor === Number(targetFloor) || targetFloorHalls.includes(hid)) {
                 matchingHalls.push(hid);
               } else {
                 nonMatchingHalls.push(hid);
@@ -2207,18 +2367,19 @@
             const validHallsToUpdate = {};
             const newCourseCodesFound = [];
 
-            matchingHalls.sort((a,b)=>+a-+b).forEach(hid => {
+            matchingHalls.sort((a,b)=>String(a).localeCompare(String(b), undefined, {numeric: true})).forEach(hid => {
               const hallSched = rawSCH[hid];
               if (typeof hallSched !== "object") return;
               validHallsToUpdate[hid] = {};
 
               DAYS.forEach(day => {
-                const dayObj = hallSched[day] || {};
+                const fullDayName = DAY_F[day];
+                const dayObj = hallSched[day] || hallSched[fullDayName] || {};
                 validHallsToUpdate[hid][day] = {};
 
                 ALL_SLOTS.forEach(slot => {
                   const sid = String(slot.id);
-                  const entry = dayObj[sid] || { t: "free", n: "" };
+                  const entry = dayObj[sid] || dayObj[slot.label] || { t: "free", n: "" };
                   validHallsToUpdate[hid][day][sid] = entry;
                   totalSlots++;
 
@@ -2227,6 +2388,7 @@
                   else classSlots++;
 
                   if (entry.c) {
+                    if (entry.n && !rawCN[entry.c]) rawCN[entry.c] = entry.n;
                     if (!COURSE_NAMES[entry.c] && !rawCN[entry.c] && !newCourseCodesFound.includes(entry.c)) {
                       newCourseCodesFound.push(entry.c);
                     }
@@ -2237,6 +2399,7 @@
 
             setParsedUpload({
               fileName: file.name,
+              mode: "floor",
               targetFloor,
               hallsToUpdate: validHallsToUpdate,
               hallList: matchingHalls,
@@ -2264,7 +2427,12 @@
       async function executeCommit(parsedData) {
         if (!parsedData) return;
         setIsCommitting(true);
-        setCommitLog(["▶ Initializing commit for Floor " + parsedData.targetFloor + "..."]);
+        const isHallMode = parsedData.mode === "hall";
+        const descTarget = isHallMode 
+          ? `Hall ${parsedData.targetHall} (Floor ${parsedData.targetFloor})` 
+          : `Floor ${parsedData.targetFloor}`;
+
+        setCommitLog([`▶ Initializing commit for ${descTarget}...`]);
 
         const updatedSCH = { ...SCH };
         const updatedCN = { ...COURSE_NAMES, ...parsedData.newCN };
@@ -2353,14 +2521,16 @@
               throw new Error("Could not find const _SECURE_PAYLOAD in GitHub index.html");
             }
             const updatedHtml = currentHtml.replace(payloadRegex, `const _SECURE_PAYLOAD = "${encryptedPayload}";`);
-            const commitMsg = `Update Floor ${parsedData.targetFloor} timetable via Admin Portal (${parsedData.hallList.length} halls)`;
+            const commitMsg = isHallMode
+              ? `Update timetable for Hall ${parsedData.targetHall} (Floor ${parsedData.targetFloor}) via Admin Portal`
+              : `Update Floor ${parsedData.targetFloor} timetable via Admin Portal (${parsedData.hallList.length} halls)`;
 
             await updateGhFile("index.html", updatedHtml, commitMsg);
             await updateGhFile("web/index.html", updatedHtml, commitMsg);
             await updateGhFile("timetable_data.json", JSON.stringify(fullDataset, null, 2), commitMsg);
 
             setCommitLog(log => [...log, "🎉 All changes committed to GitHub! Live site will reflect updates shortly."]);
-            setToastMsg({ text: `✓ Floor ${parsedData.targetFloor} timetable updated and pushed to GitHub!`, type: "success" });
+            setToastMsg({ text: `✓ ${descTarget} timetable updated and pushed to GitHub!`, type: "success" });
           } catch (ghErr) {
             setCommitLog(log => [...log, `⚠️ GitHub Error: ${ghErr.message}`, "Changes remain active locally in this browser."]);
             setToastMsg({ text: `✓ Updated locally! (GitHub error: ${ghErr.message})`, type: "info" });
@@ -2371,7 +2541,7 @@
             "✓ Timetable updated and active in your current browser session!",
             "ℹ️ No GitHub token entered. To publish live to all users, enter your GitHub Token or download the updated JSON below."
           ]);
-          setToastMsg({ text: `✓ Floor ${parsedData.targetFloor} timetable updated in browser!`, type: "success" });
+          setToastMsg({ text: `✓ ${descTarget} timetable updated in browser!`, type: "success" });
         }
 
         setIsCommitting(false);
@@ -2518,36 +2688,80 @@
             <h3 style={{ margin: 0, color: "#f1f5f9", fontSize: 20, fontWeight: 800 }}>
               Confirm Timetable Update
             </h3>
-            <p style={{ margin: "10px 0 16px", color: "#cbd5e1", fontSize: 13, lineHeight: 1.5 }}>
-              Are you sure you want to update <strong>Floor {parsedUpload.targetFloor}</strong>?
-              This will overwrite schedules for <strong>{parsedUpload.hallList.length} halls</strong>:
-            </p>
-            <div style={{
-              background: "rgba(0,0,0,0.4)",
-              borderRadius: 12,
-              padding: "10px 14px",
-              marginBottom: 16,
-              maxHeight: 100,
-              overflowY: "auto",
-              display: "flex",
-              flexWrap: "wrap",
-              gap: 6,
-              justifyContent: "center"
-            }}>
-              {parsedUpload.hallList.map(h => (
-                <span key={h} style={{
-                  background: "rgba(139,92,246,0.3)",
-                  border: "1px solid rgba(167,139,250,0.4)",
-                  color: "#e9d5ff",
-                  fontSize: 11,
-                  fontWeight: 700,
-                  padding: "2px 8px",
-                  borderRadius: 10
+            {parsedUpload.mode === "hall" ? (
+              <React.Fragment>
+                <p style={{ margin: "10px 0 16px", color: "#cbd5e1", fontSize: 13, lineHeight: 1.5 }}>
+                  Are you sure you want to update timetable for <strong>Hall {parsedUpload.targetHall}</strong>?
+                </p>
+                <div style={{
+                  background: "rgba(0,0,0,0.4)",
+                  borderRadius: 12,
+                  padding: "10px 14px",
+                  marginBottom: 16,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 10,
+                  flexWrap: "wrap"
                 }}>
-                  {h}
-                </span>
-              ))}
-            </div>
+                  <span style={{
+                    background: "rgba(139,92,246,0.3)",
+                    border: "1px solid rgba(167,139,250,0.4)",
+                    color: "#e9d5ff",
+                    fontSize: 12,
+                    fontWeight: 700,
+                    padding: "3px 10px",
+                    borderRadius: 10
+                  }}>
+                    Hall {parsedUpload.targetHall}
+                  </span>
+                  <span style={{ background: "rgba(34,197,94,0.2)", color: "#86efac", fontSize: 11, fontWeight: 700, padding: "3px 8px", borderRadius: 8 }}>
+                    {ordinal(parsedUpload.targetFloor)} Floor
+                  </span>
+                  <span style={{ fontSize: 11, color: "#e2e8f0" }}>
+                    {parsedUpload.targetProj ? "📽️ Projector" : "🪑 No Projector"}
+                  </span>
+                  {parsedUpload.isNewHall && (
+                    <span style={{ background: "rgba(245,158,11,0.2)", color: "#fde68a", fontSize: 10, fontWeight: 800, padding: "2px 8px", borderRadius: 8 }}>
+                      🆕 New Hall
+                    </span>
+                  )}
+                </div>
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+                <p style={{ margin: "10px 0 16px", color: "#cbd5e1", fontSize: 13, lineHeight: 1.5 }}>
+                  Are you sure you want to update <strong>Floor {parsedUpload.targetFloor}</strong>?
+                  This will overwrite schedules for <strong>{parsedUpload.hallList.length} halls</strong>:
+                </p>
+                <div style={{
+                  background: "rgba(0,0,0,0.4)",
+                  borderRadius: 12,
+                  padding: "10px 14px",
+                  marginBottom: 16,
+                  maxHeight: 100,
+                  overflowY: "auto",
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: 6,
+                  justifyContent: "center"
+                }}>
+                  {parsedUpload.hallList.map(h => (
+                    <span key={h} style={{
+                      background: "rgba(139,92,246,0.3)",
+                      border: "1px solid rgba(167,139,250,0.4)",
+                      color: "#e9d5ff",
+                      fontSize: 11,
+                      fontWeight: 700,
+                      padding: "2px 8px",
+                      borderRadius: 10
+                    }}>
+                      {h}
+                    </span>
+                  ))}
+                </div>
+              </React.Fragment>
+            )}
 
             <div style={{ textAlign: "left", marginBottom: 16, background: "rgba(0,0,0,0.3)", padding: "10px 12px", borderRadius: 12, border: "1px solid rgba(139,92,246,0.25)" }}>
               <label style={{ fontSize: 11, color: "#c4b5fd", fontWeight: 700, display: "block", marginBottom: 5 }}>
@@ -2616,7 +2830,26 @@
         </div>
       );
 
-      const renderAdminPortalModal = () => showAdminPortal && (
+      const renderAdminPortalModal = () => {
+        if (!showAdminPortal) return null;
+
+        const isHallMode = adminFloor === "hall";
+        const cleanInputHid = adminHallInput.trim();
+        const hallExists = Boolean(cleanInputHid && HALL_INFO[cleanInputHid]);
+        const effectiveFloor = hallExists 
+          ? HALL_INFO[cleanInputHid].floor 
+          : (adminNewHallFloor !== "" ? Number(adminNewHallFloor) : 1);
+        const effectiveProj = hallExists 
+          ? HALL_INFO[cleanInputHid].proj 
+          : adminNewHallProj;
+        const specificHallInfo = cleanInputHid ? {
+          hid: cleanInputHid,
+          floor: effectiveFloor,
+          proj: effectiveProj,
+          isNew: !hallExists
+        } : null;
+
+        return (
         <div style={{
           position: "fixed",
           inset: 0,
@@ -2667,10 +2900,10 @@
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                     <div style={{ fontSize: 17, fontWeight: 900, letterSpacing: 0.5, color: "#f1f5f9" }}>TIMETABLE MANAGEMENT</div>
                     <span style={{ background: "rgba(139,92,246,0.3)", border: "1px solid rgba(167,139,250,0.4)", color: "#c4b5fd", fontSize: 10, fontWeight: 800, padding: "2px 8px", borderRadius: 12 }}>
-                      FLOORS 1 – 5
+                      FLOORS & SPECIFIC HALLS
                     </span>
                   </div>
-                  <div style={{ fontSize: 11, color: THEME.mutedText, marginTop: 2 }}>Upload and commit floor timetable JSON files</div>
+                  <div style={{ fontSize: 11, color: THEME.mutedText, marginTop: 2 }}>Upload and commit floor or individual hall timetable JSON files</div>
                 </div>
               </div>
 
@@ -2707,12 +2940,12 @@
               </div>
             </div>
 
-            {/* Floor Option Bar (1 to 5) */}
+            {/* Floor & Individual Hall Option Bar */}
             <div style={{ marginBottom: 18 }}>
               <div style={{ fontSize: 11, fontWeight: 700, color: "#c4b5fd", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
-                <span>🏛️</span> <span>Select Floor to Upload:</span>
+                <span>🏛️</span> <span>Select Floor or Individual Hall:</span>
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 8 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(95px, 1fr))", gap: 8 }}>
                 {[1, 2, 3, 4, 5].map(f => {
                   const isSel = adminFloor === f;
                   const count = floorHalls(f).length;
@@ -2744,69 +2977,325 @@
                     </button>
                   );
                 })}
-              </div>
-            </div>
-
-            {/* Current Floor Info Card */}
-            <div style={{
-              background: "rgba(0,0,0,0.35)",
-              border: "1px solid rgba(139,92,246,0.25)",
-              borderRadius: 16,
-              padding: "14px 18px",
-              marginBottom: 18
-            }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8, marginBottom: 10 }}>
-                <div>
-                  <div style={{ fontSize: 14, fontWeight: 800, color: "#f1f5f9" }}>
-                    Floor {adminFloor} Halls
-                  </div>
-                  <div style={{ fontSize: 11, color: THEME.mutedText }}>
-                    {floorHalls(adminFloor).length} halls registered ({floorHalls(adminFloor).filter(h => SCH[h]).length} active in timetable)
-                  </div>
-                </div>
-
-                <button 
-                  onClick={() => downloadFloorTemplate(adminFloor)}
-                  style={{
-                    ...bBtn("rgba(139,92,246,0.2)", "#e9d5ff"),
-                    border: "1px solid rgba(167,139,250,0.4)",
-                    padding: "6px 14px",
-                    borderRadius: 12,
-                    fontSize: 11,
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: 6
+                <button
+                  onClick={() => {
+                    setAdminFloor("hall");
+                    setUploadedFile(null);
+                    setParsedUpload(null);
+                    setUploadError(null);
+                    setCommitLog([]);
                   }}
-                  title="Download clean JSON schema pre-filled with this floor's current schedule">
-                  <span>📥</span> <span>Download Current Floor {adminFloor} JSON</span>
+                  style={{
+                    padding: "10px 4px",
+                    borderRadius: 14,
+                    border: `1.5px solid ${isHallMode ? "#8b5cf6" : "rgba(139,92,246,0.2)"}`,
+                    background: isHallMode ? "rgba(139,92,246,0.35)" : "rgba(255,255,255,0.04)",
+                    color: isHallMode ? "#ffffff" : THEME.mutedText,
+                    fontWeight: isHallMode ? 800 : 600,
+                    fontSize: 12,
+                    cursor: "pointer",
+                    transition: "all 0.15s ease",
+                    textAlign: "center",
+                    boxShadow: isHallMode ? "0 0 15px rgba(139,92,246,0.35)" : "none"
+                  }}>
+                  <div>🏢 Individual Hall</div>
+                  <div style={{ fontSize: 10, color: isHallMode ? "#e9d5ff" : "rgba(255,255,255,0.4)", marginTop: 2 }}>Single Room</div>
                 </button>
               </div>
+            </div>
 
-              {/* Hall Chips */}
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                {floorHalls(adminFloor).map(hid => {
-                  const hasSch = !!SCH[hid];
-                  const hasProj = HALL_INFO[hid]?.proj;
-                  return (
-                    <span key={hid} style={{
-                      background: hasSch ? "rgba(139,92,246,0.18)" : "rgba(255,255,255,0.05)",
-                      border: `1px solid ${hasSch ? "rgba(139,92,246,0.4)" : "rgba(255,255,255,0.1)"}`,
-                      color: hasSch ? "#f1f5f9" : THEME.mutedText,
-                      padding: "3px 8px",
-                      borderRadius: 10,
+            {!isHallMode ? (
+              /* Current Floor Info Card */
+              <div style={{
+                background: "rgba(0,0,0,0.35)",
+                border: "1px solid rgba(139,92,246,0.25)",
+                borderRadius: 16,
+                padding: "14px 18px",
+                marginBottom: 18
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8, marginBottom: 10 }}>
+                  <div>
+                    <div style={{ fontSize: 14, fontWeight: 800, color: "#f1f5f9" }}>
+                      Floor {adminFloor} Halls
+                    </div>
+                    <div style={{ fontSize: 11, color: THEME.mutedText }}>
+                      {floorHalls(adminFloor).length} halls registered ({floorHalls(adminFloor).filter(h => SCH[h]).length} active in timetable)
+                    </div>
+                  </div>
+
+                  <button 
+                    onClick={() => downloadFloorTemplate(adminFloor)}
+                    style={{
+                      ...bBtn("rgba(139,92,246,0.2)", "#e9d5ff"),
+                      border: "1px solid rgba(167,139,250,0.4)",
+                      padding: "6px 14px",
+                      borderRadius: 12,
                       fontSize: 11,
-                      fontWeight: 700,
                       display: "inline-flex",
                       alignItems: "center",
-                      gap: 4
-                    }}>
-                      <span>{hid}</span>
-                      {hasProj && <span style={{ fontSize: 9 }}>📽️</span>}
-                    </span>
-                  );
-                })}
+                      gap: 6
+                    }}
+                    title="Download clean JSON schema pre-filled with this floor's current schedule">
+                    <span>📥</span> <span>Download Current Floor {adminFloor} JSON</span>
+                  </button>
+                </div>
+
+                {/* Hall Chips */}
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                  {floorHalls(adminFloor).map(hid => {
+                    const hasSch = !!SCH[hid];
+                    const hasProj = HALL_INFO[hid]?.proj;
+                    return (
+                      <span key={hid} style={{
+                        background: hasSch ? "rgba(139,92,246,0.18)" : "rgba(255,255,255,0.05)",
+                        border: `1px solid ${hasSch ? "rgba(139,92,246,0.4)" : "rgba(255,255,255,0.1)"}`,
+                        color: hasSch ? "#f1f5f9" : THEME.mutedText,
+                        padding: "3px 8px",
+                        borderRadius: 10,
+                        fontSize: 11,
+                        fontWeight: 700,
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 4
+                      }}>
+                        <span>{hid}</span>
+                        {hasProj && <span style={{ fontSize: 9 }}>📽️</span>}
+                      </span>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            ) : (
+              /* Specific Hall Configuration Card */
+              <div style={{
+                background: "rgba(0,0,0,0.35)",
+                border: "1.5px solid rgba(139,92,246,0.3)",
+                borderRadius: 16,
+                padding: "16px 18px",
+                marginBottom: 18
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+                  <span style={{ fontSize: 16 }}>🎯</span>
+                  <span style={{ fontSize: 14, fontWeight: 800, color: "#f1f5f9" }}>Select or Enter Individual Hall</span>
+                </div>
+
+                {/* Input + Dropdown selector */}
+                <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center", marginBottom: 14 }}>
+                  <div style={{ flex: "1 1 200px" }}>
+                    <input
+                      type="text"
+                      list="all-halls-datalist"
+                      value={adminHallInput}
+                      onChange={e => {
+                        setAdminHallInput(e.target.value);
+                        setUploadedFile(null);
+                        setParsedUpload(null);
+                        setUploadError(null);
+                      }}
+                      placeholder="Type hall (e.g. 101, 302, 601, G01)..."
+                      style={{
+                        width: "100%",
+                        padding: "10px 14px",
+                        borderRadius: 10,
+                        border: "1.5px solid rgba(139,92,246,0.4)",
+                        background: "rgba(0,0,0,0.5)",
+                        color: "#fff",
+                        fontSize: 13,
+                        fontWeight: 700,
+                        outline: "none",
+                        boxSizing: "border-box"
+                      }}
+                    />
+                    <datalist id="all-halls-datalist">
+                      {Object.keys(HALL_INFO).sort((a,b)=>String(a).localeCompare(String(b), undefined, {numeric: true})).map(hid => (
+                        <option key={hid} value={hid}>{`Hall ${hid} (Floor ${HALL_INFO[hid]?.floor})`}</option>
+                      ))}
+                    </datalist>
+                  </div>
+
+                  <select
+                    value={hallExists ? cleanInputHid : ""}
+                    onChange={e => {
+                      if (e.target.value) {
+                        setAdminHallInput(e.target.value);
+                        setUploadedFile(null);
+                        setParsedUpload(null);
+                        setUploadError(null);
+                      }
+                    }}
+                    style={{
+                      flex: "1 1 180px",
+                      padding: "10px 12px",
+                      borderRadius: 10,
+                      border: "1px solid rgba(139,92,246,0.3)",
+                      background: "#160c33",
+                      color: "#c4b5fd",
+                      fontSize: 12,
+                      fontWeight: 600,
+                      outline: "none",
+                      cursor: "pointer"
+                    }}>
+                    <option value="">— Or pick from existing halls —</option>
+                    {Object.keys(HALL_INFO).sort((a,b)=>String(a).localeCompare(String(b), undefined, {numeric: true})).map(hid => (
+                      <option key={hid} value={hid}>
+                        Hall {hid} (Floor {HALL_INFO[hid]?.floor} {HALL_INFO[hid]?.proj ? "• 📽️" : ""})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {!cleanInputHid ? (
+                  <div style={{ color: THEME.mutedText, fontSize: 12, fontStyle: "italic", padding: "4px 0" }}>
+                    ℹ️ Enter a hall number or pick one from the list above to view details, download template, or upload timetable.
+                  </div>
+                ) : hallExists ? (
+                  /* Existing Hall status card */
+                  <div style={{
+                    background: "rgba(34,197,94,0.1)",
+                    border: "1px solid rgba(34,197,94,0.35)",
+                    borderRadius: 12,
+                    padding: "12px 14px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    flexWrap: "wrap",
+                    gap: 10
+                  }}>
+                    <div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <span style={{ color: "#4ade80", fontWeight: 800, fontSize: 14 }}>✓ Existing Hall: Hall {cleanInputHid}</span>
+                        <span style={{ background: "rgba(34,197,94,0.2)", color: "#86efac", fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 8 }}>
+                          {ordinal(HALL_INFO[cleanInputHid]?.floor)} Floor
+                        </span>
+                        <span style={{ fontSize: 12 }}>
+                          {HALL_INFO[cleanInputHid]?.proj ? "📽️ Projector Available" : "🪑 No Projector"}
+                        </span>
+                      </div>
+                      <div style={{ fontSize: 11, color: THEME.mutedText, marginTop: 4 }}>
+                        {SCH[cleanInputHid] ? "Active in timetable database" : "Registered, awaiting schedule"}
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => downloadHallTemplate(cleanInputHid, HALL_INFO[cleanInputHid]?.floor, HALL_INFO[cleanInputHid]?.proj)}
+                      style={{
+                        ...bBtn("rgba(34,197,94,0.2)", "#86efac"),
+                        border: "1px solid rgba(34,197,94,0.4)",
+                        padding: "6px 14px",
+                        borderRadius: 10,
+                        fontSize: 11,
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 6
+                      }}
+                      title="Download clean JSON file pre-filled with this hall's current schedule">
+                      <span>📥</span> <span>Download Current Hall {cleanInputHid} JSON</span>
+                    </button>
+                  </div>
+                ) : (
+                  /* New Hall creation card */
+                  <div style={{
+                    background: "rgba(245,158,11,0.09)",
+                    border: "1px solid rgba(245,158,11,0.38)",
+                    borderRadius: 14,
+                    padding: "14px 16px"
+                  }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                      <span style={{ fontSize: 16 }}>🆕</span>
+                      <span style={{ color: "#fbbf24", fontWeight: 800, fontSize: 13 }}>
+                        Hall "{cleanInputHid}" is not in the system yet.
+                      </span>
+                    </div>
+                    <p style={{ margin: "0 0 12px", color: "#cbd5e1", fontSize: 12, lineHeight: 1.4 }}>
+                      Would you like to register <strong>Hall {cleanInputHid}</strong> as a new hall? Please configure its floor and projector status below:
+                    </p>
+
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginBottom: 12 }}>
+                      <div>
+                        <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: "#fbbf24", marginBottom: 5 }}>
+                          Floor Number: <span style={{ color: THEME.mutedText, fontWeight: 500 }}>(e.g. 0 for Ground, 1–5, or 6, 7...)</span>
+                        </label>
+                        <input
+                          type="number"
+                          value={adminNewHallFloor}
+                          onChange={e => setAdminNewHallFloor(e.target.value)}
+                          placeholder="Floor (0, 1, 2, 6...)"
+                          style={{
+                            width: "100%",
+                            padding: "8px 12px",
+                            borderRadius: 8,
+                            border: "1px solid rgba(245,158,11,0.4)",
+                            background: "rgba(0,0,0,0.6)",
+                            color: "#fff",
+                            fontSize: 12,
+                            outline: "none",
+                            boxSizing: "border-box"
+                          }}
+                        />
+                      </div>
+
+                      <div>
+                        <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: "#fbbf24", marginBottom: 5 }}>
+                          Projector Availability:
+                        </label>
+                        <div style={{ display: "flex", gap: 8 }}>
+                          <button
+                            type="button"
+                            onClick={() => setAdminNewHallProj(true)}
+                            style={{
+                              flex: 1,
+                              padding: "7px 10px",
+                              borderRadius: 8,
+                              border: `1px solid ${adminNewHallProj ? "#4ade80" : "rgba(255,255,255,0.15)"}`,
+                              background: adminNewHallProj ? "rgba(34,197,94,0.25)" : "rgba(255,255,255,0.05)",
+                              color: adminNewHallProj ? "#86efac" : THEME.mutedText,
+                              fontSize: 11,
+                              fontWeight: 700,
+                              cursor: "pointer"
+                            }}>
+                            📽️ Yes
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setAdminNewHallProj(false)}
+                            style={{
+                              flex: 1,
+                              padding: "7px 10px",
+                              borderRadius: 8,
+                              border: `1px solid ${!adminNewHallProj ? "#fbbf24" : "rgba(255,255,255,0.15)"}`,
+                              background: !adminNewHallProj ? "rgba(245,158,11,0.25)" : "rgba(255,255,255,0.05)",
+                              color: !adminNewHallProj ? "#fde68a" : THEME.mutedText,
+                              fontSize: 11,
+                              fontWeight: 700,
+                              cursor: "pointer"
+                            }}>
+                            🪑 No
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                      <button
+                        onClick={() => downloadHallTemplate(cleanInputHid, effectiveFloor, effectiveProj)}
+                        style={{
+                          ...bBtn("rgba(245,158,11,0.15)", "#fbbf24"),
+                          border: "1px solid rgba(245,158,11,0.35)",
+                          padding: "5px 12px",
+                          borderRadius: 8,
+                          fontSize: 11,
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: 6
+                        }}
+                        title="Download clean blank JSON template for this hall">
+                        <span>📥</span> <span>Download Blank Template for Hall {cleanInputHid} (.json)</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Dropzone / Upload area */}
             <div 
@@ -2817,17 +3306,31 @@
                 e.currentTarget.style.borderColor = "rgba(139,92,246,0.45)";
                 e.currentTarget.style.background = "rgba(139,92,246,0.06)";
                 if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-                  handleJsonFileUpload(e.dataTransfer.files[0], adminFloor);
+                  if (isHallMode) {
+                    if (!cleanInputHid) {
+                      setUploadError("Please enter or select a hall number above first.");
+                      return;
+                    }
+                    handleJsonFileUpload(e.dataTransfer.files[0], "hall", specificHallInfo);
+                  } else {
+                    handleJsonFileUpload(e.dataTransfer.files[0], adminFloor);
+                  }
                 }
               }}
-              onClick={() => document.getElementById("admin-file-upload-input")?.click()}
+              onClick={() => {
+                if (isHallMode && !cleanInputHid) {
+                  setUploadError("Please enter or select a hall number above first.");
+                  return;
+                }
+                document.getElementById("admin-file-upload-input")?.click();
+              }}
               style={{
                 border: "2px dashed rgba(139,92,246,0.45)",
                 borderRadius: 18,
                 background: "rgba(139,92,246,0.06)",
                 padding: "24px 20px",
                 textAlign: "center",
-                cursor: "pointer",
+                cursor: (isHallMode && !cleanInputHid) ? "not-allowed" : "pointer",
                 transition: "all 0.2s ease",
                 marginBottom: 16
               }}>
@@ -2838,16 +3341,26 @@
                 style={{ display: "none" }}
                 onChange={e => {
                   if (e.target.files && e.target.files[0]) {
-                    handleJsonFileUpload(e.target.files[0], adminFloor);
+                    if (isHallMode) {
+                      handleJsonFileUpload(e.target.files[0], "hall", specificHallInfo);
+                    } else {
+                      handleJsonFileUpload(e.target.files[0], adminFloor);
+                    }
                   }
                 }}
               />
               <div style={{ fontSize: 32, marginBottom: 8 }}>📁</div>
               <div style={{ fontSize: 14, fontWeight: 800, color: "#f1f5f9" }}>
-                {uploadedFile ? `Selected: ${uploadedFile.name}` : `Upload Floor ${adminFloor} Timetable (.json)`}
+                {uploadedFile 
+                  ? `Selected: ${uploadedFile.name}` 
+                  : isHallMode 
+                    ? (cleanInputHid ? `Upload Timetable for Hall ${cleanInputHid} (.json)` : `⚠️ Please enter or select a hall number above first`)
+                    : `Upload Floor ${adminFloor} Timetable (.json)`}
               </div>
               <p style={{ margin: "6px 0 0", color: THEME.mutedText, fontSize: 12 }}>
-                Drag & drop your .json file here, or click to browse
+                {isHallMode 
+                  ? (cleanInputHid ? `Drag & drop JSON file for Hall ${cleanInputHid}, or click to browse` : `Specify a hall number above before uploading`)
+                  : `Drag & drop your .json file here, or click to browse`}
               </p>
               <div style={{ fontSize: 10, color: "#a78bfa", marginTop: 8 }}>
                 ✓ Auto-validates hall numbers, days, and period slots before commit
@@ -2887,7 +3400,12 @@
               }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
                   <div style={{ color: "#4ade80", fontWeight: 800, fontSize: 13, display: "flex", alignItems: "center", gap: 6 }}>
-                    <span>✓</span> <span>Validated Floor {parsedUpload.targetFloor} Timetable ({parsedUpload.fileName})</span>
+                    <span>✓</span> 
+                    <span>
+                      {parsedUpload.mode === "hall" 
+                        ? `Validated Timetable for Hall ${parsedUpload.targetHall} (${ordinal(parsedUpload.targetFloor)} Floor)` 
+                        : `Validated Floor ${parsedUpload.targetFloor} Timetable (${parsedUpload.fileName})`}
+                    </span>
                   </div>
                   <span style={{ fontSize: 11, color: THEME.mutedText }}>Ready to commit</span>
                 </div>
@@ -3012,7 +3530,9 @@
                     borderRadius: 12,
                     boxShadow: "0 0 20px rgba(139,92,246,0.4)"
                   }}>
-                  Confirm & Commit Changes for Floor {parsedUpload.targetFloor} →
+                  {parsedUpload.mode === "hall" 
+                    ? `Confirm & Commit Changes for Hall ${parsedUpload.targetHall} →`
+                    : `Confirm & Commit Changes for Floor ${parsedUpload.targetFloor} →`}
                 </button>
               </div>
             )}
@@ -3117,8 +3637,8 @@
               )}
             </div>
           </div>
-        </div>
-      );
+        );
+      };
 
       if(screen==="landing") return(
         <div style={{minHeight:"100vh",background:"transparent",position:"relative",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",fontFamily:"'Segoe UI',system-ui,sans-serif",color:"#f8fafc",padding:24,zIndex:1}}>
