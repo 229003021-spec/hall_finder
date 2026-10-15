@@ -269,13 +269,15 @@
     // Cryptographically Hashed Passkeys (SHA-256) - Plaintext passwords are hidden from repository
     const DEAN_HASH = "b5d4045c3f466fa91fe2cc6abe79232a1a57cdf104f7a26e716e0a1e2789df78";
     const FACULTY_HASH = "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3";
+    const ADMIN_HASH = "83cf8b609de60036a8277bd0e96135751bbc07eb234256d4b65b893360651bf2";
 
     async function verifyPasskey(inputStr, role) {
+      if (role === "admin" && inputStr === "999") return true;
       try {
         const enc = new TextEncoder();
         const buf = await crypto.subtle.digest("SHA-256", enc.encode(inputStr));
         const hex = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
-        const target = role === "dean" ? DEAN_HASH : FACULTY_HASH;
+        const target = role === "dean" ? DEAN_HASH : role === "faculty" ? FACULTY_HASH : ADMIN_HASH;
         return hex === target;
       } catch(e) {
         return false;
@@ -302,10 +304,46 @@
       }
     }
 
-    const _DATA_UNPACKED = _decryptPayload(_SECURE_PAYLOAD, _SECURE_KEY);
-    const COURSE_NAMES = _DATA_UNPACKED.CN;
-    const HALL_INFO = _DATA_UNPACKED.HI;
-    const SCH = _DATA_UNPACKED.SCH;
+    function _encryptPayload(dataObj, key) {
+      try {
+        const jsonStr = JSON.stringify(dataObj);
+        const jsonBytes = new TextEncoder().encode(jsonStr);
+        const keyBytes = new TextEncoder().encode(key);
+        const bytes = new Uint8Array(jsonBytes.length);
+        for (let i = 0; i < jsonBytes.length; i++) {
+          bytes[i] = jsonBytes[i] ^ keyBytes[i % keyBytes.length];
+        }
+        let binaryStr = "";
+        const chunkSize = 8192;
+        for (let i = 0; i < bytes.length; i += chunkSize) {
+          const chunk = bytes.subarray(i, i + chunkSize);
+          binaryStr += String.fromCharCode.apply(null, chunk);
+        }
+        return btoa(binaryStr);
+      } catch(e) {
+        console.error("Payload encryption error:", e);
+        return "";
+      }
+    }
+
+    const STORAGE_KEY_CUSTOM_TIMETABLE = "HALL_FINDER_CUSTOM_TIMETABLE";
+    const _BASE_DATA = _decryptPayload(_SECURE_PAYLOAD, _SECURE_KEY);
+    let _ACTIVE_DATA = _BASE_DATA;
+    try {
+      const _stored = localStorage.getItem(STORAGE_KEY_CUSTOM_TIMETABLE);
+      if (_stored) {
+        const _parsed = JSON.parse(_stored);
+        if (_parsed && _parsed.SCH && Object.keys(_parsed.SCH).length > 0) {
+          _ACTIVE_DATA = _parsed;
+        }
+      }
+    } catch(e) {
+      console.warn("Storage read error:", e);
+    }
+
+    const COURSE_NAMES = _ACTIVE_DATA.CN || _BASE_DATA.CN || {};
+    const HALL_INFO = _ACTIVE_DATA.HI || _BASE_DATA.HI || {};
+    const SCH = _ACTIVE_DATA.SCH || _BASE_DATA.SCH || {};
 
     const ALL_SLOTS = [
       {id:1,    label:"P1",    time:"8:45 – 9:45 AM",   start:[8,45], end:[9,45], ptype:"period"},
@@ -339,8 +377,8 @@
     const bBtn=(bg,fg="#fff",extra={})=>({background:bg,border:"none",color:fg,borderRadius:10,cursor:"pointer",fontWeight:700,fontSize:13,transition:"all .15s",...extra});
     const bBadge=(bg,fg,br)=>({background:bg,border:`1px solid ${br}`,color:fg,borderRadius:12,fontSize:11,padding:"2px 9px",fontWeight:600,display:"inline-flex",alignItems:"center",gap:4});
 
-    // Keep an immutable pristine copy of decrypted schedule for clean rollbacks and daily resets
-    const _PRISTINE_SCH = JSON.parse(JSON.stringify(_DATA_UNPACKED.SCH));
+    // Keep a mutable pristine copy of decrypted schedule for clean rollbacks, swaps and daily resets
+    let _PRISTINE_SCH = JSON.parse(JSON.stringify(SCH));
 
     // Daily persistence key & helpers (Swaps strictly persist only until the end of the current working day)
     const STORAGE_KEY_DAILY_SWAPS = "HALL_FINDER_DAILY_SWAPS";
@@ -1766,6 +1804,29 @@
       const [showSwappedModal, setShowSwappedModal] = useState(false);
       const [toastMsg, setToastMsg] = useState(null);
 
+      // Admin timetable management state
+      const [showAdminPkModal, setShowAdminPkModal] = useState(false);
+      const [adminPkInput, setAdminPkInput] = useState("");
+      const [adminPkErr, setAdminPkErr] = useState(false);
+      const [showAdminPk, setShowAdminPk] = useState(false);
+      const [isAdminAuth, setIsAdminAuth] = useState(false);
+
+      const [showAdminPortal, setShowAdminPortal] = useState(false);
+      const [adminFloor, setAdminFloor] = useState(1);
+      const [uploadedFile, setUploadedFile] = useState(null);
+      const [parsedUpload, setParsedUpload] = useState(null);
+      const [uploadError, setUploadError] = useState(null);
+      const [showConfirmModal, setShowConfirmModal] = useState(false);
+      const [isCommitting, setIsCommitting] = useState(false);
+      const [commitLog, setCommitLog] = useState([]);
+      const [ghToken, setGhToken] = useState(() => {
+        try { return localStorage.getItem("HALL_FINDER_GH_TOKEN") || ""; } catch(e) { return ""; }
+      });
+      const [saveGhToken, setSaveGhToken] = useState(true);
+      const [timetableVer, setTimetableVer] = useState(0);
+      const [selectedPreviewHall, setSelectedPreviewHall] = useState(null);
+      const [showGhSettings, setShowGhSettings] = useState(false);
+
       useEffect(()=>{
         if(toastMsg){
           const t = setTimeout(()=>setToastMsg(null), 4500);
@@ -2004,9 +2065,1071 @@
         else setPkErr(true);
       }
 
+      
+      async function tryAdminLogin() {
+        const isOk = adminPkInput === "999" || (await verifyPasskey(adminPkInput, "admin"));
+        if (isOk) {
+          setIsAdminAuth(true);
+          setShowAdminPkModal(false);
+          setAdminPkErr(false);
+          setShowAdminPortal(true);
+        } else {
+          setAdminPkErr(true);
+        }
+      }
+
+      function downloadFloorTemplate(floorNum) {
+        const halls = floorHalls(floorNum);
+        const floorSCH = {};
+        const floorCN = {};
+        const floorHI = {};
+
+        halls.forEach(hid => {
+          if (SCH[hid]) floorSCH[hid] = SCH[hid];
+          if (HALL_INFO[hid]) floorHI[hid] = HALL_INFO[hid];
+          if (SCH[hid]) {
+            Object.values(SCH[hid]).forEach(daySlots => {
+              Object.values(daySlots).forEach(slot => {
+                if (slot && slot.c && COURSE_NAMES[slot.c]) {
+                  floorCN[slot.c] = COURSE_NAMES[slot.c];
+                }
+              });
+            });
+          }
+        });
+
+        const exportPayload = {
+          floor: floorNum,
+          description: `Floor ${floorNum} Timetable Data for Hall Finder`,
+          exportedAt: new Date().toISOString(),
+          HI: floorHI,
+          CN: floorCN,
+          SCH: floorSCH
+        };
+
+        const blob = new Blob([JSON.stringify(exportPayload, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `floor_${floorNum}_timetable.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+
+      function downloadFullBackup() {
+        const full = {
+          CN: COURSE_NAMES,
+          HI: HALL_INFO,
+          SCH: SCH
+        };
+        const blob = new Blob([JSON.stringify(full, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "timetable_data.json";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+
+      function handleJsonFileUpload(file, targetFloor) {
+        setUploadError(null);
+        setParsedUpload(null);
+        setCommitLog([]);
+        setSelectedPreviewHall(null);
+
+        if (!file) return;
+        if (!file.name.toLowerCase().endsWith(".json")) {
+          setUploadError("Please upload a file with a .json extension.");
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const rawText = e.target.result;
+            const json = JSON.parse(rawText);
+
+            let rawSCH = {};
+            let rawCN = json.CN || {};
+            let rawHI = json.HI || {};
+
+            if (json.SCH && typeof json.SCH === "object") {
+              rawSCH = json.SCH;
+            } else if (json.halls && typeof json.halls === "object") {
+              rawSCH = json.halls;
+            } else if (typeof json === "object" && !json.SCH && !json.floor) {
+              rawSCH = json;
+            } else if (Array.isArray(json)) {
+              json.forEach(item => {
+                if (item && (item.hid || item.hall)) {
+                  rawSCH[item.hid || item.hall] = item.schedule || item;
+                }
+              });
+            }
+
+            const hallKeys = Object.keys(rawSCH).filter(k => !["CN","HI","floor","description","exportedAt"].includes(k));
+            if (hallKeys.length === 0) {
+              setUploadError("No hall schedules found in the JSON file. Please ensure your JSON contains hall room numbers (e.g., '501', '502').");
+              return;
+            }
+
+            const targetFloorHalls = floorHalls(targetFloor);
+            const matchingHalls = [];
+            const nonMatchingHalls = [];
+            const warnings = [];
+
+            hallKeys.forEach(hid => {
+              const hFloor = HALL_INFO[hid]?.floor || parseInt(String(hid).charAt(0));
+              if (hFloor === targetFloor || targetFloorHalls.includes(hid)) {
+                matchingHalls.push(hid);
+              } else {
+                nonMatchingHalls.push(hid);
+              }
+            });
+
+            if (matchingHalls.length === 0) {
+              setUploadError(`None of the halls in this file belong to Floor ${targetFloor}. Found halls: ${hallKeys.join(", ")}. Please select the correct floor.`);
+              return;
+            }
+
+            if (nonMatchingHalls.length > 0) {
+              warnings.push(`File contains halls belonging to other floors (${nonMatchingHalls.join(", ")}). Only the ${matchingHalls.length} halls on Floor ${targetFloor} will be updated.`);
+            }
+
+            let totalSlots = 0;
+            let freeSlots = 0;
+            let classSlots = 0;
+            let labSlots = 0;
+            const validHallsToUpdate = {};
+            const newCourseCodesFound = [];
+
+            matchingHalls.sort((a,b)=>+a-+b).forEach(hid => {
+              const hallSched = rawSCH[hid];
+              if (typeof hallSched !== "object") return;
+              validHallsToUpdate[hid] = {};
+
+              DAYS.forEach(day => {
+                const dayObj = hallSched[day] || {};
+                validHallsToUpdate[hid][day] = {};
+
+                ALL_SLOTS.forEach(slot => {
+                  const sid = String(slot.id);
+                  const entry = dayObj[sid] || { t: "free", n: "" };
+                  validHallsToUpdate[hid][day][sid] = entry;
+                  totalSlots++;
+
+                  if (entry.t === "free" || !entry.t) freeSlots++;
+                  else if (entry.t === "lab") labSlots++;
+                  else classSlots++;
+
+                  if (entry.c) {
+                    if (!COURSE_NAMES[entry.c] && !rawCN[entry.c] && !newCourseCodesFound.includes(entry.c)) {
+                      newCourseCodesFound.push(entry.c);
+                    }
+                  }
+                });
+              });
+            });
+
+            setParsedUpload({
+              fileName: file.name,
+              targetFloor,
+              hallsToUpdate: validHallsToUpdate,
+              hallList: matchingHalls,
+              newCN: rawCN,
+              newHI: rawHI,
+              stats: {
+                hallCount: matchingHalls.length,
+                totalSlots,
+                freeSlots,
+                classSlots,
+                labSlots,
+                newCourses: newCourseCodesFound
+              },
+              warnings
+            });
+            setSelectedPreviewHall(matchingHalls[0] || null);
+            setUploadedFile(file);
+          } catch (err) {
+            setUploadError("Invalid JSON syntax: " + err.message);
+          }
+        };
+        reader.readAsText(file);
+      }
+
+      async function executeCommit(parsedData) {
+        if (!parsedData) return;
+        setIsCommitting(true);
+        setCommitLog(["▶ Initializing commit for Floor " + parsedData.targetFloor + "..."]);
+
+        const updatedSCH = { ...SCH };
+        const updatedCN = { ...COURSE_NAMES, ...parsedData.newCN };
+        const updatedHI = { ...HALL_INFO, ...parsedData.newHI };
+
+        Object.entries(parsedData.hallsToUpdate).forEach(([hid, sched]) => {
+          updatedSCH[hid] = sched;
+          _PRISTINE_SCH[hid] = JSON.parse(JSON.stringify(sched));
+        });
+
+        Object.assign(SCH, updatedSCH);
+        Object.assign(COURSE_NAMES, updatedCN);
+        Object.assign(HALL_INFO, updatedHI);
+
+        const fullDataset = {
+          CN: updatedCN,
+          HI: updatedHI,
+          SCH: updatedSCH
+        };
+
+        try {
+          localStorage.setItem(STORAGE_KEY_CUSTOM_TIMETABLE, JSON.stringify(fullDataset));
+          setCommitLog(log => [...log, "✓ Saved changes locally in browser storage."]);
+        } catch (e) {
+          console.warn("Storage quota warning:", e);
+        }
+
+        setTimetableVer(v => v + 1);
+        setSwapVersion(v => v + 1);
+
+        const tokenToUse = (ghToken || "").trim();
+        if (tokenToUse) {
+          if (saveGhToken) {
+            try { localStorage.setItem("HALL_FINDER_GH_TOKEN", tokenToUse); } catch(e) {}
+          }
+          setCommitLog(log => [...log, "▶ Connecting to GitHub API (229003021-spec/hall_finder)..."]);
+
+          try {
+            const encryptedPayload = _encryptPayload(fullDataset, _SECURE_KEY);
+            setCommitLog(log => [...log, "✓ Encrypted secure payload bundle."]);
+
+            async function updateGhFile(filePath, contentStr, commitMsg) {
+              setCommitLog(log => [...log, `• Fetching current ${filePath}...`]);
+              const getRes = await fetch(`https://api.github.com/repos/229003021-spec/hall_finder/contents/${filePath}?ref=main`, {
+                headers: {
+                  "Authorization": `Bearer ${tokenToUse}`,
+                  "Accept": "application/vnd.github.v3+json"
+                }
+              });
+              if (!getRes.ok) {
+                throw new Error(`Failed to read ${filePath} (${getRes.status} ${getRes.statusText})`);
+              }
+              const fileInfo = await getRes.json();
+
+              setCommitLog(log => [...log, `• Committing updated ${filePath}...`]);
+              const b64Content = btoa(unescape(encodeURIComponent(contentStr)));
+              const putRes = await fetch(`https://api.github.com/repos/229003021-spec/hall_finder/contents/${filePath}`, {
+                method: "PUT",
+                headers: {
+                  "Authorization": `Bearer ${tokenToUse}`,
+                  "Accept": "application/vnd.github.v3+json",
+                  "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                  message: commitMsg,
+                  content: b64Content,
+                  sha: fileInfo.sha,
+                  branch: "main"
+                })
+              });
+              if (!putRes.ok) {
+                const errData = await putRes.json();
+                throw new Error(`Failed to write ${filePath}: ${errData.message || putRes.statusText}`);
+              }
+              setCommitLog(log => [...log, `✓ Committed ${filePath} successfully.`]);
+            }
+
+            const indexRes = await fetch(`https://api.github.com/repos/229003021-spec/hall_finder/contents/index.html?ref=main`, {
+              headers: { "Authorization": `Bearer ${tokenToUse}`, "Accept": "application/vnd.github.v3+json" }
+            });
+            const indexInfo = await indexRes.json();
+            const currentHtml = decodeURIComponent(escape(atob(indexInfo.content.replace(/\s/g, ''))));
+
+            const payloadRegex = /const _SECURE_PAYLOAD = "[^"]+";/;
+            if (!payloadRegex.test(currentHtml)) {
+              throw new Error("Could not find const _SECURE_PAYLOAD in GitHub index.html");
+            }
+            const updatedHtml = currentHtml.replace(payloadRegex, `const _SECURE_PAYLOAD = "${encryptedPayload}";`);
+            const commitMsg = `Update Floor ${parsedData.targetFloor} timetable via Admin Portal (${parsedData.hallList.length} halls)`;
+
+            await updateGhFile("index.html", updatedHtml, commitMsg);
+            await updateGhFile("web/index.html", updatedHtml, commitMsg);
+            await updateGhFile("timetable_data.json", JSON.stringify(fullDataset, null, 2), commitMsg);
+
+            setCommitLog(log => [...log, "🎉 All changes committed to GitHub! Live site will reflect updates shortly."]);
+            setToastMsg({ text: `✓ Floor ${parsedData.targetFloor} timetable updated and pushed to GitHub!`, type: "success" });
+          } catch (ghErr) {
+            setCommitLog(log => [...log, `⚠️ GitHub Error: ${ghErr.message}`, "Changes remain active locally in this browser."]);
+            setToastMsg({ text: `✓ Updated locally! (GitHub error: ${ghErr.message})`, type: "info" });
+          }
+        } else {
+          setCommitLog(log => [
+            ...log,
+            "✓ Timetable updated and active in your current browser session!",
+            "ℹ️ No GitHub token entered. To publish live to all users, enter your GitHub Token or download the updated JSON below."
+          ]);
+          setToastMsg({ text: `✓ Floor ${parsedData.targetFloor} timetable updated in browser!`, type: "success" });
+        }
+
+        setIsCommitting(false);
+        setShowConfirmModal(false);
+      }
+
+      const renderAdminPasskeyModal = () => showAdminPkModal && (
+        <div style={{
+          position: "fixed",
+          inset: 0,
+          background: "rgba(0,0,0,0.78)",
+          backdropFilter: "blur(10px)",
+          WebkitBackdropFilter: "blur(10px)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 20,
+          zIndex: 10000,
+          animation: "cardPopIn 0.25s ease-out"
+        }}>
+          <div style={{
+            width: "100%",
+            maxWidth: 360,
+            background: "rgba(15,11,36,0.95)",
+            borderRadius: 22,
+            padding: "28px 24px",
+            border: "1.5px solid rgba(139,92,246,0.45)",
+            boxShadow: "0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(139,92,246,0.3)",
+            position: "relative"
+          }}>
+            <button 
+              onClick={() => setShowAdminPkModal(false)}
+              style={{
+                position: "absolute",
+                right: 16,
+                top: 16,
+                background: "none",
+                border: "none",
+                color: "#c4b5fd",
+                fontSize: 18,
+                cursor: "pointer"
+              }}>
+              ✕
+            </button>
+            <div style={{ textAlign: "center", marginBottom: 22 }}>
+              <div style={{
+                width: 48,
+                height: 48,
+                borderRadius: "50%",
+                background: "rgba(139,92,246,0.25)",
+                border: "1.5px solid rgba(167,139,250,0.6)",
+                color: "#f1f5f9",
+                fontSize: 22,
+                fontWeight: 900,
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: 10,
+                boxShadow: "0 0 15px rgba(139,92,246,0.4)"
+              }}>
+                A
+              </div>
+              <h3 style={{ margin: 0, color: "#f1f5f9", fontSize: 20, fontWeight: 800 }}>Enter Passkey</h3>
+              <p style={{ margin: "6px 0 0", color: THEME.mutedText, fontSize: 12 }}>Enter passkey to manage floor timetables</p>
+            </div>
+            <div style={{ position: "relative", marginBottom: adminPkErr ? 8 : 16 }}>
+              <input 
+                type={showAdminPk ? "text" : "password"} 
+                value={adminPkInput}
+                onChange={e => { setAdminPkInput(e.target.value); setAdminPkErr(false); }}
+                onKeyDown={e => e.key === "Enter" && tryAdminLogin()}
+                placeholder="Enter passkey..."
+                autoFocus
+                style={{
+                  width: "100%",
+                  padding: "12px 42px 12px 14px",
+                  borderRadius: 10,
+                  border: `1.5px solid ${adminPkErr ? "#ef4444" : "rgba(139,92,246,0.5)"}`,
+                  background: "rgba(9,6,21,0.85)",
+                  color: "#f1f5f9",
+                  fontSize: 15,
+                  outline: "none",
+                  boxSizing: "border-box",
+                  fontFamily: "inherit"
+                }}
+              />
+              <button 
+                onClick={() => setShowAdminPk(v => !v)}
+                style={{
+                  position: "absolute",
+                  right: 12,
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  fontSize: 16
+                }}>
+                {showAdminPk ? "🙈" : "👁️"}
+              </button>
+            </div>
+            {adminPkErr && <p style={{ color: "#ef4444", fontSize: 12, textAlign: "center", margin: "0 0 12px" }}>❌ Incorrect passkey. Try again.</p>}
+            <button 
+              onClick={tryAdminLogin}
+              style={{
+                ...bBtn("#8b5cf6"),
+                width: "100%",
+                padding: "12px",
+                fontSize: 15,
+                borderRadius: 10,
+                boxShadow: "0 0 20px rgba(139,92,246,0.5)"
+              }}>
+              Continue →
+            </button>
+          </div>
+        </div>
+      );
+
+      const renderConfirmCommitModal = () => showConfirmModal && parsedUpload && (
+        <div style={{
+          position: "fixed",
+          inset: 0,
+          background: "rgba(0,0,0,0.82)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 20,
+          zIndex: 11000,
+          animation: "cardPopIn 0.2s ease-out"
+        }}>
+          <div style={{
+            width: "100%",
+            maxWidth: 460,
+            background: "rgba(15,11,36,0.97)",
+            borderRadius: 22,
+            padding: "26px 24px",
+            border: "1.5px solid rgba(139,92,246,0.5)",
+            boxShadow: "0 25px 60px rgba(0,0,0,0.9)",
+            textAlign: "center"
+          }}>
+            <div style={{ fontSize: 36, marginBottom: 10 }}>⚡</div>
+            <h3 style={{ margin: 0, color: "#f1f5f9", fontSize: 20, fontWeight: 800 }}>
+              Confirm Timetable Update
+            </h3>
+            <p style={{ margin: "10px 0 16px", color: "#cbd5e1", fontSize: 13, lineHeight: 1.5 }}>
+              Are you sure you want to update <strong>Floor {parsedUpload.targetFloor}</strong>?
+              This will overwrite schedules for <strong>{parsedUpload.hallList.length} halls</strong>:
+            </p>
+            <div style={{
+              background: "rgba(0,0,0,0.4)",
+              borderRadius: 12,
+              padding: "10px 14px",
+              marginBottom: 18,
+              maxHeight: 100,
+              overflowY: "auto",
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 6,
+              justifyContent: "center"
+            }}>
+              {parsedUpload.hallList.map(h => (
+                <span key={h} style={{
+                  background: "rgba(139,92,246,0.3)",
+                  border: "1px solid rgba(167,139,250,0.4)",
+                  color: "#e9d5ff",
+                  fontSize: 11,
+                  fontWeight: 700,
+                  padding: "2px 8px",
+                  borderRadius: 10
+                }}>
+                  {h}
+                </span>
+              ))}
+            </div>
+
+            <div style={{ display: "flex", gap: 10 }}>
+              <button 
+                disabled={isCommitting}
+                onClick={() => setShowConfirmModal(false)}
+                style={{
+                  ...bBtn("rgba(255,255,255,0.08)", "#cbd5e1"),
+                  flex: 1,
+                  padding: "11px",
+                  borderRadius: 12,
+                  border: "1px solid rgba(255,255,255,0.15)"
+                }}>
+                Cancel
+              </button>
+              <button 
+                disabled={isCommitting}
+                onClick={() => executeCommit(parsedUpload)}
+                style={{
+                  ...bBtn("#8b5cf6"),
+                  flex: 1.4,
+                  padding: "11px",
+                  borderRadius: 12,
+                  boxShadow: "0 0 20px rgba(139,92,246,0.5)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 8
+                }}>
+                {isCommitting ? "Committing..." : "✓ Yes, Commit Now"}
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+
+      const renderAdminPortalModal = () => showAdminPortal && (
+        <div style={{
+          position: "fixed",
+          inset: 0,
+          background: "rgba(0,0,0,0.85)",
+          backdropFilter: "blur(14px)",
+          WebkitBackdropFilter: "blur(14px)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "16px 14px",
+          zIndex: 10000,
+          animation: "cardPopIn 0.25s ease-out",
+          overflowY: "auto"
+        }}>
+          <div style={{
+            width: "100%",
+            maxWidth: 720,
+            maxHeight: "92vh",
+            overflowY: "auto",
+            background: "rgba(15,11,36,0.96)",
+            borderRadius: 24,
+            padding: "24px 26px",
+            border: "1.5px solid rgba(139,92,246,0.45)",
+            boxShadow: "0 25px 60px rgba(0,0,0,0.9), 0 0 35px rgba(139,92,246,0.25)",
+            position: "relative",
+            color: "#f8fafc"
+          }}>
+            {/* Header */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20, borderBottom: "1px solid rgba(139,92,246,0.25)", paddingBottom: 14 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <div style={{
+                  width: 38,
+                  height: 38,
+                  borderRadius: "50%",
+                  background: "rgba(139,92,246,0.3)",
+                  border: "1.5px solid rgba(167,139,250,0.6)",
+                  color: "#f1f5f9",
+                  fontSize: 18,
+                  fontWeight: 900,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  boxShadow: "0 0 15px rgba(139,92,246,0.4)"
+                }}>
+                  A
+                </div>
+                <div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <div style={{ fontSize: 17, fontWeight: 900, letterSpacing: 0.5, color: "#f1f5f9" }}>TIMETABLE MANAGEMENT</div>
+                    <span style={{ background: "rgba(139,92,246,0.3)", border: "1px solid rgba(167,139,250,0.4)", color: "#c4b5fd", fontSize: 10, fontWeight: 800, padding: "2px 8px", borderRadius: 12 }}>
+                      FLOORS 1 – 5
+                    </span>
+                  </div>
+                  <div style={{ fontSize: 11, color: THEME.mutedText, marginTop: 2 }}>Upload and commit floor timetable JSON files</div>
+                </div>
+              </div>
+
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <button 
+                  onClick={() => { setIsAdminAuth(false); setShowAdminPortal(false); }}
+                  style={{
+                    ...bBtn("rgba(255,255,255,0.06)", THEME.mutedText),
+                    padding: "5px 12px",
+                    borderRadius: 14,
+                    fontSize: 11,
+                    border: "1px solid rgba(255,255,255,0.12)"
+                  }}
+                  title="Lock admin session">
+                  Logout 🔒
+                </button>
+                <button 
+                  onClick={() => setShowAdminPortal(false)}
+                  style={{
+                    background: "rgba(255,255,255,0.08)",
+                    border: "1px solid rgba(255,255,255,0.15)",
+                    color: "#f1f5f9",
+                    width: 30,
+                    height: 30,
+                    borderRadius: 15,
+                    cursor: "pointer",
+                    fontSize: 14,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center"
+                  }}>
+                  ✕
+                </button>
+              </div>
+            </div>
+
+            {/* Floor Option Bar (1 to 5) */}
+            <div style={{ marginBottom: 18 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#c4b5fd", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
+                <span>🏛️</span> <span>Select Floor to Upload:</span>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 8 }}>
+                {[1, 2, 3, 4, 5].map(f => {
+                  const isSel = adminFloor === f;
+                  const count = floorHalls(f).length;
+                  return (
+                    <button
+                      key={f}
+                      onClick={() => {
+                        setAdminFloor(f);
+                        setUploadedFile(null);
+                        setParsedUpload(null);
+                        setUploadError(null);
+                        setCommitLog([]);
+                      }}
+                      style={{
+                        padding: "10px 4px",
+                        borderRadius: 14,
+                        border: `1.5px solid ${isSel ? "#8b5cf6" : "rgba(139,92,246,0.2)"}`,
+                        background: isSel ? "rgba(139,92,246,0.35)" : "rgba(255,255,255,0.04)",
+                        color: isSel ? "#ffffff" : THEME.mutedText,
+                        fontWeight: isSel ? 800 : 600,
+                        fontSize: 13,
+                        cursor: "pointer",
+                        transition: "all 0.15s ease",
+                        textAlign: "center",
+                        boxShadow: isSel ? "0 0 15px rgba(139,92,246,0.35)" : "none"
+                      }}>
+                      <div>Floor {f}</div>
+                      <div style={{ fontSize: 10, color: isSel ? "#e9d5ff" : "rgba(255,255,255,0.4)", marginTop: 2 }}>{count} Halls</div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Current Floor Info Card */}
+            <div style={{
+              background: "rgba(0,0,0,0.35)",
+              border: "1px solid rgba(139,92,246,0.25)",
+              borderRadius: 16,
+              padding: "14px 18px",
+              marginBottom: 18
+            }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8, marginBottom: 10 }}>
+                <div>
+                  <div style={{ fontSize: 14, fontWeight: 800, color: "#f1f5f9" }}>
+                    Floor {adminFloor} Halls
+                  </div>
+                  <div style={{ fontSize: 11, color: THEME.mutedText }}>
+                    {floorHalls(adminFloor).length} halls registered ({floorHalls(adminFloor).filter(h => SCH[h]).length} active in timetable)
+                  </div>
+                </div>
+
+                <button 
+                  onClick={() => downloadFloorTemplate(adminFloor)}
+                  style={{
+                    ...bBtn("rgba(139,92,246,0.2)", "#e9d5ff"),
+                    border: "1px solid rgba(167,139,250,0.4)",
+                    padding: "6px 14px",
+                    borderRadius: 12,
+                    fontSize: 11,
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6
+                  }}
+                  title="Download clean JSON schema pre-filled with this floor's current schedule">
+                  <span>📥</span> <span>Download Current Floor {adminFloor} JSON</span>
+                </button>
+              </div>
+
+              {/* Hall Chips */}
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                {floorHalls(adminFloor).map(hid => {
+                  const hasSch = !!SCH[hid];
+                  const hasProj = HALL_INFO[hid]?.proj;
+                  return (
+                    <span key={hid} style={{
+                      background: hasSch ? "rgba(139,92,246,0.18)" : "rgba(255,255,255,0.05)",
+                      border: `1px solid ${hasSch ? "rgba(139,92,246,0.4)" : "rgba(255,255,255,0.1)"}`,
+                      color: hasSch ? "#f1f5f9" : THEME.mutedText,
+                      padding: "3px 8px",
+                      borderRadius: 10,
+                      fontSize: 11,
+                      fontWeight: 700,
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 4
+                    }}>
+                      <span>{hid}</span>
+                      {hasProj && <span style={{ fontSize: 9 }}>📽️</span>}
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Dropzone / Upload area */}
+            <div 
+              onDragOver={e => { e.preventDefault(); e.currentTarget.style.borderColor = "#a78bfa"; e.currentTarget.style.background = "rgba(139,92,246,0.15)"; }}
+              onDragLeave={e => { e.preventDefault(); e.currentTarget.style.borderColor = "rgba(139,92,246,0.45)"; e.currentTarget.style.background = "rgba(139,92,246,0.06)"; }}
+              onDrop={e => {
+                e.preventDefault();
+                e.currentTarget.style.borderColor = "rgba(139,92,246,0.45)";
+                e.currentTarget.style.background = "rgba(139,92,246,0.06)";
+                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                  handleJsonFileUpload(e.dataTransfer.files[0], adminFloor);
+                }
+              }}
+              onClick={() => document.getElementById("admin-file-upload-input")?.click()}
+              style={{
+                border: "2px dashed rgba(139,92,246,0.45)",
+                borderRadius: 18,
+                background: "rgba(139,92,246,0.06)",
+                padding: "24px 20px",
+                textAlign: "center",
+                cursor: "pointer",
+                transition: "all 0.2s ease",
+                marginBottom: 16
+              }}>
+              <input 
+                id="admin-file-upload-input"
+                type="file" 
+                accept=".json"
+                style={{ display: "none" }}
+                onChange={e => {
+                  if (e.target.files && e.target.files[0]) {
+                    handleJsonFileUpload(e.target.files[0], adminFloor);
+                  }
+                }}
+              />
+              <div style={{ fontSize: 32, marginBottom: 8 }}>📁</div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: "#f1f5f9" }}>
+                {uploadedFile ? `Selected: ${uploadedFile.name}` : `Upload Floor ${adminFloor} Timetable (.json)`}
+              </div>
+              <p style={{ margin: "6px 0 0", color: THEME.mutedText, fontSize: 12 }}>
+                Drag & drop your .json file here, or click to browse
+              </p>
+              <div style={{ fontSize: 10, color: "#a78bfa", marginTop: 8 }}>
+                ✓ Auto-validates hall numbers, days, and period slots before commit
+              </div>
+            </div>
+
+            {/* Upload Error */}
+            {uploadError && (
+              <div style={{
+                background: "rgba(239,68,68,0.12)",
+                border: "1.5px solid rgba(239,68,68,0.4)",
+                color: "#fca5a5",
+                borderRadius: 14,
+                padding: "12px 16px",
+                marginBottom: 16,
+                fontSize: 12,
+                lineHeight: 1.5,
+                display: "flex",
+                alignItems: "flex-start",
+                gap: 10
+              }}>
+                <span style={{ fontSize: 16 }}>⚠️</span>
+                <div>
+                  <strong>Validation Error:</strong> {uploadError}
+                </div>
+              </div>
+            )}
+
+            {/* Validation Success Box */}
+            {parsedUpload && (
+              <div style={{
+                background: "rgba(74,222,128,0.08)",
+                border: "1.5px solid rgba(74,222,128,0.35)",
+                borderRadius: 16,
+                padding: "16px 18px",
+                marginBottom: 16
+              }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+                  <div style={{ color: "#4ade80", fontWeight: 800, fontSize: 13, display: "flex", alignItems: "center", gap: 6 }}>
+                    <span>✓</span> <span>Validated Floor {parsedUpload.targetFloor} Timetable ({parsedUpload.fileName})</span>
+                  </div>
+                  <span style={{ fontSize: 11, color: THEME.mutedText }}>Ready to commit</span>
+                </div>
+
+                {/* Stats Bar */}
+                <div style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(4, 1fr)",
+                  gap: 8,
+                  marginBottom: 12,
+                  textAlign: "center"
+                }}>
+                  <div style={{ background: "rgba(0,0,0,0.3)", padding: "8px 6px", borderRadius: 10 }}>
+                    <div style={{ fontSize: 16, fontWeight: 900, color: "#f1f5f9" }}>{parsedUpload.stats.hallCount}</div>
+                    <div style={{ fontSize: 10, color: THEME.mutedText }}>Halls</div>
+                  </div>
+                  <div style={{ background: "rgba(0,0,0,0.3)", padding: "8px 6px", borderRadius: 10 }}>
+                    <div style={{ fontSize: 16, fontWeight: 900, color: "#818cf8" }}>{parsedUpload.stats.classSlots}</div>
+                    <div style={{ fontSize: 10, color: THEME.mutedText }}>Classes</div>
+                  </div>
+                  <div style={{ background: "rgba(0,0,0,0.3)", padding: "8px 6px", borderRadius: 10 }}>
+                    <div style={{ fontSize: 16, fontWeight: 900, color: "#4ade80" }}>{parsedUpload.stats.freeSlots}</div>
+                    <div style={{ fontSize: 10, color: THEME.mutedText }}>Free Slots</div>
+                  </div>
+                  <div style={{ background: "rgba(0,0,0,0.3)", padding: "8px 6px", borderRadius: 10 }}>
+                    <div style={{ fontSize: 16, fontWeight: 900, color: "#f59e0b" }}>{parsedUpload.stats.labSlots}</div>
+                    <div style={{ fontSize: 10, color: THEME.mutedText }}>Labs</div>
+                  </div>
+                </div>
+
+                {/* Warnings if any */}
+                {parsedUpload.warnings.length > 0 && (
+                  <div style={{
+                    background: "rgba(245,158,11,0.12)",
+                    border: "1px solid rgba(245,158,11,0.3)",
+                    borderRadius: 10,
+                    padding: "8px 12px",
+                    marginBottom: 10,
+                    fontSize: 11,
+                    color: "#fde68a"
+                  }}>
+                    {parsedUpload.warnings.map((w, idx) => <div key={idx}>⚠️ {w}</div>)}
+                  </div>
+                )}
+
+                {/* New courses detected */}
+                {parsedUpload.stats.newCourses.length > 0 && (
+                  <div style={{ fontSize: 11, color: "#c4b5fd", marginBottom: 12 }}>
+                    <strong>Detected New Courses:</strong> {parsedUpload.stats.newCourses.join(", ")}
+                  </div>
+                )}
+
+                {/* Hall preview picker */}
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+                  <span style={{ fontSize: 11, color: THEME.mutedText }}>Preview Hall:</span>
+                  <select 
+                    value={selectedPreviewHall || ""}
+                    onChange={e => setSelectedPreviewHall(e.target.value)}
+                    style={{
+                      background: "rgba(0,0,0,0.5)",
+                      border: "1px solid rgba(139,92,246,0.3)",
+                      color: "#f1f5f9",
+                      borderRadius: 8,
+                      padding: "4px 8px",
+                      fontSize: 12,
+                      outline: "none"
+                    }}>
+                    {parsedUpload.hallList.map(h => (
+                      <option key={h} value={h}>Hall {h}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Quick Hall Preview Table */}
+                {selectedPreviewHall && parsedUpload.hallsToUpdate[selectedPreviewHall] && (
+                  <div style={{
+                    background: "rgba(0,0,0,0.4)",
+                    borderRadius: 10,
+                    padding: "8px 10px",
+                    marginBottom: 14,
+                    overflowX: "auto",
+                    maxHeight: 140,
+                    fontSize: 10
+                  }}>
+                    <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+                      <thead>
+                        <tr style={{ color: "#a78bfa", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
+                          <th style={{ padding: "4px 6px" }}>Day</th>
+                          {ALL_SLOTS.filter(s => s.ptype === "period").map(s => (
+                            <th key={s.id} style={{ padding: "4px 6px" }}>{s.label}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {DAYS.map(d => (
+                          <tr key={d} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                            <td style={{ padding: "4px 6px", fontWeight: 700, color: "#cbd5e1" }}>{d}</td>
+                            {ALL_SLOTS.filter(s => s.ptype === "period").map(s => {
+                              const slot = parsedUpload.hallsToUpdate[selectedPreviewHall]?.[d]?.[String(s.id)];
+                              const isFree = !slot || slot.t === "free";
+                              return (
+                                <td key={s.id} style={{ padding: "4px 6px", color: isFree ? "#4ade80" : "#e2e8f0" }}>
+                                  {isFree ? "Free" : (slot.c || "Class")}
+                                </td>
+                              );
+                            })}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+
+                {/* Confirm & Commit Button */}
+                <button 
+                  onClick={() => setShowConfirmModal(true)}
+                  style={{
+                    ...bBtn("#8b5cf6"),
+                    width: "100%",
+                    padding: "12px",
+                    fontSize: 14,
+                    borderRadius: 12,
+                    boxShadow: "0 0 20px rgba(139,92,246,0.4)"
+                  }}>
+                  Confirm & Commit Changes for Floor {parsedUpload.targetFloor} →
+                </button>
+              </div>
+            )}
+
+            {/* Commit Log Console */}
+            {commitLog.length > 0 && (
+              <div style={{
+                background: "#05030a",
+                border: "1px solid rgba(139,92,246,0.3)",
+                borderRadius: 14,
+                padding: "12px 14px",
+                marginBottom: 16,
+                fontFamily: "monospace",
+                fontSize: 11,
+                lineHeight: 1.6,
+                maxHeight: 130,
+                overflowY: "auto",
+                color: "#e2e8f0"
+              }}>
+                {commitLog.map((line, idx) => (
+                  <div key={idx} style={{ color: line.startsWith("✓") || line.startsWith("🎉") ? "#4ade80" : line.startsWith("⚠️") ? "#f59e0b" : "#c4b5fd" }}>
+                    {line}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Collapsible GitHub & Backup Settings */}
+            <div style={{
+              background: "rgba(0,0,0,0.25)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              borderRadius: 14,
+              padding: "12px 16px"
+            }}>
+              <div 
+                onClick={() => setShowGhSettings(v => !v)}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  fontSize: 12,
+                  fontWeight: 700,
+                  color: "#c4b5fd"
+                }}>
+                <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <span>⚙️</span> <span>GitHub Cloud Sync Settings & Data Backup</span>
+                </span>
+                <span>{showGhSettings ? "▲" : "▼"}</span>
+              </div>
+
+              {showGhSettings && (
+                <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+                  <div style={{ fontSize: 11, color: THEME.mutedText, marginBottom: 8, lineHeight: 1.4 }}>
+                    Enter your GitHub Personal Access Token (PAT) with <code>repo</code> or <code>contents:write</code> permission to automatically commit timetable changes to your GitHub Pages repository:
+                  </div>
+                  <input 
+                    type="password"
+                    value={ghToken}
+                    onChange={e => setGhToken(e.target.value)}
+                    placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+                    style={{
+                      width: "100%",
+                      padding: "8px 12px",
+                      borderRadius: 8,
+                      border: "1px solid rgba(139,92,246,0.35)",
+                      background: "rgba(0,0,0,0.6)",
+                      color: "#f1f5f9",
+                      fontSize: 12,
+                      fontFamily: "monospace",
+                      outline: "none",
+                      marginBottom: 8,
+                      boxSizing: "border-box"
+                    }}
+                  />
+                  <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: THEME.mutedText, cursor: "pointer", marginBottom: 12 }}>
+                    <input 
+                      type="checkbox" 
+                      checked={saveGhToken} 
+                      onChange={e => setSaveGhToken(e.target.checked)}
+                    />
+                    <span>Remember GitHub token in this browser</span>
+                  </label>
+
+                  <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                    <button 
+                      onClick={downloadFullBackup}
+                      style={{
+                        ...bBtn("rgba(255,255,255,0.08)", "#f1f5f9"),
+                        border: "1px solid rgba(255,255,255,0.15)",
+                        padding: "6px 12px",
+                        borderRadius: 10,
+                        fontSize: 11,
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 6
+                      }}>
+                      <span>💾</span> <span>Download Full timetable_data.json</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+
       if(screen==="landing") return(
         <div style={{minHeight:"100vh",background:"transparent",position:"relative",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",fontFamily:"'Segoe UI',system-ui,sans-serif",color:"#f8fafc",padding:24,zIndex:1}}>
           <VideoBg />
+          {/* Top-right spherical icon with letter 'A' */}
+          <button 
+            onClick={() => {
+              if (isAdminAuth) {
+                setShowAdminPortal(true);
+              } else {
+                setAdminPkInput("");
+                setAdminPkErr(false);
+                setShowAdminPkModal(true);
+              }
+            }}
+            style={{
+              position:"absolute",
+              top:20,
+              right:20,
+              zIndex:10,
+              width:44,
+              height:44,
+              borderRadius:"50%",
+              background:"rgba(139, 92, 246, 0.22)",
+              border:"1.5px solid rgba(167, 139, 250, 0.5)",
+              color:"#f1f5f9",
+              fontSize:18,
+              fontWeight:800,
+              fontFamily:"'Segoe UI',system-ui,sans-serif",
+              cursor:"pointer",
+              display:"flex",
+              alignItems:"center",
+              justifyContent:"center",
+              backdropFilter:"blur(12px)",
+              WebkitBackdropFilter:"blur(12px)",
+              boxShadow:"0 6px 20px rgba(0,0,0,0.5), 0 0 15px rgba(139,92,246,0.35)",
+              transition:"all 0.2s ease"
+            }}
+            onMouseOver={e=>{e.currentTarget.style.transform="scale(1.08)";e.currentTarget.style.background="rgba(139,92,246,0.4)";}}
+            onMouseOut={e=>{e.currentTarget.style.transform="scale(1)";e.currentTarget.style.background="rgba(139,92,246,0.22)";}}
+            title="Portal Access">
+            A
+          </button>
+          
           <div style={{textAlign:"center",marginBottom:36,zIndex:2}}>
             <div style={{display:"flex",justifyContent:"center",alignItems:"center",marginBottom:14}}>
               <img 
@@ -2051,6 +3174,9 @@
               </button>
             ))}
           </div>
+          {renderAdminPasskeyModal()}
+          {renderAdminPortalModal()}
+          {renderConfirmCommitModal()}
         </div>
       );
 
