@@ -1,15 +1,15 @@
 {
   "CN": {
-    "MAT201R01": "Engineering Mathematics III",
+    "MAT201R01": "ENGINEERING MATHEMATICS - III",
     "CSE208": "Java Programming",
     "CSE105": "Computer Organization",
     "CSE103R01": "Data Structures",
-    "ECE101R01": "Digital System Design",
+    "ECE101R01": "DIGITAL SYSTEM DESIGN",
     "CSE104R01/ECE103": "DS Lab / DSD Lab",
     "ECE103/EIE202R01": "DSD Lab / EC Lab",
-    "EEE201R01": "Electric Networks",
-    "ECE102": "Engg. Electromagnetics",
-    "EIE201": "Electronic Circuits",
+    "EEE201R01": "ELECTRIC NETWORKS",
+    "ECE102": "ENGINEERING ELECTROMAGNETICS",
+    "EIE201": "ELECTRONIC CIRCUITS",
     "MAT101R01": "Engineering Mathematics I",
     "PHY101R01": "Engineering Physics",
     "EEE101R02": "Basic Electrical Engineering",
@@ -191,7 +191,10 @@
     "ECS117": "Electromagnetic Fields & Guided Waves",
     "ECS201": "Analog Electronics",
     "ECS209": "Introduction To Vlsi Design",
-    "ECS202": "Analog Electronics Laboratory"
+    "ECS202": "Analog Electronics Laboratory",
+    "ECE103": "DIGITAL SYSTEM DESIGN LABORATORY",
+    "EIE202R01": "ELECTRONIC CIRCUITS LABORATORY",
+    "INT106M": "FOUNDATIONS OF PROGRAMMING FOR AI"
   },
   "HI": {
     "102": {
@@ -381,10 +384,8 @@
       "floor": 3
     },
     "401": {
-      "cn": "II ECE A",
-      "dept": "ECE",
-      "proj": false,
-      "floor": 4
+      "floor": 4,
+      "proj": false
     },
     "402": {
       "cn": "II ECE B",
@@ -574,22 +575,129 @@
     }
   },
   "SCH": {
-    "407": {
+    "102": {
       "MON": {
         "1": {
-          "t": "class",
-          "c": "MAT201R01",
-          "f": "Dr. K. Kannan"
+          "t": "lab",
+          "c": "CAP303",
+          "f": "Rubidha Devi, D / Sujarani, R / Venkateswari, P / Vimala Devi, P"
         },
         "2": {
-          "t": "class",
-          "c": "CSE105",
-          "f": "Dr. Durga Karthik"
+          "t": "lab",
+          "c": "CAP303",
+          "f": "Rubidha Devi, D / Sujarani, R / Venkateswari, P / Vimala Devi, P"
         },
         "3": {
           "t": "class",
-          "c": "CSE208",
-          "f": "Dr. Sangeetha J"
+          "c": "CAP207R01",
+          "f": "Nagamuthu Krishnan, S S"
+        },
+        "4": {
+          "t": "class",
+          "c": "CAP302",
+          "f": "Rubidha Devi, D"
+        },
+        "6": {
+          "t": "class",
+          "c": "CAP113",
+          "f": "Arulmani, K / Ganesh, J / Saravanan, N"
+        },
+        "7": {
+          "t": "class",
+          "c": "ENG209R01",
+          "f": "Loganayaki, G"
+        },
+        "8": {
+          "t": "free",
+          "n": ""
+        }
+      },
+      "TUE": {
+        "1": {
+          "t": "class",
+          "c": "CAP302",
+          "f": "Rubidha Devi, D"
+        },
+        "2": {
+          "t": "class",
+          "c": "CAP301",
+          "f": "Menaga, A"
+        },
+        "3": {
+          "t": "class",
+          "c": "CAP113",
+          "f": "Arulmani, K / Ganesh, J / Saravanan, N"
+        },
+        "4": {
+          "t": "class",
+          "c": "CHY102",
+          "f": "Sundar, N"
+        },
+        "6": {
+          "t": "class",
+          "c": "CAP207R01",
+          "f": "Nagamuthu Krishnan, S S"
+        },
+        "7": {
+          "t": "lab",
+          "c": "CAP304",
+          "f": "Dharshini K / Manjula, K / Menaga, A"
+        },
+        "8": {
+          "t": "lab",
+          "c": "CAP304",
+          "f": "Dharshini K / Manjula, K / Menaga, A"
+        }
+      },
+      "WED": {
+        "1": {
+          "t": "class",
+          "c": "CHY102",
+          "f": "Sundar, N"
+        },
+        "2": {
+          "t": "class",
+          "c": "CAP301",
+          "f": "Menaga, A"
+        },
+        "3": {
+          "t": "class",
+          "c": "CAP113",
+          "f": "Arulmani, K / Ganesh, J / Saravanan, N"
+        },
+        "4": {
+          "t": "class",
+          "c": "ENG209R01",
+          "f": "Loganayaki, G"
+        },
+        "6": {
+          "t": "class",
+          "c": "CAP302",
+          "f": "Rubidha Devi, D"
+        },
+        "7": {
+          "t": "class",
+          "c": "CAP207R01",
+          "f": "Nagamuthu Krishnan, S S"
+        },
+        "8": {
+          "t": "free",
+          "n": ""
+        }
+      },
+      "THU": {
+        "1": {
+          "t": "free",
+          "n": ""
+        },
+        "2": {
+          "t": "free",
+          "n": ""
+        },
+        "3": {
+          "t": "class",
+          "c": "CAP301",
+          "f": "Menaga, A"
         },
         "4": {
           "t": "lunch",
@@ -597,695 +705,55 @@
         },
         "6": {
           "t": "lab",
-          "c": "CSE104R01/ECE103",
-          "f": "Dr. Sumathi A · Dr. T. Nirmalraj"
+          "c": "CAP303",
+          "f": "Rubidha Devi, D / Sujarani, R / Venkateswari, P / Vimala Devi, P"
         },
         "7": {
-          "t": "free",
-          "n": "Minor Spec."
+          "t": "class",
+          "c": "CAP113",
+          "f": "Arulmani, K / Ganesh, J / Saravanan, N"
         },
         "8": {
-          "t": "free",
-          "n": "Minor Spec."
+          "t": "class",
+          "c": "CAP207R01",
+          "f": "Nagamuthu Krishnan, S S"
         },
         "ln": {
           "t": "lab",
-          "c": "CSE104R01/ECE103",
-          "f": "Dr. Sumathi A · Dr. T. Nirmalraj"
-        }
-      },
-      "TUE": {
-        "1": {
-          "t": "class",
-          "c": "MAT201R01",
-          "f": "Dr. K. Kannan"
-        },
-        "2": {
-          "t": "class",
-          "c": "CSE103R01",
-          "f": "Dr. Sumathi A"
-        },
-        "3": {
-          "t": "class",
-          "c": "CSE105",
-          "f": "Dr. Durga Karthik"
-        },
-        "4": {
-          "t": "class",
-          "c": "ECE101R01",
-          "f": "Dr. T. Nirmalraj"
-        },
-        "6": {
-          "t": "free",
-          "n": ""
-        },
-        "7": {
-          "t": "free",
-          "n": "Minor Spec."
-        },
-        "8": {
-          "t": "free",
-          "n": "Minor Spec."
-        }
-      },
-      "WED": {
-        "1": {
-          "t": "lab",
-          "c": "CSE104R01/ECE103",
-          "f": "Dr. Sumathi A · Dr. T. Nirmalraj"
-        },
-        "2": {
-          "t": "lab",
-          "c": "CSE104R01/ECE103",
-          "f": "Dr. Sumathi A · Dr. T. Nirmalraj"
-        },
-        "3": {
-          "t": "class",
-          "c": "CSE105",
-          "f": "Dr. Durga Karthik"
-        },
-        "4": {
-          "t": "class",
-          "c": "ECE101R01",
-          "f": "Dr. T. Nirmalraj"
-        },
-        "6": {
-          "t": "class",
-          "c": "CSE103R01",
-          "f": "Dr. Sumathi A"
-        },
-        "7": {
-          "t": "class",
-          "c": "CSE208",
-          "f": "Dr. Sangeetha J"
-        },
-        "8": {
-          "t": "free",
-          "n": ""
-        }
-      },
-      "THU": {
-        "1": {
-          "t": "class",
-          "c": "MAT201R01",
-          "f": "Dr. K. Kannan"
-        },
-        "2": {
-          "t": "class",
-          "c": "CSE208",
-          "f": "Dr. Sangeetha J"
-        },
-        "3": {
-          "t": "class",
-          "c": "ECE101R01",
-          "f": "Dr. T. Nirmalraj"
-        },
-        "4": {
-          "t": "class",
-          "c": "CSE103R01",
-          "f": "Dr. Sumathi A"
-        },
-        "6": {
-          "t": "free",
-          "n": ""
-        },
-        "7": {
-          "t": "free",
-          "n": ""
-        },
-        "8": {
-          "t": "free",
-          "n": ""
+          "c": "CAP303",
+          "f": "Rubidha Devi, D / Sujarani, R / Venkateswari, P / Vimala Devi, P"
         }
       },
       "FRI": {
         "1": {
-          "t": "free",
-          "n": ""
-        },
-        "2": {
-          "t": "class",
-          "c": "MAT201R01",
-          "f": "Dr. K. Kannan"
-        },
-        "3": {
-          "t": "class",
-          "c": "ECE101R01",
-          "f": "Dr. T. Nirmalraj"
-        },
-        "4": {
-          "t": "class",
-          "c": "CSE105",
-          "f": "Dr. Durga Karthik"
-        },
-        "6": {
-          "t": "class",
-          "c": "CSE103R01",
-          "f": "Dr. Sumathi A"
-        },
-        "7": {
           "t": "lab",
-          "c": "CSE208",
-          "f": "Dr. Sangeetha J · Dr. Manjula K"
-        },
-        "8": {
-          "t": "lab",
-          "c": "CSE208",
-          "f": "Dr. Sangeetha J · Dr. Manjula K"
-        }
-      }
-    },
-    "409": {
-      "MON": {
-        "1": {
-          "t": "free",
-          "n": ""
-        },
-        "2": {
-          "t": "class",
-          "c": "CSE103R01",
-          "f": "Dr. D. Vaishnavi"
-        },
-        "3": {
-          "t": "class",
-          "c": "MAT201R01",
-          "f": "Dr. V. Srinivasan"
-        },
-        "4": {
-          "t": "class",
-          "c": "ECE101R01",
-          "f": "Dr. S. Radhakrishnan"
-        },
-        "6": {
-          "t": "class",
-          "c": "CSE105",
-          "f": "Dr. Durga Karthik"
-        },
-        "7": {
-          "t": "free",
-          "n": "Minor Spec."
-        },
-        "8": {
-          "t": "free",
-          "n": "Minor Spec."
-        }
-      },
-      "TUE": {
-        "1": {
-          "t": "lab",
-          "c": "CSE104R01/ECE103",
-          "f": "Dr. D. Vaishnavi · Dr. S. Radhakrishnan"
+          "c": "CAP304",
+          "f": "Dharshini K / Manjula, K / Menaga, A"
         },
         "2": {
           "t": "lab",
-          "c": "CSE104R01/ECE103",
-          "f": "Dr. D. Vaishnavi · Dr. S. Radhakrishnan"
+          "c": "CAP304",
+          "f": "Dharshini K / Manjula, K / Menaga, A"
         },
         "3": {
           "t": "class",
-          "c": "ECE101R01",
-          "f": "Dr. S. Radhakrishnan"
+          "c": "CAP207R01",
+          "f": "Nagamuthu Krishnan, S S"
         },
         "4": {
           "t": "class",
-          "c": "CSE208",
-          "f": "Dr. Sangeetha J"
+          "c": "ENG209R01",
+          "f": "Loganayaki, G"
         },
         "6": {
           "t": "class",
-          "c": "MAT201R01",
-          "f": "Dr. V. Srinivasan"
+          "c": "CAP301",
+          "f": "Menaga, A"
         },
         "7": {
           "t": "class",
-          "c": "CSE105",
-          "f": "Dr. Durga Karthik"
-        },
-        "8": {
-          "t": "free",
-          "n": "Minor Spec."
-        }
-      },
-      "WED": {
-        "1": {
-          "t": "free",
-          "n": ""
-        },
-        "2": {
-          "t": "class",
-          "c": "CSE208",
-          "f": "Dr. Sangeetha J"
-        },
-        "3": {
-          "t": "class",
-          "c": "MAT201R01",
-          "f": "Dr. V. Srinivasan"
-        },
-        "4": {
-          "t": "class",
-          "c": "ECE101R01",
-          "f": "Dr. S. Radhakrishnan"
-        },
-        "6": {
-          "t": "class",
-          "c": "CSE105",
-          "f": "Dr. Durga Karthik"
-        },
-        "7": {
-          "t": "class",
-          "c": "CSE103R01",
-          "f": "Dr. D. Vaishnavi"
-        },
-        "8": {
-          "t": "free",
-          "n": ""
-        }
-      },
-      "THU": {
-        "1": {
-          "t": "free",
-          "n": ""
-        },
-        "2": {
-          "t": "free",
-          "n": ""
-        },
-        "3": {
-          "t": "free",
-          "n": ""
-        },
-        "4": {
-          "t": "class",
-          "c": "CSE208",
-          "f": "Dr. Sangeetha J"
-        },
-        "6": {
-          "t": "class",
-          "c": "CSE103R01",
-          "f": "Dr. D. Vaishnavi"
-        },
-        "7": {
-          "t": "lab",
-          "c": "CSE208",
-          "f": "Dr. Sangeetha J · Mr. Swaminathan S"
-        },
-        "8": {
-          "t": "lab",
-          "c": "CSE208",
-          "f": "Dr. Sangeetha J · Mr. Swaminathan S"
-        }
-      },
-      "FRI": {
-        "1": {
-          "t": "free",
-          "n": ""
-        },
-        "2": {
-          "t": "class",
-          "c": "MAT201R01",
-          "f": "Dr. V. Srinivasan"
-        },
-        "3": {
-          "t": "class",
-          "c": "ECE101R01",
-          "f": "Dr. S. Radhakrishnan"
-        },
-        "4": {
-          "t": "lunch",
-          "n": "Lunch Break"
-        },
-        "6": {
-          "t": "lab",
-          "c": "CSE104R01/ECE103",
-          "f": "Dr. D. Vaishnavi · Dr. S. Radhakrishnan"
-        },
-        "7": {
-          "t": "class",
-          "c": "CSE105",
-          "f": "Dr. Durga Karthik"
-        },
-        "8": {
-          "t": "class",
-          "c": "CSE103R01",
-          "f": "Dr. D. Vaishnavi"
-        },
-        "ln": {
-          "t": "lab",
-          "c": "CSE104R01/ECE103",
-          "f": "Dr. D. Vaishnavi · Dr. S. Radhakrishnan"
-        }
-      }
-    },
-    "410": {
-      "MON": {
-        "1": {
-          "t": "lab",
-          "c": "CSE104R01/ECE103",
-          "f": "Mrs. Hemamalini S · Dr. M. Suba"
-        },
-        "2": {
-          "t": "lab",
-          "c": "CSE104R01/ECE103",
-          "f": "Mrs. Hemamalini S · Dr. M. Suba"
-        },
-        "3": {
-          "t": "class",
-          "c": "CSE105",
-          "f": "Dr. Vimala Devi P"
-        },
-        "4": {
-          "t": "class",
-          "c": "MAT201R01",
-          "f": "Dr. K. Kanakaraj"
-        },
-        "6": {
-          "t": "class",
-          "c": "ECE101R01",
-          "f": "Prof. G. Usha"
-        },
-        "7": {
-          "t": "free",
-          "n": "Minor Spec."
-        },
-        "8": {
-          "t": "free",
-          "n": "Minor Spec."
-        }
-      },
-      "TUE": {
-        "1": {
-          "t": "class",
-          "c": "MAT201R01",
-          "f": "Dr. K. Kanakaraj"
-        },
-        "2": {
-          "t": "class",
-          "c": "ECE101R01",
-          "f": "Prof. G. Usha"
-        },
-        "3": {
-          "t": "class",
-          "c": "CSE208",
-          "f": "Dr. Manjula K"
-        },
-        "4": {
-          "t": "class",
-          "c": "CSE103R01",
-          "f": "Mrs. Hemamalini S"
-        },
-        "6": {
-          "t": "class",
-          "c": "CSE105",
-          "f": "Dr. Vimala Devi P"
-        },
-        "7": {
-          "t": "free",
-          "n": "Minor Spec."
-        },
-        "8": {
-          "t": "free",
-          "n": "Minor Spec."
-        }
-      },
-      "WED": {
-        "1": {
-          "t": "free",
-          "n": ""
-        },
-        "2": {
-          "t": "class",
-          "c": "CSE103R01",
-          "f": "Mrs. Hemamalini S"
-        },
-        "3": {
-          "t": "class",
-          "c": "MAT201R01",
-          "f": "Dr. K. Kanakaraj"
-        },
-        "4": {
-          "t": "class",
-          "c": "CSE105",
-          "f": "Dr. Vimala Devi P"
-        },
-        "6": {
-          "t": "class",
-          "c": "ECE101R01",
-          "f": "Prof. G. Usha"
-        },
-        "7": {
-          "t": "class",
-          "c": "CSE208",
-          "f": "Dr. Manjula K"
-        },
-        "8": {
-          "t": "free",
-          "n": ""
-        }
-      },
-      "THU": {
-        "1": {
-          "t": "class",
-          "c": "MAT201R01",
-          "f": "Dr. K. Kanakaraj"
-        },
-        "2": {
-          "t": "class",
-          "c": "CSE105",
-          "f": "Dr. Vimala Devi P"
-        },
-        "3": {
-          "t": "class",
-          "c": "CSE208",
-          "f": "Dr. Manjula K"
-        },
-        "4": {
-          "t": "class",
-          "c": "ECE101R01",
-          "f": "Prof. G. Usha"
-        },
-        "6": {
-          "t": "class",
-          "c": "CSE103R01",
-          "f": "Mrs. Hemamalini S"
-        },
-        "7": {
-          "t": "lab",
-          "c": "CSE208",
-          "f": "Dr. Manjula K · Dr. Rekha D"
-        },
-        "8": {
-          "t": "lab",
-          "c": "CSE208",
-          "f": "Dr. Manjula K · Dr. Rekha D"
-        }
-      },
-      "FRI": {
-        "1": {
-          "t": "free",
-          "n": ""
-        },
-        "2": {
-          "t": "free",
-          "n": ""
-        },
-        "3": {
-          "t": "free",
-          "n": ""
-        },
-        "4": {
-          "t": "free",
-          "n": ""
-        },
-        "6": {
-          "t": "class",
-          "c": "CSE103R01",
-          "f": "Mrs. Hemamalini S"
-        },
-        "7": {
-          "t": "lab",
-          "c": "CSE104R01/ECE103",
-          "f": "Mrs. Hemamalini S · Dr. Gayathri Devi T"
-        },
-        "8": {
-          "t": "lab",
-          "c": "CSE104R01/ECE103",
-          "f": "Mrs. Hemamalini S · Dr. Gayathri Devi T"
-        }
-      }
-    },
-    "401": {
-      "MON": {
-        "1": {
-          "t": "class",
-          "c": "ECE101R01",
-          "f": "Prof. Ramasamy K"
-        },
-        "2": {
-          "t": "class",
-          "c": "MAT201R01",
-          "f": "Dr. Narasimman D"
-        },
-        "3": {
-          "t": "class",
-          "c": "ECE102",
-          "f": "Dr. Alli Rani A"
-        },
-        "4": {
-          "t": "class",
-          "c": "EEE201R01",
-          "f": "Dr. Sundaravazhuthi V"
-        },
-        "6": {
-          "t": "free",
-          "n": ""
-        },
-        "7": {
-          "t": "free",
-          "n": ""
-        },
-        "8": {
-          "t": "free",
-          "n": ""
-        }
-      },
-      "TUE": {
-        "1": {
-          "t": "class",
-          "c": "EEE201R01",
-          "f": "Dr. Sundaravazhuthi V"
-        },
-        "2": {
-          "t": "class",
-          "c": "ECE102",
-          "f": "Dr. Alli Rani A"
-        },
-        "3": {
-          "t": "lab",
-          "c": "ECE103/EIE202R01",
-          "f": "Prof. Ramasamy K · Prof. Thalaimalaichamy M"
-        },
-        "4": {
-          "t": "lab",
-          "c": "ECE103/EIE202R01",
-          "f": "Prof. Ramasamy K · Prof. Thalaimalaichamy M"
-        },
-        "6": {
-          "t": "class",
-          "c": "EIE201",
-          "f": "Prof. Thalaimalaichamy M"
-        },
-        "7": {
-          "t": "free",
-          "n": ""
-        },
-        "8": {
-          "t": "free",
-          "n": ""
-        }
-      },
-      "WED": {
-        "1": {
-          "t": "class",
-          "c": "EEE201R01",
-          "f": "Dr. Sundaravazhuthi V"
-        },
-        "2": {
-          "t": "class",
-          "c": "MAT201R01",
-          "f": "Dr. Narasimman D"
-        },
-        "3": {
-          "t": "class",
-          "c": "EIE201",
-          "f": "Prof. Thalaimalaichamy M"
-        },
-        "4": {
-          "t": "class",
-          "c": "ECE101R01",
-          "f": "Prof. Ramasamy K"
-        },
-        "6": {
-          "t": "free",
-          "n": ""
-        },
-        "7": {
-          "t": "free",
-          "n": ""
-        },
-        "8": {
-          "t": "free",
-          "n": ""
-        }
-      },
-      "THU": {
-        "1": {
-          "t": "class",
-          "c": "ECE101R01",
-          "f": "Prof. Ramasamy K"
-        },
-        "2": {
-          "t": "class",
-          "c": "MAT201R01",
-          "f": "Dr. Narasimman D"
-        },
-        "3": {
-          "t": "class",
-          "c": "ECE102",
-          "f": "Dr. Alli Rani A"
-        },
-        "4": {
-          "t": "lunch",
-          "n": "Lunch Break"
-        },
-        "6": {
-          "t": "lab",
-          "c": "ECE103/EIE202R01",
-          "f": "Prof. Ramasamy K · Prof. Thalaimalaichamy M"
-        },
-        "7": {
-          "t": "class",
-          "c": "EIE201",
-          "f": "Prof. Thalaimalaichamy M"
-        },
-        "8": {
-          "t": "free",
-          "n": ""
-        },
-        "ln": {
-          "t": "lab",
-          "c": "ECE103/EIE202R01",
-          "f": "Prof. Ramasamy K · Prof. Thalaimalaichamy M"
-        }
-      },
-      "FRI": {
-        "1": {
-          "t": "class",
-          "c": "EIE201",
-          "f": "Prof. Thalaimalaichamy M"
-        },
-        "2": {
-          "t": "class",
-          "c": "EEE201R01",
-          "f": "Dr. Sundaravazhuthi V"
-        },
-        "3": {
-          "t": "class",
-          "c": "ECE102",
-          "f": "Dr. Alli Rani A"
-        },
-        "4": {
-          "t": "class",
-          "c": "MAT201R01",
-          "f": "Dr. Narasimman D"
-        },
-        "6": {
-          "t": "class",
-          "c": "ECE101R01",
-          "f": "Prof. Ramasamy K"
-        },
-        "7": {
-          "t": "free",
-          "n": ""
+          "c": "CAP302",
+          "f": "Rubidha Devi, D"
         },
         "8": {
           "t": "free",
@@ -1293,70 +761,72 @@
         }
       }
     },
-    "402": {
+    "103": {
       "MON": {
         "1": {
-          "t": "class",
-          "c": "EIE201",
-          "f": "Dr. Sudha S"
+          "t": "free",
+          "n": ""
         },
         "2": {
           "t": "class",
-          "c": "EEE201R01",
-          "f": "Dr. Sundaravazhuthi V"
+          "c": "CAP207R01",
+          "f": "Nagamuthu Krishnan, S S"
         },
         "3": {
           "t": "class",
-          "c": "MAT201R01",
-          "f": "Dr. BalasubramanianK"
+          "c": "CAP301",
+          "f": "Menaga, A"
         },
         "4": {
           "t": "class",
-          "c": "ECE101R01",
-          "f": "Dr. Srinivasan A"
+          "c": "CHY102",
+          "f": "Sundar, N"
         },
         "6": {
           "t": "class",
-          "c": "ECE102",
-          "f": "Dr. Alli Rani A"
+          "c": "CAP113",
+          "f": "Arulmani, K / Ganesh, J / Saravanan, N"
         },
         "7": {
-          "t": "free",
-          "n": ""
+          "t": "lab",
+          "c": "CAP304",
+          "f": "Dharshini K / Girija / Hemamalini, S / Menaga, A"
         },
         "8": {
-          "t": "free",
-          "n": ""
+          "t": "lab",
+          "c": "CAP304",
+          "f": "Dharshini K / Girija / Hemamalini, S / Menaga, A"
         }
       },
       "TUE": {
         "1": {
-          "t": "free",
-          "n": ""
+          "t": "class",
+          "c": "CHY102",
+          "f": "Sundar, N"
         },
         "2": {
           "t": "class",
-          "c": "EIE201",
-          "f": "Dr. Sudha S"
+          "c": "CAP113",
+          "f": "Arulmani, K / Ganesh, J / Saravanan, N"
         },
         "3": {
-          "t": "class",
-          "c": "ECE101R01",
-          "f": "Dr. Srinivasan A"
+          "t": "free",
+          "n": ""
         },
         "4": {
           "t": "class",
-          "c": "EEE201R01",
-          "f": "Dr. Sundaravazhuthi V"
+          "c": "CAP302",
+          "f": "Rubidha Devi, D"
         },
         "6": {
           "t": "class",
-          "c": "ECE102",
-          "f": "Dr. Alli Rani A"
+          "c": "CAP301",
+          "f": "Menaga, A"
         },
         "7": {
-          "t": "free",
-          "n": ""
+          "t": "class",
+          "c": "CAP207R01",
+          "f": "Nagamuthu Krishnan, S S"
         },
         "8": {
           "t": "free",
@@ -1366,72 +836,75 @@
       "WED": {
         "1": {
           "t": "class",
-          "c": "ECE102",
-          "f": "Dr. Alli Rani A"
+          "c": "ENG209R01",
+          "f": "Siva Vidhya, M"
         },
         "2": {
           "t": "class",
-          "c": "EIE201",
-          "f": "Dr. Sudha S"
+          "c": "CAP302",
+          "f": "Rubidha Devi, D"
         },
         "3": {
-          "t": "lab",
-          "c": "ECE103/EIE202R01",
-          "f": "Dr. Srinivasan A · Dr. Sudha S"
+          "t": "class",
+          "c": "CAP113",
+          "f": "Arulmani, K / Ganesh, J / Saravanan, N"
         },
         "4": {
-          "t": "lab",
-          "c": "ECE103/EIE202R01",
-          "f": "Dr. Srinivasan A · Dr. Sudha S"
+          "t": "class",
+          "c": "CAP301",
+          "f": "Menaga, A"
         },
         "6": {
           "t": "class",
-          "c": "MAT201R01",
-          "f": "Dr. BalasubramanianK"
+          "c": "CAP207R01",
+          "f": "Nagamuthu Krishnan, S S"
         },
         "7": {
-          "t": "free",
-          "n": ""
+          "t": "lab",
+          "c": "CAP303",
+          "f": "Ramya, R / Rubidha Devi, D / Sujarani, R"
         },
         "8": {
-          "t": "free",
-          "n": ""
+          "t": "lab",
+          "c": "CAP303",
+          "f": "Ramya, R / Rubidha Devi, D / Sujarani, R"
         }
       },
       "THU": {
         "1": {
           "t": "class",
-          "c": "MAT201R01",
-          "f": "Dr. BalasubramanianK"
+          "c": "CAP207R01",
+          "f": "Nagamuthu Krishnan, S S"
         },
         "2": {
           "t": "class",
-          "c": "ECE101R01",
-          "f": "Dr. Srinivasan A"
+          "c": "CAP302",
+          "f": "Rubidha Devi, D"
         },
         "3": {
           "t": "lab",
-          "c": "ECE103/EIE202R01",
-          "f": "Dr. Srinivasan A · Dr. Sudha S"
+          "c": "CAP304",
+          "f": "Dharshini K / Girija / Hemamalini, S / Menaga, A"
         },
         "4": {
           "t": "lab",
-          "c": "ECE103/EIE202R01",
-          "f": "Dr. Srinivasan A · Dr. Sudha S"
+          "c": "CAP304",
+          "f": "Dharshini K / Girija / Hemamalini, S / Menaga, A"
         },
         "6": {
           "t": "class",
-          "c": "EEE201R01",
-          "f": "Dr. Sundaravazhuthi V"
+          "c": "CAP301",
+          "f": "Menaga, A"
         },
         "7": {
           "t": "class",
-          "c": "EIE201",
-          "f": "Dr. Sudha S"
+          "c": "CAP113",
+          "f": "Arulmani, K / Ganesh, J / Saravanan, N"
         },
         "8": {
-          "t": "free",
-          "n": ""
+          "t": "class",
+          "c": "ENG209R01",
+          "f": "Siva Vidhya, M"
         }
       },
       "FRI": {
@@ -1441,1110 +914,32 @@
         },
         "2": {
           "t": "class",
-          "c": "ECE102",
-          "f": "Dr. Alli Rani A"
+          "c": "CAP302",
+          "f": "Rubidha Devi, D"
         },
         "3": {
-          "t": "class",
-          "c": "EEE201R01",
-          "f": "Dr. Sundaravazhuthi V"
+          "t": "lab",
+          "c": "CAP303",
+          "f": "Ramya, R / Rubidha Devi, D / Sujarani, R"
         },
         "4": {
-          "t": "class",
-          "c": "MAT201R01",
-          "f": "Dr. BalasubramanianK"
+          "t": "lab",
+          "c": "CAP303",
+          "f": "Ramya, R / Rubidha Devi, D / Sujarani, R"
         },
         "6": {
           "t": "class",
-          "c": "ECE101R01",
-          "f": "Dr. Srinivasan A"
+          "c": "ENG209R01",
+          "f": "Siva Vidhya, M"
         },
         "7": {
-          "t": "free",
-          "n": ""
+          "t": "class",
+          "c": "CAP207R01",
+          "f": "Nagamuthu Krishnan, S S"
         },
         "8": {
           "t": "free",
           "n": ""
-        }
-      }
-    },
-    "411": {
-      "MON": {
-        "1": {
-          "t": "lab",
-          "c": "CSE312",
-          "f": "Mr. Manikandan H · Dr. Ganesh J"
-        },
-        "2": {
-          "t": "lab",
-          "c": "CSE312",
-          "f": "Mr. Manikandan H · Dr. Ganesh J"
-        },
-        "3": {
-          "t": "free",
-          "n": "INT310/CSE312 in Room 506"
-        },
-        "4": {
-          "t": "class",
-          "c": "CSE302",
-          "f": "Dr. Sreedevi B"
-        },
-        "6": {
-          "t": "free",
-          "n": ""
-        },
-        "7": {
-          "t": "free",
-          "n": ""
-        },
-        "8": {
-          "t": "free",
-          "n": ""
-        }
-      },
-      "TUE": {
-        "1": {
-          "t": "class",
-          "c": "CSE301",
-          "f": "Dr. Rajeswari N"
-        },
-        "2": {
-          "t": "class",
-          "c": "CSE308",
-          "f": "Dr. N. Moratanch"
-        },
-        "3": {
-          "t": "class",
-          "c": "CSE302",
-          "f": "Dr. Sreedevi B"
-        },
-        "4": {
-          "t": "lunch",
-          "n": "Lunch Break"
-        },
-        "6": {
-          "t": "lab",
-          "c": "CSE304",
-          "f": "Dr. Arul Mani K · Dr. Ramakrishnan R"
-        },
-        "7": {
-          "t": "class",
-          "c": "CSE304",
-          "f": "Dr. Arul Mani K"
-        },
-        "8": {
-          "t": "free",
-          "n": ""
-        },
-        "ln": {
-          "t": "lab",
-          "c": "CSE304",
-          "f": "Dr. Arul Mani K · Dr. Ramakrishnan R"
-        }
-      },
-      "WED": {
-        "1": {
-          "t": "lab",
-          "c": "CSE303",
-          "f": "Dr. Sreedevi B · Dr. Venkatesh K (Batch-1)"
-        },
-        "2": {
-          "t": "lab",
-          "c": "CSE303",
-          "f": "Dr. Sreedevi B · Dr. Venkatesh K (Batch-1)"
-        },
-        "3": {
-          "t": "class",
-          "c": "CSE302",
-          "f": "Dr. Sreedevi B"
-        },
-        "4": {
-          "t": "class",
-          "c": "CSE301",
-          "f": "Dr. Rajeswari N"
-        },
-        "6": {
-          "t": "class",
-          "c": "CSE308",
-          "f": "Dr. N. Moratanch"
-        },
-        "7": {
-          "t": "class",
-          "c": "INT310",
-          "f": "Mrs. Hemamalini S"
-        },
-        "8": {
-          "t": "free",
-          "n": "Minor Spec."
-        }
-      },
-      "THU": {
-        "1": {
-          "t": "class",
-          "c": "CSE301",
-          "f": "Dr. Rajeswari N"
-        },
-        "2": {
-          "t": "class",
-          "c": "CSE302",
-          "f": "Dr. Sreedevi B"
-        },
-        "3": {
-          "t": "lab",
-          "c": "CSE309R01",
-          "f": "Dr. N. Moratanch · Dr. D. Vaishnavi"
-        },
-        "4": {
-          "t": "lab",
-          "c": "CSE309R01",
-          "f": "Dr. N. Moratanch · Dr. D. Vaishnavi"
-        },
-        "6": {
-          "t": "class",
-          "c": "CSE304",
-          "f": "Dr. Arul Mani K"
-        },
-        "7": {
-          "t": "free",
-          "n": "Minor Spec."
-        },
-        "8": {
-          "t": "free",
-          "n": "Minor Spec."
-        }
-      },
-      "FRI": {
-        "1": {
-          "t": "class",
-          "c": "CSE301",
-          "f": "Dr. Rajeswari N"
-        },
-        "2": {
-          "t": "free",
-          "n": "INT310/CSE312 in Room 410"
-        },
-        "3": {
-          "t": "class",
-          "c": "CSE304",
-          "f": "Dr. Arul Mani K"
-        },
-        "4": {
-          "t": "class",
-          "c": "CSE308",
-          "f": "Dr. N. Moratanch"
-        },
-        "6": {
-          "t": "lab",
-          "c": "CSE303",
-          "f": "Dr. Ramya R · Dr. Suganya S (Batch-2)"
-        },
-        "7": {
-          "t": "lab",
-          "c": "CSE303",
-          "f": "Dr. Ramya R · Dr. Suganya S (Batch-2)"
-        },
-        "8": {
-          "t": "free",
-          "n": ""
-        }
-      }
-    },
-    "412": {
-      "MON": {
-        "1": {
-          "t": "lab",
-          "c": "CSE312",
-          "f": "Mr. Manikandan H · Dr. Ganesh J"
-        },
-        "2": {
-          "t": "lab",
-          "c": "CSE312",
-          "f": "Mr. Manikandan H · Dr. Ganesh J"
-        },
-        "3": {
-          "t": "free",
-          "n": "INT310/CSE312 in Room 506"
-        },
-        "4": {
-          "t": "lunch",
-          "n": "Lunch Break"
-        },
-        "6": {
-          "t": "lab",
-          "c": "CSE309R01",
-          "f": "Dr. N. Moratanch · Dr. S. Keerthana"
-        },
-        "7": {
-          "t": "class",
-          "c": "CSE301",
-          "f": "Mr. Ramesh R"
-        },
-        "8": {
-          "t": "free",
-          "n": ""
-        },
-        "ln": {
-          "t": "lab",
-          "c": "CSE309R01",
-          "f": "Dr. N. Moratanch · Dr. S. Keerthana"
-        }
-      },
-      "TUE": {
-        "1": {
-          "t": "class",
-          "c": "CSE301",
-          "f": "Mr. Ramesh R"
-        },
-        "2": {
-          "t": "class",
-          "c": "CSE302",
-          "f": "Dr. Sreedevi B"
-        },
-        "3": {
-          "t": "class",
-          "c": "CSE308",
-          "f": "Dr. N. Moratanch"
-        },
-        "4": {
-          "t": "lunch",
-          "n": "Lunch Break"
-        },
-        "6": {
-          "t": "lab",
-          "c": "CSE304",
-          "f": "Mrs. KamalaDevi M · Mr. Jeyapandian M"
-        },
-        "7": {
-          "t": "class",
-          "c": "CSE304",
-          "f": "Mrs. KamalaDevi M"
-        },
-        "8": {
-          "t": "free",
-          "n": ""
-        },
-        "ln": {
-          "t": "lab",
-          "c": "CSE304",
-          "f": "Mrs. KamalaDevi M · Mr. Jeyapandian M"
-        }
-      },
-      "WED": {
-        "1": {
-          "t": "class",
-          "c": "CSE301",
-          "f": "Mr. Ramesh R"
-        },
-        "2": {
-          "t": "class",
-          "c": "CSE308",
-          "f": "Dr. N. Moratanch"
-        },
-        "3": {
-          "t": "free",
-          "n": ""
-        },
-        "4": {
-          "t": "free",
-          "n": ""
-        },
-        "6": {
-          "t": "class",
-          "c": "CSE302",
-          "f": "Dr. Sreedevi B"
-        },
-        "7": {
-          "t": "class",
-          "c": "INT310",
-          "f": "Mrs. Hemamalini S"
-        },
-        "8": {
-          "t": "free",
-          "n": "Minor Spec."
-        }
-      },
-      "THU": {
-        "1": {
-          "t": "lab",
-          "c": "CSE303",
-          "f": "Dr. Durga Karthik · Dr. Suganya S (Batch-1)"
-        },
-        "2": {
-          "t": "lab",
-          "c": "CSE303",
-          "f": "Dr. Durga Karthik · Dr. Suganya S (Batch-1)"
-        },
-        "3": {
-          "t": "class",
-          "c": "CSE302",
-          "f": "Dr. Sreedevi B"
-        },
-        "4": {
-          "t": "class",
-          "c": "CSE301",
-          "f": "Mr. Ramesh R"
-        },
-        "6": {
-          "t": "class",
-          "c": "CSE304",
-          "f": "Mrs. KamalaDevi M"
-        },
-        "7": {
-          "t": "free",
-          "n": "Minor Spec."
-        },
-        "8": {
-          "t": "free",
-          "n": "Minor Spec."
-        }
-      },
-      "FRI": {
-        "1": {
-          "t": "lab",
-          "c": "CSE303",
-          "f": "Dr. Sreedevi B · Dr. Durga Karthik (Batch-2)"
-        },
-        "2": {
-          "t": "lab",
-          "c": "CSE303",
-          "f": "Dr. Sreedevi B · Dr. Durga Karthik (Batch-2)"
-        },
-        "3": {
-          "t": "free",
-          "n": "INT310/CSE312 in Room 410"
-        },
-        "4": {
-          "t": "class",
-          "c": "CSE304",
-          "f": "Mrs. KamalaDevi M"
-        },
-        "6": {
-          "t": "class",
-          "c": "CSE302",
-          "f": "Dr. Sreedevi B"
-        },
-        "7": {
-          "t": "class",
-          "c": "CSE308",
-          "f": "Dr. N. Moratanch"
-        },
-        "8": {
-          "t": "free",
-          "n": ""
-        }
-      }
-    },
-    "417": {
-      "MON": {
-        "1": {
-          "t": "lab",
-          "c": "CSE312",
-          "f": "Mr. Manikandan H · Dr. Ganesh J"
-        },
-        "2": {
-          "t": "lab",
-          "c": "CSE312",
-          "f": "Mr. Manikandan H · Dr. Ganesh J"
-        },
-        "3": {
-          "t": "free",
-          "n": "INT310/CSE312 in Room 506"
-        },
-        "4": {
-          "t": "class",
-          "c": "CSE301",
-          "f": "Dr. Rekha D"
-        },
-        "6": {
-          "t": "class",
-          "c": "CSE308",
-          "f": "Dr. Venkateswari P"
-        },
-        "7": {
-          "t": "lab",
-          "c": "CSE303",
-          "f": "Dr. Nagamuthu Krishnan · Dr. Suganya S (Batch-2)"
-        },
-        "8": {
-          "t": "lab",
-          "c": "CSE303",
-          "f": "Dr. Nagamuthu Krishnan · Dr. Suganya S (Batch-2)"
-        }
-      },
-      "TUE": {
-        "1": {
-          "t": "lab",
-          "c": "CSE303",
-          "f": "Mr. Manikandan H · Dr. Durga Karthik (Batch-1)"
-        },
-        "2": {
-          "t": "lab",
-          "c": "CSE303",
-          "f": "Mr. Manikandan H · Dr. Durga Karthik (Batch-1)"
-        },
-        "3": {
-          "t": "class",
-          "c": "CSE302",
-          "f": "Dr. Nagamuthu Krishnan"
-        },
-        "4": {
-          "t": "lunch",
-          "n": "Lunch Break"
-        },
-        "6": {
-          "t": "lab",
-          "c": "CSE304",
-          "f": "Dr. Manjula K · Dr. Rekha D"
-        },
-        "7": {
-          "t": "class",
-          "c": "CSE304",
-          "f": "Dr. Manjula K"
-        },
-        "8": {
-          "t": "free",
-          "n": ""
-        },
-        "ln": {
-          "t": "lab",
-          "c": "CSE304",
-          "f": "Dr. Manjula K · Dr. Rekha D"
-        }
-      },
-      "WED": {
-        "1": {
-          "t": "class",
-          "c": "CSE302",
-          "f": "Dr. Nagamuthu Krishnan"
-        },
-        "2": {
-          "t": "class",
-          "c": "CSE301",
-          "f": "Dr. Rekha D"
-        },
-        "3": {
-          "t": "free",
-          "n": ""
-        },
-        "4": {
-          "t": "free",
-          "n": ""
-        },
-        "6": {
-          "t": "class",
-          "c": "CSE308",
-          "f": "Dr. Venkateswari P"
-        },
-        "7": {
-          "t": "class",
-          "c": "INT310",
-          "f": "Mrs. Hemamalini S"
-        },
-        "8": {
-          "t": "free",
-          "n": "Minor Spec."
-        }
-      },
-      "THU": {
-        "1": {
-          "t": "class",
-          "c": "CSE308",
-          "f": "Dr. Venkateswari P"
-        },
-        "2": {
-          "t": "class",
-          "c": "CSE302",
-          "f": "Dr. Nagamuthu Krishnan"
-        },
-        "3": {
-          "t": "class",
-          "c": "CSE301",
-          "f": "Dr. Rekha D"
-        },
-        "4": {
-          "t": "class",
-          "c": "CSE304",
-          "f": "Dr. Manjula K"
-        },
-        "6": {
-          "t": "free",
-          "n": "Minor Spec."
-        },
-        "7": {
-          "t": "free",
-          "n": "Minor Spec."
-        },
-        "8": {
-          "t": "free",
-          "n": ""
-        }
-      },
-      "FRI": {
-        "1": {
-          "t": "lab",
-          "c": "CSE309R01",
-          "f": "Dr. Venkateswari P · Dr. N. Moratanch"
-        },
-        "2": {
-          "t": "lab",
-          "c": "CSE309R01",
-          "f": "Dr. Venkateswari P · Dr. N. Moratanch"
-        },
-        "3": {
-          "t": "free",
-          "n": "INT310/CSE312 in Room 410"
-        },
-        "4": {
-          "t": "class",
-          "c": "CSE304",
-          "f": "Dr. Manjula K"
-        },
-        "6": {
-          "t": "class",
-          "c": "CSE302",
-          "f": "Dr. Nagamuthu Krishnan"
-        },
-        "7": {
-          "t": "class",
-          "c": "CSE301",
-          "f": "Dr. Rekha D"
-        },
-        "8": {
-          "t": "free",
-          "n": ""
-        }
-      }
-    },
-    "414": {
-      "MON": {
-        "1": {
-          "t": "lab",
-          "c": "CSE431",
-          "f": "Mr. Jeyapandian M · Dr. Vimala Devi P (Batch-1)"
-        },
-        "2": {
-          "t": "lab",
-          "c": "CSE431",
-          "f": "Mr. Jeyapandian M · Dr. Vimala Devi P (Batch-1)"
-        },
-        "3": {
-          "t": "class",
-          "c": "CSE409",
-          "f": "Dr. S. Suganya"
-        },
-        "4": {
-          "t": "class",
-          "c": "CSE415R02",
-          "f": "Mr. Jeyapandian M"
-        },
-        "6": {
-          "t": "class",
-          "c": "CSE414/INT405R02",
-          "f": "Dr. Sangeetha J"
-        },
-        "7": {
-          "t": "class",
-          "c": "INT404R01",
-          "f": "Dr. Meganathan S"
-        },
-        "8": {
-          "t": "free",
-          "n": ""
-        }
-      },
-      "TUE": {
-        "1": {
-          "t": "class",
-          "c": "CSE407R01",
-          "f": "Dr. Ramakrishnan R"
-        },
-        "2": {
-          "t": "class",
-          "c": "CSE409",
-          "f": "Dr. S. Suganya"
-        },
-        "3": {
-          "t": "lab",
-          "c": "CSE411",
-          "f": "Dr. S. Suganya · Dr. S. Farjana Farvin"
-        },
-        "4": {
-          "t": "lab",
-          "c": "CSE411",
-          "f": "Dr. S. Suganya · Dr. S. Farjana Farvin"
-        },
-        "6": {
-          "t": "class",
-          "c": "INT404R01",
-          "f": "Dr. Meganathan S"
-        },
-        "7": {
-          "t": "free",
-          "n": ""
-        },
-        "8": {
-          "t": "free",
-          "n": ""
-        }
-      },
-      "WED": {
-        "1": {
-          "t": "class",
-          "c": "INT404R01",
-          "f": "Dr. Meganathan S"
-        },
-        "2": {
-          "t": "free",
-          "n": "CSE414/INT327 in Room 502"
-        },
-        "3": {
-          "t": "class",
-          "c": "CSE415R02",
-          "f": "Mr. Jeyapandian M"
-        },
-        "4": {
-          "t": "class",
-          "c": "CSE407R01",
-          "f": "Dr. Ramakrishnan R"
-        },
-        "6": {
-          "t": "class",
-          "c": "CSE409",
-          "f": "Dr. S. Suganya"
-        },
-        "7": {
-          "t": "free",
-          "n": ""
-        },
-        "8": {
-          "t": "free",
-          "n": ""
-        }
-      },
-      "THU": {
-        "1": {
-          "t": "lab",
-          "c": "CSE431",
-          "f": "Mr. Jeyapandian M · Mr. Venkatesan R (Batch-2)"
-        },
-        "2": {
-          "t": "lab",
-          "c": "CSE431",
-          "f": "Mr. Jeyapandian M · Mr. Venkatesan R (Batch-2)"
-        },
-        "3": {
-          "t": "class",
-          "c": "CSE415R02",
-          "f": "Mr. Jeyapandian M"
-        },
-        "4": {
-          "t": "class",
-          "c": "CSE407R01",
-          "f": "Dr. Ramakrishnan R"
-        },
-        "6": {
-          "t": "free",
-          "n": "CSE414/INT327 in Room 504"
-        },
-        "7": {
-          "t": "free",
-          "n": "Minor Spec."
-        },
-        "8": {
-          "t": "free",
-          "n": "Minor Spec."
-        }
-      },
-      "FRI": {
-        "1": {
-          "t": "lab",
-          "c": "INT327",
-          "f": "Dr. Rajakumar R · Dr. Vanitha M"
-        },
-        "2": {
-          "t": "lab",
-          "c": "INT327",
-          "f": "Dr. Rajakumar R · Dr. Vanitha M"
-        },
-        "3": {
-          "t": "free",
-          "n": "CSE414/INT327 in Room 103"
-        },
-        "4": {
-          "t": "class",
-          "c": "CSE407R01",
-          "f": "Dr. Ramakrishnan R"
-        },
-        "6": {
-          "t": "class",
-          "c": "CSE409",
-          "f": "Dr. S. Suganya"
-        },
-        "7": {
-          "t": "class",
-          "c": "CSE415R02",
-          "f": "Mr. Jeyapandian M"
-        },
-        "8": {
-          "t": "free",
-          "n": "Minor Spec."
-        }
-      }
-    },
-    "415": {
-      "MON": {
-        "1": {
-          "t": "class",
-          "c": "INT404R01",
-          "f": "Dr. Meganathan S"
-        },
-        "2": {
-          "t": "class",
-          "c": "CSE407R01",
-          "f": "Dr. Ramakrishnan R"
-        },
-        "3": {
-          "t": "class",
-          "c": "CSE409",
-          "f": "Dr. S. Farjana Farvin"
-        },
-        "4": {
-          "t": "free",
-          "n": ""
-        },
-        "6": {
-          "t": "class",
-          "c": "CSE414/INT405R02",
-          "f": "Dr. Sangeetha J"
-        },
-        "7": {
-          "t": "class",
-          "c": "CSE415R02",
-          "f": "Dr. Vimala Devi P"
-        },
-        "8": {
-          "t": "free",
-          "n": ""
-        }
-      },
-      "TUE": {
-        "1": {
-          "t": "lab",
-          "c": "CSE431",
-          "f": "Dr. Vimala Devi P · Mr. Jeyapandian M (Batch-1)"
-        },
-        "2": {
-          "t": "lab",
-          "c": "CSE431",
-          "f": "Dr. Vimala Devi P · Mr. Jeyapandian M (Batch-1)"
-        },
-        "3": {
-          "t": "class",
-          "c": "CSE415R02",
-          "f": "Dr. Vimala Devi P"
-        },
-        "4": {
-          "t": "class",
-          "c": "INT404R01",
-          "f": "Dr. Meganathan S"
-        },
-        "6": {
-          "t": "class",
-          "c": "CSE409",
-          "f": "Dr. S. Farjana Farvin"
-        },
-        "7": {
-          "t": "free",
-          "n": ""
-        },
-        "8": {
-          "t": "free",
-          "n": ""
-        }
-      },
-      "WED": {
-        "1": {
-          "t": "class",
-          "c": "CSE407R01",
-          "f": "Dr. Ramakrishnan R"
-        },
-        "2": {
-          "t": "free",
-          "n": "CSE414/INT327 in Room 502"
-        },
-        "3": {
-          "t": "class",
-          "c": "INT404R01",
-          "f": "Dr. Meganathan S"
-        },
-        "4": {
-          "t": "class",
-          "c": "CSE415R02",
-          "f": "Dr. Vimala Devi P"
-        },
-        "6": {
-          "t": "lab",
-          "c": "CSE431",
-          "f": "Dr. Vimala Devi P · Mr. Jeyapandian M (Batch-2)"
-        },
-        "7": {
-          "t": "lab",
-          "c": "CSE431",
-          "f": "Dr. Vimala Devi P · Mr. Jeyapandian M (Batch-2)"
-        },
-        "8": {
-          "t": "free",
-          "n": ""
-        }
-      },
-      "THU": {
-        "1": {
-          "t": "class",
-          "c": "CSE407R01",
-          "f": "Dr. Ramakrishnan R"
-        },
-        "2": {
-          "t": "class",
-          "c": "CSE409",
-          "f": "Dr. S. Farjana Farvin"
-        },
-        "3": {
-          "t": "lab",
-          "c": "CSE411",
-          "f": "Dr. S. Farjana Farvin · Dr. Ganesh J"
-        },
-        "4": {
-          "t": "lab",
-          "c": "CSE411",
-          "f": "Dr. S. Farjana Farvin · Dr. Ganesh J"
-        },
-        "6": {
-          "t": "free",
-          "n": "CSE414/INT327 in Room 504"
-        },
-        "7": {
-          "t": "free",
-          "n": "Minor Spec."
-        },
-        "8": {
-          "t": "free",
-          "n": "Minor Spec."
-        }
-      },
-      "FRI": {
-        "1": {
-          "t": "lab",
-          "c": "INT327",
-          "f": "Dr. Rajakumar R · Dr. Vanitha M"
-        },
-        "2": {
-          "t": "lab",
-          "c": "INT327",
-          "f": "Dr. Rajakumar R · Dr. Vanitha M"
-        },
-        "3": {
-          "t": "free",
-          "n": "CSE414/INT327 in Room 103"
-        },
-        "4": {
-          "t": "class",
-          "c": "CSE409",
-          "f": "Dr. S. Farjana Farvin"
-        },
-        "6": {
-          "t": "class",
-          "c": "CSE407R01",
-          "f": "Dr. Ramakrishnan R"
-        },
-        "7": {
-          "t": "class",
-          "c": "CSE415R02",
-          "f": "Dr. Vimala Devi P"
-        },
-        "8": {
-          "t": "free",
-          "n": "Minor Spec."
-        }
-      }
-    },
-    "416": {
-      "MON": {
-        "1": {
-          "t": "class",
-          "c": "CSE409",
-          "f": "Dr. M. Vanitha"
-        },
-        "2": {
-          "t": "lab",
-          "c": "CSE411",
-          "f": "Dr. M. Vanitha · Dr. Rajesh K"
-        },
-        "3": {
-          "t": "lab",
-          "c": "CSE411",
-          "f": "Dr. M. Vanitha · Dr. Rajesh K"
-        },
-        "4": {
-          "t": "free",
-          "n": ""
-        },
-        "6": {
-          "t": "class",
-          "c": "CSE414/INT405R02",
-          "f": "Dr. Sangeetha J"
-        },
-        "7": {
-          "t": "class",
-          "c": "CSE407R01",
-          "f": "Dr. Maartina M"
-        },
-        "8": {
-          "t": "free",
-          "n": ""
-        }
-      },
-      "TUE": {
-        "1": {
-          "t": "class",
-          "c": "CSE415R02",
-          "f": "Dr. Ganesh J"
-        },
-        "2": {
-          "t": "class",
-          "c": "CSE407R01",
-          "f": "Dr. Maartina M"
-        },
-        "3": {
-          "t": "free",
-          "n": ""
-        },
-        "4": {
-          "t": "lunch",
-          "n": "Lunch Break"
-        },
-        "6": {
-          "t": "lab",
-          "c": "CSE431",
-          "f": "Dr. Ganesh J · R. Ramesh (Batch-1)"
-        },
-        "7": {
-          "t": "free",
-          "n": ""
-        },
-        "8": {
-          "t": "free",
-          "n": ""
-        },
-        "ln": {
-          "t": "lab",
-          "c": "CSE431",
-          "f": "Dr. Ganesh J · R. Ramesh (Batch-1)"
-        }
-      },
-      "WED": {
-        "1": {
-          "t": "lab",
-          "c": "CSE431",
-          "f": "Dr. Ganesh J · R. Ramesh (Batch-2)"
-        },
-        "2": {
-          "t": "lab",
-          "c": "CSE431",
-          "f": "Dr. Ganesh J · R. Ramesh (Batch-2)"
-        },
-        "3": {
-          "t": "free",
-          "n": "CSE414/INT327 in Room 502"
-        },
-        "4": {
-          "t": "class",
-          "c": "CSE409",
-          "f": "Dr. M. Vanitha"
-        },
-        "6": {
-          "t": "class",
-          "c": "CSE407R01",
-          "f": "Dr. Maartina M"
-        },
-        "7": {
-          "t": "class",
-          "c": "INT404R01",
-          "f": "Dr. Durga Karthik"
-        },
-        "8": {
-          "t": "class",
-          "c": "CSE415R02",
-          "f": "Dr. Ganesh J"
-        }
-      },
-      "THU": {
-        "1": {
-          "t": "class",
-          "c": "CSE415R02",
-          "f": "Dr. Ganesh J"
-        },
-        "2": {
-          "t": "class",
-          "c": "CSE409",
-          "f": "Dr. M. Vanitha"
-        },
-        "3": {
-          "t": "class",
-          "c": "INT404R01",
-          "f": "Dr. Durga Karthik"
-        },
-        "4": {
-          "t": "class",
-          "c": "CSE407R01",
-          "f": "Dr. Maartina M"
-        },
-        "6": {
-          "t": "free",
-          "n": "CSE414/INT327 in Room 504"
-        },
-        "7": {
-          "t": "free",
-          "n": "Minor Spec."
-        },
-        "8": {
-          "t": "free",
-          "n": "Minor Spec."
-        }
-      },
-      "FRI": {
-        "1": {
-          "t": "lab",
-          "c": "INT327",
-          "f": "Dr. Rajakumar R · Dr. Vanitha M"
-        },
-        "2": {
-          "t": "lab",
-          "c": "INT327",
-          "f": "Dr. Rajakumar R · Dr. Vanitha M"
-        },
-        "3": {
-          "t": "free",
-          "n": "CSE414/INT327 in Room 103"
-        },
-        "4": {
-          "t": "class",
-          "c": "CSE415R02",
-          "f": "Dr. Ganesh J"
-        },
-        "6": {
-          "t": "class",
-          "c": "INT404R01",
-          "f": "Dr. Durga Karthik"
-        },
-        "7": {
-          "t": "class",
-          "c": "CSE409",
-          "f": "Dr. M. Vanitha"
-        },
-        "8": {
-          "t": "free",
-          "n": "Minor Spec."
         }
       }
     },
@@ -3427,374 +1822,6 @@
         "7": {
           "t": "free",
           "n": ""
-        },
-        "8": {
-          "t": "free",
-          "n": ""
-        }
-      }
-    },
-    "102": {
-      "MON": {
-        "1": {
-          "t": "lab",
-          "c": "CAP303",
-          "f": "Rubidha Devi, D / Sujarani, R / Venkateswari, P / Vimala Devi, P"
-        },
-        "2": {
-          "t": "lab",
-          "c": "CAP303",
-          "f": "Rubidha Devi, D / Sujarani, R / Venkateswari, P / Vimala Devi, P"
-        },
-        "3": {
-          "t": "class",
-          "c": "CAP207R01",
-          "f": "Nagamuthu Krishnan, S S"
-        },
-        "4": {
-          "t": "class",
-          "c": "CAP302",
-          "f": "Rubidha Devi, D"
-        },
-        "6": {
-          "t": "class",
-          "c": "CAP113",
-          "f": "Arulmani, K / Ganesh, J / Saravanan, N"
-        },
-        "7": {
-          "t": "class",
-          "c": "ENG209R01",
-          "f": "Loganayaki, G"
-        },
-        "8": {
-          "t": "free",
-          "n": ""
-        }
-      },
-      "TUE": {
-        "1": {
-          "t": "class",
-          "c": "CAP302",
-          "f": "Rubidha Devi, D"
-        },
-        "2": {
-          "t": "class",
-          "c": "CAP301",
-          "f": "Menaga, A"
-        },
-        "3": {
-          "t": "class",
-          "c": "CAP113",
-          "f": "Arulmani, K / Ganesh, J / Saravanan, N"
-        },
-        "4": {
-          "t": "class",
-          "c": "CHY102",
-          "f": "Sundar, N"
-        },
-        "6": {
-          "t": "class",
-          "c": "CAP207R01",
-          "f": "Nagamuthu Krishnan, S S"
-        },
-        "7": {
-          "t": "lab",
-          "c": "CAP304",
-          "f": "Dharshini K / Manjula, K / Menaga, A"
-        },
-        "8": {
-          "t": "lab",
-          "c": "CAP304",
-          "f": "Dharshini K / Manjula, K / Menaga, A"
-        }
-      },
-      "WED": {
-        "1": {
-          "t": "class",
-          "c": "CHY102",
-          "f": "Sundar, N"
-        },
-        "2": {
-          "t": "class",
-          "c": "CAP301",
-          "f": "Menaga, A"
-        },
-        "3": {
-          "t": "class",
-          "c": "CAP113",
-          "f": "Arulmani, K / Ganesh, J / Saravanan, N"
-        },
-        "4": {
-          "t": "class",
-          "c": "ENG209R01",
-          "f": "Loganayaki, G"
-        },
-        "6": {
-          "t": "class",
-          "c": "CAP302",
-          "f": "Rubidha Devi, D"
-        },
-        "7": {
-          "t": "class",
-          "c": "CAP207R01",
-          "f": "Nagamuthu Krishnan, S S"
-        },
-        "8": {
-          "t": "free",
-          "n": ""
-        }
-      },
-      "THU": {
-        "1": {
-          "t": "free",
-          "n": ""
-        },
-        "2": {
-          "t": "free",
-          "n": ""
-        },
-        "3": {
-          "t": "class",
-          "c": "CAP301",
-          "f": "Menaga, A"
-        },
-        "4": {
-          "t": "lunch",
-          "n": "Lunch Break"
-        },
-        "6": {
-          "t": "lab",
-          "c": "CAP303",
-          "f": "Rubidha Devi, D / Sujarani, R / Venkateswari, P / Vimala Devi, P"
-        },
-        "7": {
-          "t": "class",
-          "c": "CAP113",
-          "f": "Arulmani, K / Ganesh, J / Saravanan, N"
-        },
-        "8": {
-          "t": "class",
-          "c": "CAP207R01",
-          "f": "Nagamuthu Krishnan, S S"
-        },
-        "ln": {
-          "t": "lab",
-          "c": "CAP303",
-          "f": "Rubidha Devi, D / Sujarani, R / Venkateswari, P / Vimala Devi, P"
-        }
-      },
-      "FRI": {
-        "1": {
-          "t": "lab",
-          "c": "CAP304",
-          "f": "Dharshini K / Manjula, K / Menaga, A"
-        },
-        "2": {
-          "t": "lab",
-          "c": "CAP304",
-          "f": "Dharshini K / Manjula, K / Menaga, A"
-        },
-        "3": {
-          "t": "class",
-          "c": "CAP207R01",
-          "f": "Nagamuthu Krishnan, S S"
-        },
-        "4": {
-          "t": "class",
-          "c": "ENG209R01",
-          "f": "Loganayaki, G"
-        },
-        "6": {
-          "t": "class",
-          "c": "CAP301",
-          "f": "Menaga, A"
-        },
-        "7": {
-          "t": "class",
-          "c": "CAP302",
-          "f": "Rubidha Devi, D"
-        },
-        "8": {
-          "t": "free",
-          "n": ""
-        }
-      }
-    },
-    "103": {
-      "MON": {
-        "1": {
-          "t": "free",
-          "n": ""
-        },
-        "2": {
-          "t": "class",
-          "c": "CAP207R01",
-          "f": "Nagamuthu Krishnan, S S"
-        },
-        "3": {
-          "t": "class",
-          "c": "CAP301",
-          "f": "Menaga, A"
-        },
-        "4": {
-          "t": "class",
-          "c": "CHY102",
-          "f": "Sundar, N"
-        },
-        "6": {
-          "t": "class",
-          "c": "CAP113",
-          "f": "Arulmani, K / Ganesh, J / Saravanan, N"
-        },
-        "7": {
-          "t": "lab",
-          "c": "CAP304",
-          "f": "Dharshini K / Girija / Hemamalini, S / Menaga, A"
-        },
-        "8": {
-          "t": "lab",
-          "c": "CAP304",
-          "f": "Dharshini K / Girija / Hemamalini, S / Menaga, A"
-        }
-      },
-      "TUE": {
-        "1": {
-          "t": "class",
-          "c": "CHY102",
-          "f": "Sundar, N"
-        },
-        "2": {
-          "t": "class",
-          "c": "CAP113",
-          "f": "Arulmani, K / Ganesh, J / Saravanan, N"
-        },
-        "3": {
-          "t": "free",
-          "n": ""
-        },
-        "4": {
-          "t": "class",
-          "c": "CAP302",
-          "f": "Rubidha Devi, D"
-        },
-        "6": {
-          "t": "class",
-          "c": "CAP301",
-          "f": "Menaga, A"
-        },
-        "7": {
-          "t": "class",
-          "c": "CAP207R01",
-          "f": "Nagamuthu Krishnan, S S"
-        },
-        "8": {
-          "t": "free",
-          "n": ""
-        }
-      },
-      "WED": {
-        "1": {
-          "t": "class",
-          "c": "ENG209R01",
-          "f": "Siva Vidhya, M"
-        },
-        "2": {
-          "t": "class",
-          "c": "CAP302",
-          "f": "Rubidha Devi, D"
-        },
-        "3": {
-          "t": "class",
-          "c": "CAP113",
-          "f": "Arulmani, K / Ganesh, J / Saravanan, N"
-        },
-        "4": {
-          "t": "class",
-          "c": "CAP301",
-          "f": "Menaga, A"
-        },
-        "6": {
-          "t": "class",
-          "c": "CAP207R01",
-          "f": "Nagamuthu Krishnan, S S"
-        },
-        "7": {
-          "t": "lab",
-          "c": "CAP303",
-          "f": "Ramya, R / Rubidha Devi, D / Sujarani, R"
-        },
-        "8": {
-          "t": "lab",
-          "c": "CAP303",
-          "f": "Ramya, R / Rubidha Devi, D / Sujarani, R"
-        }
-      },
-      "THU": {
-        "1": {
-          "t": "class",
-          "c": "CAP207R01",
-          "f": "Nagamuthu Krishnan, S S"
-        },
-        "2": {
-          "t": "class",
-          "c": "CAP302",
-          "f": "Rubidha Devi, D"
-        },
-        "3": {
-          "t": "lab",
-          "c": "CAP304",
-          "f": "Dharshini K / Girija / Hemamalini, S / Menaga, A"
-        },
-        "4": {
-          "t": "lab",
-          "c": "CAP304",
-          "f": "Dharshini K / Girija / Hemamalini, S / Menaga, A"
-        },
-        "6": {
-          "t": "class",
-          "c": "CAP301",
-          "f": "Menaga, A"
-        },
-        "7": {
-          "t": "class",
-          "c": "CAP113",
-          "f": "Arulmani, K / Ganesh, J / Saravanan, N"
-        },
-        "8": {
-          "t": "class",
-          "c": "ENG209R01",
-          "f": "Siva Vidhya, M"
-        }
-      },
-      "FRI": {
-        "1": {
-          "t": "free",
-          "n": ""
-        },
-        "2": {
-          "t": "class",
-          "c": "CAP302",
-          "f": "Rubidha Devi, D"
-        },
-        "3": {
-          "t": "lab",
-          "c": "CAP303",
-          "f": "Ramya, R / Rubidha Devi, D / Sujarani, R"
-        },
-        "4": {
-          "t": "lab",
-          "c": "CAP303",
-          "f": "Ramya, R / Rubidha Devi, D / Sujarani, R"
-        },
-        "6": {
-          "t": "class",
-          "c": "ENG209R01",
-          "f": "Siva Vidhya, M"
-        },
-        "7": {
-          "t": "class",
-          "c": "CAP207R01",
-          "f": "Nagamuthu Krishnan, S S"
         },
         "8": {
           "t": "free",
@@ -7263,14 +5290,14 @@
           "c": "COM204R01",
           "f": "Sivakami, R"
         },
+        "8": {
+          "t": "free",
+          "n": ""
+        },
         "ln": {
           "t": "lab",
           "c": "COM210",
           "f": "Blessy Milca, I; Renuka, R"
-        },
-        "8": {
-          "t": "free",
-          "n": ""
         }
       },
       "WED": {
@@ -7569,6 +5596,10 @@
           "c": "COM203R01",
           "f": "Durgamani, M K"
         },
+        "4": {
+          "t": "lunch",
+          "n": "Lunch Break"
+        },
         "6": {
           "t": "lab",
           "c": "COM210",
@@ -7582,10 +5613,6 @@
         "8": {
           "t": "free",
           "n": ""
-        },
-        "4": {
-          "t": "lunch",
-          "n": "Lunch Break"
         },
         "ln": {
           "t": "lab",
@@ -7897,6 +5924,443 @@
         "6": {
           "t": "free",
           "n": ""
+        },
+        "7": {
+          "t": "free",
+          "n": ""
+        },
+        "8": {
+          "t": "free",
+          "n": ""
+        }
+      }
+    },
+    "401": {
+      "MON": {
+        "1": {
+          "t": "class",
+          "c": "ECE101R01",
+          "f": "Ramasamy, K"
+        },
+        "2": {
+          "t": "class",
+          "c": "MAT201R01",
+          "f": "Narasimhan, D"
+        },
+        "3": {
+          "t": "class",
+          "c": "ECE102",
+          "f": "Alli Rani, A"
+        },
+        "4": {
+          "t": "class",
+          "c": "EEE201R01",
+          "f": "Sundaravazhuthi, V"
+        },
+        "6": {
+          "t": "class",
+          "c": "EIE201",
+          "f": "Thalaimalaichamy, M"
+        },
+        "7": {
+          "t": "free",
+          "n": ""
+        },
+        "8": {
+          "t": "free",
+          "n": ""
+        },
+        "b1": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
+          "t": "free",
+          "n": ""
+        },
+        "b2": {
+          "t": "free",
+          "n": ""
+        }
+      },
+      "TUE": {
+        "1": {
+          "t": "class",
+          "c": "EEE201R01",
+          "f": "Sundaravazhuthi, V"
+        },
+        "2": {
+          "t": "class",
+          "c": "ECE102",
+          "f": "Alli Rani, A"
+        },
+        "3": {
+          "t": "lab",
+          "c": [
+            "ECE103",
+            "EIE202R01"
+          ],
+          "f": [
+            "Ramasamy, K",
+            "Arun Kumar, M / Thalaimalaichamy, M"
+          ]
+        },
+        "4": {
+          "t": "lab",
+          "c": [
+            "ECE103",
+            "EIE202R01"
+          ],
+          "f": [
+            "Suganya, J",
+            "Balasubramanian, A"
+          ]
+        },
+        "6": {
+          "t": "class",
+          "c": "EIE201",
+          "f": "Thalaimalaichamy, M"
+        },
+        "7": {
+          "t": "class",
+          "c": "INT106M",
+          "f": "Ramya, R"
+        },
+        "8": {
+          "t": "free",
+          "n": ""
+        },
+        "b1": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
+          "t": "free",
+          "n": ""
+        },
+        "b2": {
+          "t": "free",
+          "n": ""
+        }
+      },
+      "WED": {
+        "1": {
+          "t": "class",
+          "c": "EEE201R01",
+          "f": "Sundaravazhuthi, V"
+        },
+        "2": {
+          "t": "class",
+          "c": "MAT201R01",
+          "f": "Narasimhan, D"
+        },
+        "3": {
+          "t": "class",
+          "c": "EIE201",
+          "f": "Thalaimalaichamy, M"
+        },
+        "4": {
+          "t": "class",
+          "c": "ECE101R01",
+          "f": "Ramasamy, K"
+        },
+        "6": {
+          "t": "class",
+          "c": "ECE102",
+          "f": "Alli Rani, A"
+        },
+        "7": {
+          "t": "free",
+          "n": ""
+        },
+        "8": {
+          "t": "free",
+          "n": ""
+        },
+        "b1": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
+          "t": "free",
+          "n": ""
+        },
+        "b2": {
+          "t": "free",
+          "n": ""
+        }
+      },
+      "THU": {
+        "1": {
+          "t": "class",
+          "c": "ECE101R01",
+          "f": "Ramasamy, K"
+        },
+        "2": {
+          "t": "class",
+          "c": "MAT201R01",
+          "f": "Narasimhan, D"
+        },
+        "3": {
+          "t": "class",
+          "c": "ECE102",
+          "f": "Alli Rani, A"
+        },
+        "4": {
+          "t": "free",
+          "n": ""
+        },
+        "6": {
+          "t": "lab",
+          "c": [
+            "EIE202R01",
+            "ECE103"
+          ],
+          "f": [
+            "Arun Kumar, M / Balasubramanian, A / Thalaimalaichamy, M",
+            "Ramasamy, K / Suganya, J"
+          ]
+        },
+        "7": {
+          "t": "lab",
+          "c": [
+            "ECE103",
+            "EIE202R01"
+          ],
+          "f": [
+            "Ramasamy, K / Suganya, J",
+            "Arun Kumar, M / Balasubramanian, A / Thalaimalaichamy, M"
+          ]
+        },
+        "8": {
+          "t": "free",
+          "n": ""
+        },
+        "b1": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
+          "t": "free",
+          "n": ""
+        },
+        "b2": {
+          "t": "free",
+          "n": ""
+        }
+      },
+      "FRI": {
+        "1": {
+          "t": "class",
+          "c": "ECE101R01",
+          "f": "Ramasamy, K"
+        },
+        "2": {
+          "t": "class",
+          "c": "EIE201",
+          "f": "Thalaimalaichamy, M"
+        },
+        "3": {
+          "t": "class",
+          "c": "EEE201R01",
+          "f": "Sundaravazhuthi, V"
+        },
+        "4": {
+          "t": "class",
+          "c": "MAT201R01",
+          "f": "Narasimhan, D"
+        },
+        "6": {
+          "t": "free",
+          "n": ""
+        },
+        "7": {
+          "t": "free",
+          "n": ""
+        },
+        "8": {
+          "t": "free",
+          "n": ""
+        },
+        "b1": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
+          "t": "free",
+          "n": ""
+        },
+        "b2": {
+          "t": "free",
+          "n": ""
+        }
+      }
+    },
+    "402": {
+      "MON": {
+        "1": {
+          "t": "class",
+          "c": "EIE201",
+          "f": "Dr. Sudha S"
+        },
+        "2": {
+          "t": "class",
+          "c": "EEE201R01",
+          "f": "Dr. Sundaravazhuthi V"
+        },
+        "3": {
+          "t": "class",
+          "c": "MAT201R01",
+          "f": "Dr. BalasubramanianK"
+        },
+        "4": {
+          "t": "class",
+          "c": "ECE101R01",
+          "f": "Dr. Srinivasan A"
+        },
+        "6": {
+          "t": "class",
+          "c": "ECE102",
+          "f": "Dr. Alli Rani A"
+        },
+        "7": {
+          "t": "free",
+          "n": ""
+        },
+        "8": {
+          "t": "free",
+          "n": ""
+        }
+      },
+      "TUE": {
+        "1": {
+          "t": "free",
+          "n": ""
+        },
+        "2": {
+          "t": "class",
+          "c": "EIE201",
+          "f": "Dr. Sudha S"
+        },
+        "3": {
+          "t": "class",
+          "c": "ECE101R01",
+          "f": "Dr. Srinivasan A"
+        },
+        "4": {
+          "t": "class",
+          "c": "EEE201R01",
+          "f": "Dr. Sundaravazhuthi V"
+        },
+        "6": {
+          "t": "class",
+          "c": "ECE102",
+          "f": "Dr. Alli Rani A"
+        },
+        "7": {
+          "t": "free",
+          "n": ""
+        },
+        "8": {
+          "t": "free",
+          "n": ""
+        }
+      },
+      "WED": {
+        "1": {
+          "t": "class",
+          "c": "ECE102",
+          "f": "Dr. Alli Rani A"
+        },
+        "2": {
+          "t": "class",
+          "c": "EIE201",
+          "f": "Dr. Sudha S"
+        },
+        "3": {
+          "t": "lab",
+          "c": "ECE103/EIE202R01",
+          "f": "Dr. Srinivasan A · Dr. Sudha S"
+        },
+        "4": {
+          "t": "lab",
+          "c": "ECE103/EIE202R01",
+          "f": "Dr. Srinivasan A · Dr. Sudha S"
+        },
+        "6": {
+          "t": "class",
+          "c": "MAT201R01",
+          "f": "Dr. BalasubramanianK"
+        },
+        "7": {
+          "t": "free",
+          "n": ""
+        },
+        "8": {
+          "t": "free",
+          "n": ""
+        }
+      },
+      "THU": {
+        "1": {
+          "t": "class",
+          "c": "MAT201R01",
+          "f": "Dr. BalasubramanianK"
+        },
+        "2": {
+          "t": "class",
+          "c": "ECE101R01",
+          "f": "Dr. Srinivasan A"
+        },
+        "3": {
+          "t": "lab",
+          "c": "ECE103/EIE202R01",
+          "f": "Dr. Srinivasan A · Dr. Sudha S"
+        },
+        "4": {
+          "t": "lab",
+          "c": "ECE103/EIE202R01",
+          "f": "Dr. Srinivasan A · Dr. Sudha S"
+        },
+        "6": {
+          "t": "class",
+          "c": "EEE201R01",
+          "f": "Dr. Sundaravazhuthi V"
+        },
+        "7": {
+          "t": "class",
+          "c": "EIE201",
+          "f": "Dr. Sudha S"
+        },
+        "8": {
+          "t": "free",
+          "n": ""
+        }
+      },
+      "FRI": {
+        "1": {
+          "t": "free",
+          "n": ""
+        },
+        "2": {
+          "t": "class",
+          "c": "ECE102",
+          "f": "Dr. Alli Rani A"
+        },
+        "3": {
+          "t": "class",
+          "c": "EEE201R01",
+          "f": "Dr. Sundaravazhuthi V"
+        },
+        "4": {
+          "t": "class",
+          "c": "MAT201R01",
+          "f": "Dr. BalasubramanianK"
+        },
+        "6": {
+          "t": "class",
+          "c": "ECE101R01",
+          "f": "Dr. Srinivasan A"
         },
         "7": {
           "t": "free",
@@ -8657,6 +7121,1624 @@
         }
       }
     },
+    "407": {
+      "MON": {
+        "1": {
+          "t": "class",
+          "c": "MAT201R01",
+          "f": "Dr. K. Kannan"
+        },
+        "2": {
+          "t": "class",
+          "c": "CSE105",
+          "f": "Dr. Durga Karthik"
+        },
+        "3": {
+          "t": "class",
+          "c": "CSE208",
+          "f": "Dr. Sangeetha J"
+        },
+        "4": {
+          "t": "lunch",
+          "n": "Lunch Break"
+        },
+        "6": {
+          "t": "lab",
+          "c": "CSE104R01/ECE103",
+          "f": "Dr. Sumathi A · Dr. T. Nirmalraj"
+        },
+        "7": {
+          "t": "free",
+          "n": "Minor Spec."
+        },
+        "8": {
+          "t": "free",
+          "n": "Minor Spec."
+        },
+        "ln": {
+          "t": "lab",
+          "c": "CSE104R01/ECE103",
+          "f": "Dr. Sumathi A · Dr. T. Nirmalraj"
+        }
+      },
+      "TUE": {
+        "1": {
+          "t": "class",
+          "c": "MAT201R01",
+          "f": "Dr. K. Kannan"
+        },
+        "2": {
+          "t": "class",
+          "c": "CSE103R01",
+          "f": "Dr. Sumathi A"
+        },
+        "3": {
+          "t": "class",
+          "c": "CSE105",
+          "f": "Dr. Durga Karthik"
+        },
+        "4": {
+          "t": "class",
+          "c": "ECE101R01",
+          "f": "Dr. T. Nirmalraj"
+        },
+        "6": {
+          "t": "free",
+          "n": ""
+        },
+        "7": {
+          "t": "free",
+          "n": "Minor Spec."
+        },
+        "8": {
+          "t": "free",
+          "n": "Minor Spec."
+        }
+      },
+      "WED": {
+        "1": {
+          "t": "lab",
+          "c": "CSE104R01/ECE103",
+          "f": "Dr. Sumathi A · Dr. T. Nirmalraj"
+        },
+        "2": {
+          "t": "lab",
+          "c": "CSE104R01/ECE103",
+          "f": "Dr. Sumathi A · Dr. T. Nirmalraj"
+        },
+        "3": {
+          "t": "class",
+          "c": "CSE105",
+          "f": "Dr. Durga Karthik"
+        },
+        "4": {
+          "t": "class",
+          "c": "ECE101R01",
+          "f": "Dr. T. Nirmalraj"
+        },
+        "6": {
+          "t": "class",
+          "c": "CSE103R01",
+          "f": "Dr. Sumathi A"
+        },
+        "7": {
+          "t": "class",
+          "c": "CSE208",
+          "f": "Dr. Sangeetha J"
+        },
+        "8": {
+          "t": "free",
+          "n": ""
+        }
+      },
+      "THU": {
+        "1": {
+          "t": "class",
+          "c": "MAT201R01",
+          "f": "Dr. K. Kannan"
+        },
+        "2": {
+          "t": "class",
+          "c": "CSE208",
+          "f": "Dr. Sangeetha J"
+        },
+        "3": {
+          "t": "class",
+          "c": "ECE101R01",
+          "f": "Dr. T. Nirmalraj"
+        },
+        "4": {
+          "t": "class",
+          "c": "CSE103R01",
+          "f": "Dr. Sumathi A"
+        },
+        "6": {
+          "t": "free",
+          "n": ""
+        },
+        "7": {
+          "t": "free",
+          "n": ""
+        },
+        "8": {
+          "t": "free",
+          "n": ""
+        }
+      },
+      "FRI": {
+        "1": {
+          "t": "free",
+          "n": ""
+        },
+        "2": {
+          "t": "class",
+          "c": "MAT201R01",
+          "f": "Dr. K. Kannan"
+        },
+        "3": {
+          "t": "class",
+          "c": "ECE101R01",
+          "f": "Dr. T. Nirmalraj"
+        },
+        "4": {
+          "t": "class",
+          "c": "CSE105",
+          "f": "Dr. Durga Karthik"
+        },
+        "6": {
+          "t": "class",
+          "c": "CSE103R01",
+          "f": "Dr. Sumathi A"
+        },
+        "7": {
+          "t": "lab",
+          "c": "CSE208",
+          "f": "Dr. Sangeetha J · Dr. Manjula K"
+        },
+        "8": {
+          "t": "lab",
+          "c": "CSE208",
+          "f": "Dr. Sangeetha J · Dr. Manjula K"
+        }
+      }
+    },
+    "409": {
+      "MON": {
+        "1": {
+          "t": "free",
+          "n": ""
+        },
+        "2": {
+          "t": "class",
+          "c": "CSE103R01",
+          "f": "Dr. D. Vaishnavi"
+        },
+        "3": {
+          "t": "class",
+          "c": "MAT201R01",
+          "f": "Dr. V. Srinivasan"
+        },
+        "4": {
+          "t": "class",
+          "c": "ECE101R01",
+          "f": "Dr. S. Radhakrishnan"
+        },
+        "6": {
+          "t": "class",
+          "c": "CSE105",
+          "f": "Dr. Durga Karthik"
+        },
+        "7": {
+          "t": "free",
+          "n": "Minor Spec."
+        },
+        "8": {
+          "t": "free",
+          "n": "Minor Spec."
+        }
+      },
+      "TUE": {
+        "1": {
+          "t": "lab",
+          "c": "CSE104R01/ECE103",
+          "f": "Dr. D. Vaishnavi · Dr. S. Radhakrishnan"
+        },
+        "2": {
+          "t": "lab",
+          "c": "CSE104R01/ECE103",
+          "f": "Dr. D. Vaishnavi · Dr. S. Radhakrishnan"
+        },
+        "3": {
+          "t": "class",
+          "c": "ECE101R01",
+          "f": "Dr. S. Radhakrishnan"
+        },
+        "4": {
+          "t": "class",
+          "c": "CSE208",
+          "f": "Dr. Sangeetha J"
+        },
+        "6": {
+          "t": "class",
+          "c": "MAT201R01",
+          "f": "Dr. V. Srinivasan"
+        },
+        "7": {
+          "t": "class",
+          "c": "CSE105",
+          "f": "Dr. Durga Karthik"
+        },
+        "8": {
+          "t": "free",
+          "n": "Minor Spec."
+        }
+      },
+      "WED": {
+        "1": {
+          "t": "free",
+          "n": ""
+        },
+        "2": {
+          "t": "class",
+          "c": "CSE208",
+          "f": "Dr. Sangeetha J"
+        },
+        "3": {
+          "t": "class",
+          "c": "MAT201R01",
+          "f": "Dr. V. Srinivasan"
+        },
+        "4": {
+          "t": "class",
+          "c": "ECE101R01",
+          "f": "Dr. S. Radhakrishnan"
+        },
+        "6": {
+          "t": "class",
+          "c": "CSE105",
+          "f": "Dr. Durga Karthik"
+        },
+        "7": {
+          "t": "class",
+          "c": "CSE103R01",
+          "f": "Dr. D. Vaishnavi"
+        },
+        "8": {
+          "t": "free",
+          "n": ""
+        }
+      },
+      "THU": {
+        "1": {
+          "t": "free",
+          "n": ""
+        },
+        "2": {
+          "t": "free",
+          "n": ""
+        },
+        "3": {
+          "t": "free",
+          "n": ""
+        },
+        "4": {
+          "t": "class",
+          "c": "CSE208",
+          "f": "Dr. Sangeetha J"
+        },
+        "6": {
+          "t": "class",
+          "c": "CSE103R01",
+          "f": "Dr. D. Vaishnavi"
+        },
+        "7": {
+          "t": "lab",
+          "c": "CSE208",
+          "f": "Dr. Sangeetha J · Mr. Swaminathan S"
+        },
+        "8": {
+          "t": "lab",
+          "c": "CSE208",
+          "f": "Dr. Sangeetha J · Mr. Swaminathan S"
+        }
+      },
+      "FRI": {
+        "1": {
+          "t": "free",
+          "n": ""
+        },
+        "2": {
+          "t": "class",
+          "c": "MAT201R01",
+          "f": "Dr. V. Srinivasan"
+        },
+        "3": {
+          "t": "class",
+          "c": "ECE101R01",
+          "f": "Dr. S. Radhakrishnan"
+        },
+        "4": {
+          "t": "lunch",
+          "n": "Lunch Break"
+        },
+        "6": {
+          "t": "lab",
+          "c": "CSE104R01/ECE103",
+          "f": "Dr. D. Vaishnavi · Dr. S. Radhakrishnan"
+        },
+        "7": {
+          "t": "class",
+          "c": "CSE105",
+          "f": "Dr. Durga Karthik"
+        },
+        "8": {
+          "t": "class",
+          "c": "CSE103R01",
+          "f": "Dr. D. Vaishnavi"
+        },
+        "ln": {
+          "t": "lab",
+          "c": "CSE104R01/ECE103",
+          "f": "Dr. D. Vaishnavi · Dr. S. Radhakrishnan"
+        }
+      }
+    },
+    "410": {
+      "MON": {
+        "1": {
+          "t": "lab",
+          "c": "CSE104R01/ECE103",
+          "f": "Mrs. Hemamalini S · Dr. M. Suba"
+        },
+        "2": {
+          "t": "lab",
+          "c": "CSE104R01/ECE103",
+          "f": "Mrs. Hemamalini S · Dr. M. Suba"
+        },
+        "3": {
+          "t": "class",
+          "c": "CSE105",
+          "f": "Dr. Vimala Devi P"
+        },
+        "4": {
+          "t": "class",
+          "c": "MAT201R01",
+          "f": "Dr. K. Kanakaraj"
+        },
+        "6": {
+          "t": "class",
+          "c": "ECE101R01",
+          "f": "Prof. G. Usha"
+        },
+        "7": {
+          "t": "free",
+          "n": "Minor Spec."
+        },
+        "8": {
+          "t": "free",
+          "n": "Minor Spec."
+        }
+      },
+      "TUE": {
+        "1": {
+          "t": "class",
+          "c": "MAT201R01",
+          "f": "Dr. K. Kanakaraj"
+        },
+        "2": {
+          "t": "class",
+          "c": "ECE101R01",
+          "f": "Prof. G. Usha"
+        },
+        "3": {
+          "t": "class",
+          "c": "CSE208",
+          "f": "Dr. Manjula K"
+        },
+        "4": {
+          "t": "class",
+          "c": "CSE103R01",
+          "f": "Mrs. Hemamalini S"
+        },
+        "6": {
+          "t": "class",
+          "c": "CSE105",
+          "f": "Dr. Vimala Devi P"
+        },
+        "7": {
+          "t": "free",
+          "n": "Minor Spec."
+        },
+        "8": {
+          "t": "free",
+          "n": "Minor Spec."
+        }
+      },
+      "WED": {
+        "1": {
+          "t": "free",
+          "n": ""
+        },
+        "2": {
+          "t": "class",
+          "c": "CSE103R01",
+          "f": "Mrs. Hemamalini S"
+        },
+        "3": {
+          "t": "class",
+          "c": "MAT201R01",
+          "f": "Dr. K. Kanakaraj"
+        },
+        "4": {
+          "t": "class",
+          "c": "CSE105",
+          "f": "Dr. Vimala Devi P"
+        },
+        "6": {
+          "t": "class",
+          "c": "ECE101R01",
+          "f": "Prof. G. Usha"
+        },
+        "7": {
+          "t": "class",
+          "c": "CSE208",
+          "f": "Dr. Manjula K"
+        },
+        "8": {
+          "t": "free",
+          "n": ""
+        }
+      },
+      "THU": {
+        "1": {
+          "t": "class",
+          "c": "MAT201R01",
+          "f": "Dr. K. Kanakaraj"
+        },
+        "2": {
+          "t": "class",
+          "c": "CSE105",
+          "f": "Dr. Vimala Devi P"
+        },
+        "3": {
+          "t": "class",
+          "c": "CSE208",
+          "f": "Dr. Manjula K"
+        },
+        "4": {
+          "t": "class",
+          "c": "ECE101R01",
+          "f": "Prof. G. Usha"
+        },
+        "6": {
+          "t": "class",
+          "c": "CSE103R01",
+          "f": "Mrs. Hemamalini S"
+        },
+        "7": {
+          "t": "lab",
+          "c": "CSE208",
+          "f": "Dr. Manjula K · Dr. Rekha D"
+        },
+        "8": {
+          "t": "lab",
+          "c": "CSE208",
+          "f": "Dr. Manjula K · Dr. Rekha D"
+        }
+      },
+      "FRI": {
+        "1": {
+          "t": "free",
+          "n": ""
+        },
+        "2": {
+          "t": "free",
+          "n": ""
+        },
+        "3": {
+          "t": "free",
+          "n": ""
+        },
+        "4": {
+          "t": "free",
+          "n": ""
+        },
+        "6": {
+          "t": "class",
+          "c": "CSE103R01",
+          "f": "Mrs. Hemamalini S"
+        },
+        "7": {
+          "t": "lab",
+          "c": "CSE104R01/ECE103",
+          "f": "Mrs. Hemamalini S · Dr. Gayathri Devi T"
+        },
+        "8": {
+          "t": "lab",
+          "c": "CSE104R01/ECE103",
+          "f": "Mrs. Hemamalini S · Dr. Gayathri Devi T"
+        }
+      }
+    },
+    "411": {
+      "MON": {
+        "1": {
+          "t": "lab",
+          "c": "CSE312",
+          "f": "Mr. Manikandan H · Dr. Ganesh J"
+        },
+        "2": {
+          "t": "lab",
+          "c": "CSE312",
+          "f": "Mr. Manikandan H · Dr. Ganesh J"
+        },
+        "3": {
+          "t": "free",
+          "n": "INT310/CSE312 in Room 506"
+        },
+        "4": {
+          "t": "class",
+          "c": "CSE302",
+          "f": "Dr. Sreedevi B"
+        },
+        "6": {
+          "t": "free",
+          "n": ""
+        },
+        "7": {
+          "t": "free",
+          "n": ""
+        },
+        "8": {
+          "t": "free",
+          "n": ""
+        }
+      },
+      "TUE": {
+        "1": {
+          "t": "class",
+          "c": "CSE301",
+          "f": "Dr. Rajeswari N"
+        },
+        "2": {
+          "t": "class",
+          "c": "CSE308",
+          "f": "Dr. N. Moratanch"
+        },
+        "3": {
+          "t": "class",
+          "c": "CSE302",
+          "f": "Dr. Sreedevi B"
+        },
+        "4": {
+          "t": "lunch",
+          "n": "Lunch Break"
+        },
+        "6": {
+          "t": "lab",
+          "c": "CSE304",
+          "f": "Dr. Arul Mani K · Dr. Ramakrishnan R"
+        },
+        "7": {
+          "t": "class",
+          "c": "CSE304",
+          "f": "Dr. Arul Mani K"
+        },
+        "8": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
+          "t": "lab",
+          "c": "CSE304",
+          "f": "Dr. Arul Mani K · Dr. Ramakrishnan R"
+        }
+      },
+      "WED": {
+        "1": {
+          "t": "lab",
+          "c": "CSE303",
+          "f": "Dr. Sreedevi B · Dr. Venkatesh K (Batch-1)"
+        },
+        "2": {
+          "t": "lab",
+          "c": "CSE303",
+          "f": "Dr. Sreedevi B · Dr. Venkatesh K (Batch-1)"
+        },
+        "3": {
+          "t": "class",
+          "c": "CSE302",
+          "f": "Dr. Sreedevi B"
+        },
+        "4": {
+          "t": "class",
+          "c": "CSE301",
+          "f": "Dr. Rajeswari N"
+        },
+        "6": {
+          "t": "class",
+          "c": "CSE308",
+          "f": "Dr. N. Moratanch"
+        },
+        "7": {
+          "t": "class",
+          "c": "INT310",
+          "f": "Mrs. Hemamalini S"
+        },
+        "8": {
+          "t": "free",
+          "n": "Minor Spec."
+        }
+      },
+      "THU": {
+        "1": {
+          "t": "class",
+          "c": "CSE301",
+          "f": "Dr. Rajeswari N"
+        },
+        "2": {
+          "t": "class",
+          "c": "CSE302",
+          "f": "Dr. Sreedevi B"
+        },
+        "3": {
+          "t": "lab",
+          "c": "CSE309R01",
+          "f": "Dr. N. Moratanch · Dr. D. Vaishnavi"
+        },
+        "4": {
+          "t": "lab",
+          "c": "CSE309R01",
+          "f": "Dr. N. Moratanch · Dr. D. Vaishnavi"
+        },
+        "6": {
+          "t": "class",
+          "c": "CSE304",
+          "f": "Dr. Arul Mani K"
+        },
+        "7": {
+          "t": "free",
+          "n": "Minor Spec."
+        },
+        "8": {
+          "t": "free",
+          "n": "Minor Spec."
+        }
+      },
+      "FRI": {
+        "1": {
+          "t": "class",
+          "c": "CSE301",
+          "f": "Dr. Rajeswari N"
+        },
+        "2": {
+          "t": "free",
+          "n": "INT310/CSE312 in Room 410"
+        },
+        "3": {
+          "t": "class",
+          "c": "CSE304",
+          "f": "Dr. Arul Mani K"
+        },
+        "4": {
+          "t": "class",
+          "c": "CSE308",
+          "f": "Dr. N. Moratanch"
+        },
+        "6": {
+          "t": "lab",
+          "c": "CSE303",
+          "f": "Dr. Ramya R · Dr. Suganya S (Batch-2)"
+        },
+        "7": {
+          "t": "lab",
+          "c": "CSE303",
+          "f": "Dr. Ramya R · Dr. Suganya S (Batch-2)"
+        },
+        "8": {
+          "t": "free",
+          "n": ""
+        }
+      }
+    },
+    "412": {
+      "MON": {
+        "1": {
+          "t": "lab",
+          "c": "CSE312",
+          "f": "Mr. Manikandan H · Dr. Ganesh J"
+        },
+        "2": {
+          "t": "lab",
+          "c": "CSE312",
+          "f": "Mr. Manikandan H · Dr. Ganesh J"
+        },
+        "3": {
+          "t": "free",
+          "n": "INT310/CSE312 in Room 506"
+        },
+        "4": {
+          "t": "lunch",
+          "n": "Lunch Break"
+        },
+        "6": {
+          "t": "lab",
+          "c": "CSE309R01",
+          "f": "Dr. N. Moratanch · Dr. S. Keerthana"
+        },
+        "7": {
+          "t": "class",
+          "c": "CSE301",
+          "f": "Mr. Ramesh R"
+        },
+        "8": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
+          "t": "lab",
+          "c": "CSE309R01",
+          "f": "Dr. N. Moratanch · Dr. S. Keerthana"
+        }
+      },
+      "TUE": {
+        "1": {
+          "t": "class",
+          "c": "CSE301",
+          "f": "Mr. Ramesh R"
+        },
+        "2": {
+          "t": "class",
+          "c": "CSE302",
+          "f": "Dr. Sreedevi B"
+        },
+        "3": {
+          "t": "class",
+          "c": "CSE308",
+          "f": "Dr. N. Moratanch"
+        },
+        "4": {
+          "t": "lunch",
+          "n": "Lunch Break"
+        },
+        "6": {
+          "t": "lab",
+          "c": "CSE304",
+          "f": "Mrs. KamalaDevi M · Mr. Jeyapandian M"
+        },
+        "7": {
+          "t": "class",
+          "c": "CSE304",
+          "f": "Mrs. KamalaDevi M"
+        },
+        "8": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
+          "t": "lab",
+          "c": "CSE304",
+          "f": "Mrs. KamalaDevi M · Mr. Jeyapandian M"
+        }
+      },
+      "WED": {
+        "1": {
+          "t": "class",
+          "c": "CSE301",
+          "f": "Mr. Ramesh R"
+        },
+        "2": {
+          "t": "class",
+          "c": "CSE308",
+          "f": "Dr. N. Moratanch"
+        },
+        "3": {
+          "t": "free",
+          "n": ""
+        },
+        "4": {
+          "t": "free",
+          "n": ""
+        },
+        "6": {
+          "t": "class",
+          "c": "CSE302",
+          "f": "Dr. Sreedevi B"
+        },
+        "7": {
+          "t": "class",
+          "c": "INT310",
+          "f": "Mrs. Hemamalini S"
+        },
+        "8": {
+          "t": "free",
+          "n": "Minor Spec."
+        }
+      },
+      "THU": {
+        "1": {
+          "t": "lab",
+          "c": "CSE303",
+          "f": "Dr. Durga Karthik · Dr. Suganya S (Batch-1)"
+        },
+        "2": {
+          "t": "lab",
+          "c": "CSE303",
+          "f": "Dr. Durga Karthik · Dr. Suganya S (Batch-1)"
+        },
+        "3": {
+          "t": "class",
+          "c": "CSE302",
+          "f": "Dr. Sreedevi B"
+        },
+        "4": {
+          "t": "class",
+          "c": "CSE301",
+          "f": "Mr. Ramesh R"
+        },
+        "6": {
+          "t": "class",
+          "c": "CSE304",
+          "f": "Mrs. KamalaDevi M"
+        },
+        "7": {
+          "t": "free",
+          "n": "Minor Spec."
+        },
+        "8": {
+          "t": "free",
+          "n": "Minor Spec."
+        }
+      },
+      "FRI": {
+        "1": {
+          "t": "lab",
+          "c": "CSE303",
+          "f": "Dr. Sreedevi B · Dr. Durga Karthik (Batch-2)"
+        },
+        "2": {
+          "t": "lab",
+          "c": "CSE303",
+          "f": "Dr. Sreedevi B · Dr. Durga Karthik (Batch-2)"
+        },
+        "3": {
+          "t": "free",
+          "n": "INT310/CSE312 in Room 410"
+        },
+        "4": {
+          "t": "class",
+          "c": "CSE304",
+          "f": "Mrs. KamalaDevi M"
+        },
+        "6": {
+          "t": "class",
+          "c": "CSE302",
+          "f": "Dr. Sreedevi B"
+        },
+        "7": {
+          "t": "class",
+          "c": "CSE308",
+          "f": "Dr. N. Moratanch"
+        },
+        "8": {
+          "t": "free",
+          "n": ""
+        }
+      }
+    },
+    "414": {
+      "MON": {
+        "1": {
+          "t": "lab",
+          "c": "CSE431",
+          "f": "Mr. Jeyapandian M · Dr. Vimala Devi P (Batch-1)"
+        },
+        "2": {
+          "t": "lab",
+          "c": "CSE431",
+          "f": "Mr. Jeyapandian M · Dr. Vimala Devi P (Batch-1)"
+        },
+        "3": {
+          "t": "class",
+          "c": "CSE409",
+          "f": "Dr. S. Suganya"
+        },
+        "4": {
+          "t": "class",
+          "c": "CSE415R02",
+          "f": "Mr. Jeyapandian M"
+        },
+        "6": {
+          "t": "class",
+          "c": "CSE414/INT405R02",
+          "f": "Dr. Sangeetha J"
+        },
+        "7": {
+          "t": "class",
+          "c": "INT404R01",
+          "f": "Dr. Meganathan S"
+        },
+        "8": {
+          "t": "free",
+          "n": ""
+        }
+      },
+      "TUE": {
+        "1": {
+          "t": "class",
+          "c": "CSE407R01",
+          "f": "Dr. Ramakrishnan R"
+        },
+        "2": {
+          "t": "class",
+          "c": "CSE409",
+          "f": "Dr. S. Suganya"
+        },
+        "3": {
+          "t": "lab",
+          "c": "CSE411",
+          "f": "Dr. S. Suganya · Dr. S. Farjana Farvin"
+        },
+        "4": {
+          "t": "lab",
+          "c": "CSE411",
+          "f": "Dr. S. Suganya · Dr. S. Farjana Farvin"
+        },
+        "6": {
+          "t": "class",
+          "c": "INT404R01",
+          "f": "Dr. Meganathan S"
+        },
+        "7": {
+          "t": "free",
+          "n": ""
+        },
+        "8": {
+          "t": "free",
+          "n": ""
+        }
+      },
+      "WED": {
+        "1": {
+          "t": "class",
+          "c": "INT404R01",
+          "f": "Dr. Meganathan S"
+        },
+        "2": {
+          "t": "free",
+          "n": "CSE414/INT327 in Room 502"
+        },
+        "3": {
+          "t": "class",
+          "c": "CSE415R02",
+          "f": "Mr. Jeyapandian M"
+        },
+        "4": {
+          "t": "class",
+          "c": "CSE407R01",
+          "f": "Dr. Ramakrishnan R"
+        },
+        "6": {
+          "t": "class",
+          "c": "CSE409",
+          "f": "Dr. S. Suganya"
+        },
+        "7": {
+          "t": "free",
+          "n": ""
+        },
+        "8": {
+          "t": "free",
+          "n": ""
+        }
+      },
+      "THU": {
+        "1": {
+          "t": "lab",
+          "c": "CSE431",
+          "f": "Mr. Jeyapandian M · Mr. Venkatesan R (Batch-2)"
+        },
+        "2": {
+          "t": "lab",
+          "c": "CSE431",
+          "f": "Mr. Jeyapandian M · Mr. Venkatesan R (Batch-2)"
+        },
+        "3": {
+          "t": "class",
+          "c": "CSE415R02",
+          "f": "Mr. Jeyapandian M"
+        },
+        "4": {
+          "t": "class",
+          "c": "CSE407R01",
+          "f": "Dr. Ramakrishnan R"
+        },
+        "6": {
+          "t": "free",
+          "n": "CSE414/INT327 in Room 504"
+        },
+        "7": {
+          "t": "free",
+          "n": "Minor Spec."
+        },
+        "8": {
+          "t": "free",
+          "n": "Minor Spec."
+        }
+      },
+      "FRI": {
+        "1": {
+          "t": "lab",
+          "c": "INT327",
+          "f": "Dr. Rajakumar R · Dr. Vanitha M"
+        },
+        "2": {
+          "t": "lab",
+          "c": "INT327",
+          "f": "Dr. Rajakumar R · Dr. Vanitha M"
+        },
+        "3": {
+          "t": "free",
+          "n": "CSE414/INT327 in Room 103"
+        },
+        "4": {
+          "t": "class",
+          "c": "CSE407R01",
+          "f": "Dr. Ramakrishnan R"
+        },
+        "6": {
+          "t": "class",
+          "c": "CSE409",
+          "f": "Dr. S. Suganya"
+        },
+        "7": {
+          "t": "class",
+          "c": "CSE415R02",
+          "f": "Mr. Jeyapandian M"
+        },
+        "8": {
+          "t": "free",
+          "n": "Minor Spec."
+        }
+      }
+    },
+    "415": {
+      "MON": {
+        "1": {
+          "t": "class",
+          "c": "INT404R01",
+          "f": "Dr. Meganathan S"
+        },
+        "2": {
+          "t": "class",
+          "c": "CSE407R01",
+          "f": "Dr. Ramakrishnan R"
+        },
+        "3": {
+          "t": "class",
+          "c": "CSE409",
+          "f": "Dr. S. Farjana Farvin"
+        },
+        "4": {
+          "t": "free",
+          "n": ""
+        },
+        "6": {
+          "t": "class",
+          "c": "CSE414/INT405R02",
+          "f": "Dr. Sangeetha J"
+        },
+        "7": {
+          "t": "class",
+          "c": "CSE415R02",
+          "f": "Dr. Vimala Devi P"
+        },
+        "8": {
+          "t": "free",
+          "n": ""
+        }
+      },
+      "TUE": {
+        "1": {
+          "t": "lab",
+          "c": "CSE431",
+          "f": "Dr. Vimala Devi P · Mr. Jeyapandian M (Batch-1)"
+        },
+        "2": {
+          "t": "lab",
+          "c": "CSE431",
+          "f": "Dr. Vimala Devi P · Mr. Jeyapandian M (Batch-1)"
+        },
+        "3": {
+          "t": "class",
+          "c": "CSE415R02",
+          "f": "Dr. Vimala Devi P"
+        },
+        "4": {
+          "t": "class",
+          "c": "INT404R01",
+          "f": "Dr. Meganathan S"
+        },
+        "6": {
+          "t": "class",
+          "c": "CSE409",
+          "f": "Dr. S. Farjana Farvin"
+        },
+        "7": {
+          "t": "free",
+          "n": ""
+        },
+        "8": {
+          "t": "free",
+          "n": ""
+        }
+      },
+      "WED": {
+        "1": {
+          "t": "class",
+          "c": "CSE407R01",
+          "f": "Dr. Ramakrishnan R"
+        },
+        "2": {
+          "t": "free",
+          "n": "CSE414/INT327 in Room 502"
+        },
+        "3": {
+          "t": "class",
+          "c": "INT404R01",
+          "f": "Dr. Meganathan S"
+        },
+        "4": {
+          "t": "class",
+          "c": "CSE415R02",
+          "f": "Dr. Vimala Devi P"
+        },
+        "6": {
+          "t": "lab",
+          "c": "CSE431",
+          "f": "Dr. Vimala Devi P · Mr. Jeyapandian M (Batch-2)"
+        },
+        "7": {
+          "t": "lab",
+          "c": "CSE431",
+          "f": "Dr. Vimala Devi P · Mr. Jeyapandian M (Batch-2)"
+        },
+        "8": {
+          "t": "free",
+          "n": ""
+        }
+      },
+      "THU": {
+        "1": {
+          "t": "class",
+          "c": "CSE407R01",
+          "f": "Dr. Ramakrishnan R"
+        },
+        "2": {
+          "t": "class",
+          "c": "CSE409",
+          "f": "Dr. S. Farjana Farvin"
+        },
+        "3": {
+          "t": "lab",
+          "c": "CSE411",
+          "f": "Dr. S. Farjana Farvin · Dr. Ganesh J"
+        },
+        "4": {
+          "t": "lab",
+          "c": "CSE411",
+          "f": "Dr. S. Farjana Farvin · Dr. Ganesh J"
+        },
+        "6": {
+          "t": "free",
+          "n": "CSE414/INT327 in Room 504"
+        },
+        "7": {
+          "t": "free",
+          "n": "Minor Spec."
+        },
+        "8": {
+          "t": "free",
+          "n": "Minor Spec."
+        }
+      },
+      "FRI": {
+        "1": {
+          "t": "lab",
+          "c": "INT327",
+          "f": "Dr. Rajakumar R · Dr. Vanitha M"
+        },
+        "2": {
+          "t": "lab",
+          "c": "INT327",
+          "f": "Dr. Rajakumar R · Dr. Vanitha M"
+        },
+        "3": {
+          "t": "free",
+          "n": "CSE414/INT327 in Room 103"
+        },
+        "4": {
+          "t": "class",
+          "c": "CSE409",
+          "f": "Dr. S. Farjana Farvin"
+        },
+        "6": {
+          "t": "class",
+          "c": "CSE407R01",
+          "f": "Dr. Ramakrishnan R"
+        },
+        "7": {
+          "t": "class",
+          "c": "CSE415R02",
+          "f": "Dr. Vimala Devi P"
+        },
+        "8": {
+          "t": "free",
+          "n": "Minor Spec."
+        }
+      }
+    },
+    "416": {
+      "MON": {
+        "1": {
+          "t": "class",
+          "c": "CSE409",
+          "f": "Dr. M. Vanitha"
+        },
+        "2": {
+          "t": "lab",
+          "c": "CSE411",
+          "f": "Dr. M. Vanitha · Dr. Rajesh K"
+        },
+        "3": {
+          "t": "lab",
+          "c": "CSE411",
+          "f": "Dr. M. Vanitha · Dr. Rajesh K"
+        },
+        "4": {
+          "t": "free",
+          "n": ""
+        },
+        "6": {
+          "t": "class",
+          "c": "CSE414/INT405R02",
+          "f": "Dr. Sangeetha J"
+        },
+        "7": {
+          "t": "class",
+          "c": "CSE407R01",
+          "f": "Dr. Maartina M"
+        },
+        "8": {
+          "t": "free",
+          "n": ""
+        }
+      },
+      "TUE": {
+        "1": {
+          "t": "class",
+          "c": "CSE415R02",
+          "f": "Dr. Ganesh J"
+        },
+        "2": {
+          "t": "class",
+          "c": "CSE407R01",
+          "f": "Dr. Maartina M"
+        },
+        "3": {
+          "t": "free",
+          "n": ""
+        },
+        "4": {
+          "t": "lunch",
+          "n": "Lunch Break"
+        },
+        "6": {
+          "t": "lab",
+          "c": "CSE431",
+          "f": "Dr. Ganesh J · R. Ramesh (Batch-1)"
+        },
+        "7": {
+          "t": "free",
+          "n": ""
+        },
+        "8": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
+          "t": "lab",
+          "c": "CSE431",
+          "f": "Dr. Ganesh J · R. Ramesh (Batch-1)"
+        }
+      },
+      "WED": {
+        "1": {
+          "t": "lab",
+          "c": "CSE431",
+          "f": "Dr. Ganesh J · R. Ramesh (Batch-2)"
+        },
+        "2": {
+          "t": "lab",
+          "c": "CSE431",
+          "f": "Dr. Ganesh J · R. Ramesh (Batch-2)"
+        },
+        "3": {
+          "t": "free",
+          "n": "CSE414/INT327 in Room 502"
+        },
+        "4": {
+          "t": "class",
+          "c": "CSE409",
+          "f": "Dr. M. Vanitha"
+        },
+        "6": {
+          "t": "class",
+          "c": "CSE407R01",
+          "f": "Dr. Maartina M"
+        },
+        "7": {
+          "t": "class",
+          "c": "INT404R01",
+          "f": "Dr. Durga Karthik"
+        },
+        "8": {
+          "t": "class",
+          "c": "CSE415R02",
+          "f": "Dr. Ganesh J"
+        }
+      },
+      "THU": {
+        "1": {
+          "t": "class",
+          "c": "CSE415R02",
+          "f": "Dr. Ganesh J"
+        },
+        "2": {
+          "t": "class",
+          "c": "CSE409",
+          "f": "Dr. M. Vanitha"
+        },
+        "3": {
+          "t": "class",
+          "c": "INT404R01",
+          "f": "Dr. Durga Karthik"
+        },
+        "4": {
+          "t": "class",
+          "c": "CSE407R01",
+          "f": "Dr. Maartina M"
+        },
+        "6": {
+          "t": "free",
+          "n": "CSE414/INT327 in Room 504"
+        },
+        "7": {
+          "t": "free",
+          "n": "Minor Spec."
+        },
+        "8": {
+          "t": "free",
+          "n": "Minor Spec."
+        }
+      },
+      "FRI": {
+        "1": {
+          "t": "lab",
+          "c": "INT327",
+          "f": "Dr. Rajakumar R · Dr. Vanitha M"
+        },
+        "2": {
+          "t": "lab",
+          "c": "INT327",
+          "f": "Dr. Rajakumar R · Dr. Vanitha M"
+        },
+        "3": {
+          "t": "free",
+          "n": "CSE414/INT327 in Room 103"
+        },
+        "4": {
+          "t": "class",
+          "c": "CSE415R02",
+          "f": "Dr. Ganesh J"
+        },
+        "6": {
+          "t": "class",
+          "c": "INT404R01",
+          "f": "Dr. Durga Karthik"
+        },
+        "7": {
+          "t": "class",
+          "c": "CSE409",
+          "f": "Dr. M. Vanitha"
+        },
+        "8": {
+          "t": "free",
+          "n": "Minor Spec."
+        }
+      }
+    },
+    "417": {
+      "MON": {
+        "1": {
+          "t": "lab",
+          "c": "CSE312",
+          "f": "Mr. Manikandan H · Dr. Ganesh J"
+        },
+        "2": {
+          "t": "lab",
+          "c": "CSE312",
+          "f": "Mr. Manikandan H · Dr. Ganesh J"
+        },
+        "3": {
+          "t": "free",
+          "n": "INT310/CSE312 in Room 506"
+        },
+        "4": {
+          "t": "class",
+          "c": "CSE301",
+          "f": "Dr. Rekha D"
+        },
+        "6": {
+          "t": "class",
+          "c": "CSE308",
+          "f": "Dr. Venkateswari P"
+        },
+        "7": {
+          "t": "lab",
+          "c": "CSE303",
+          "f": "Dr. Nagamuthu Krishnan · Dr. Suganya S (Batch-2)"
+        },
+        "8": {
+          "t": "lab",
+          "c": "CSE303",
+          "f": "Dr. Nagamuthu Krishnan · Dr. Suganya S (Batch-2)"
+        }
+      },
+      "TUE": {
+        "1": {
+          "t": "lab",
+          "c": "CSE303",
+          "f": "Mr. Manikandan H · Dr. Durga Karthik (Batch-1)"
+        },
+        "2": {
+          "t": "lab",
+          "c": "CSE303",
+          "f": "Mr. Manikandan H · Dr. Durga Karthik (Batch-1)"
+        },
+        "3": {
+          "t": "class",
+          "c": "CSE302",
+          "f": "Dr. Nagamuthu Krishnan"
+        },
+        "4": {
+          "t": "lunch",
+          "n": "Lunch Break"
+        },
+        "6": {
+          "t": "lab",
+          "c": "CSE304",
+          "f": "Dr. Manjula K · Dr. Rekha D"
+        },
+        "7": {
+          "t": "class",
+          "c": "CSE304",
+          "f": "Dr. Manjula K"
+        },
+        "8": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
+          "t": "lab",
+          "c": "CSE304",
+          "f": "Dr. Manjula K · Dr. Rekha D"
+        }
+      },
+      "WED": {
+        "1": {
+          "t": "class",
+          "c": "CSE302",
+          "f": "Dr. Nagamuthu Krishnan"
+        },
+        "2": {
+          "t": "class",
+          "c": "CSE301",
+          "f": "Dr. Rekha D"
+        },
+        "3": {
+          "t": "free",
+          "n": ""
+        },
+        "4": {
+          "t": "free",
+          "n": ""
+        },
+        "6": {
+          "t": "class",
+          "c": "CSE308",
+          "f": "Dr. Venkateswari P"
+        },
+        "7": {
+          "t": "class",
+          "c": "INT310",
+          "f": "Mrs. Hemamalini S"
+        },
+        "8": {
+          "t": "free",
+          "n": "Minor Spec."
+        }
+      },
+      "THU": {
+        "1": {
+          "t": "class",
+          "c": "CSE308",
+          "f": "Dr. Venkateswari P"
+        },
+        "2": {
+          "t": "class",
+          "c": "CSE302",
+          "f": "Dr. Nagamuthu Krishnan"
+        },
+        "3": {
+          "t": "class",
+          "c": "CSE301",
+          "f": "Dr. Rekha D"
+        },
+        "4": {
+          "t": "class",
+          "c": "CSE304",
+          "f": "Dr. Manjula K"
+        },
+        "6": {
+          "t": "free",
+          "n": "Minor Spec."
+        },
+        "7": {
+          "t": "free",
+          "n": "Minor Spec."
+        },
+        "8": {
+          "t": "free",
+          "n": ""
+        }
+      },
+      "FRI": {
+        "1": {
+          "t": "lab",
+          "c": "CSE309R01",
+          "f": "Dr. Venkateswari P · Dr. N. Moratanch"
+        },
+        "2": {
+          "t": "lab",
+          "c": "CSE309R01",
+          "f": "Dr. Venkateswari P · Dr. N. Moratanch"
+        },
+        "3": {
+          "t": "free",
+          "n": "INT310/CSE312 in Room 410"
+        },
+        "4": {
+          "t": "class",
+          "c": "CSE304",
+          "f": "Dr. Manjula K"
+        },
+        "6": {
+          "t": "class",
+          "c": "CSE302",
+          "f": "Dr. Nagamuthu Krishnan"
+        },
+        "7": {
+          "t": "class",
+          "c": "CSE301",
+          "f": "Dr. Rekha D"
+        },
+        "8": {
+          "t": "free",
+          "n": ""
+        }
+      }
+    },
     "501": {
       "MON": {
         "1": {
@@ -8678,10 +8760,6 @@
           "c": "CSS303",
           "f": "Kalaivani, P"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "CSS210R01",
@@ -8693,6 +8771,10 @@
           "f": "Rubidha Devi, D"
         },
         "8": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
           "t": "free",
           "n": ""
         }
@@ -8718,10 +8800,6 @@
           "c": "CSS234",
           "f": "Venkatesh, K"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "ENG142",
@@ -8736,6 +8814,10 @@
           "t": "class",
           "c": "CSS235",
           "f": "Rubidha Devi, D"
+        },
+        "ln": {
+          "t": "free",
+          "n": ""
         }
       },
       "WED": {
@@ -8759,10 +8841,6 @@
           "c": "CSS234",
           "f": "Venkatesh, K"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "CSS222",
@@ -8774,6 +8852,10 @@
           "f": "Kalaichelvi, V"
         },
         "8": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
           "t": "free",
           "n": ""
         }
@@ -8798,11 +8880,6 @@
           "t": "lunch",
           "n": "Lunch Break"
         },
-        "ln": {
-          "t": "lab",
-          "c": "CSS223",
-          "f": "Ramya, R"
-        },
         "6": {
           "t": "lab",
           "c": "CSS223",
@@ -8817,6 +8894,11 @@
           "t": "class",
           "c": "CSS210R01",
           "f": "Kalaichelvi, V"
+        },
+        "ln": {
+          "t": "lab",
+          "c": "CSS223",
+          "f": "Ramya, R"
         }
       },
       "FRI": {
@@ -8840,10 +8922,6 @@
           "c": "ENG209R01",
           "f": "Sathya, G"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "CSS235",
@@ -8855,6 +8933,10 @@
           "f": "Kalaivani, P"
         },
         "8": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
           "t": "free",
           "n": ""
         }
@@ -8881,10 +8963,6 @@
           "c": "CSS303",
           "f": "Kalaivani, P"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "CSS210R01",
@@ -8896,6 +8974,10 @@
           "f": "Sujarani, R"
         },
         "8": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
           "t": "free",
           "n": ""
         }
@@ -8921,10 +9003,6 @@
           "c": "ENG142",
           "f": "Barathi, S"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "ENG209R01",
@@ -8939,6 +9017,10 @@
           "t": "class",
           "c": "CSS235",
           "f": "Sujarani, R"
+        },
+        "ln": {
+          "t": "free",
+          "n": ""
         }
       },
       "WED": {
@@ -8961,10 +9043,6 @@
           "c": "CSS223",
           "f": "Venkateswari, P"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "CSS210R01",
@@ -8979,6 +9057,10 @@
           "t": "class",
           "c": "CSS234",
           "f": "Venkatesh, K"
+        },
+        "ln": {
+          "t": "free",
+          "n": ""
         }
       },
       "THU": {
@@ -9002,10 +9084,6 @@
           "c": "ENG142",
           "f": "Barathi, S"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "CSS234",
@@ -9017,6 +9095,10 @@
           "f": "Sumathi, A"
         },
         "8": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
           "t": "free",
           "n": ""
         }
@@ -9042,10 +9124,6 @@
           "c": "CSS210R01",
           "f": "Ramya, R"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "CSS234",
@@ -9060,6 +9138,10 @@
           "t": "class",
           "c": "CSS235",
           "f": "Sujarani, R"
+        },
+        "ln": {
+          "t": "free",
+          "n": ""
         }
       }
     },
@@ -9085,10 +9167,6 @@
           "c": "MAT121",
           "f": "Rajalakshmi, D"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "CAP108",
@@ -9103,6 +9181,10 @@
           "t": "class",
           "c": "CAP107R01",
           "f": "Farjana Farvin, S"
+        },
+        "ln": {
+          "t": "free",
+          "n": ""
         }
       },
       "TUE": {
@@ -9126,10 +9208,6 @@
           "c": "MAT121",
           "f": "Rajalakshmi, D"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "CAP108",
@@ -9140,6 +9218,10 @@
           "n": ""
         },
         "8": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
           "t": "free",
           "n": ""
         }
@@ -9165,10 +9247,6 @@
           "c": "TNP107",
           "f": "Krishnaswamy, N"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "CAP201R01",
@@ -9179,6 +9257,10 @@
           "n": ""
         },
         "8": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
           "t": "free",
           "n": ""
         }
@@ -9202,11 +9284,6 @@
           "t": "lunch",
           "n": "Lunch Break"
         },
-        "ln": {
-          "t": "lab",
-          "c": "CAP109",
-          "f": "Suganya, S"
-        },
         "6": {
           "t": "lab",
           "c": "CAP109",
@@ -9221,6 +9298,11 @@
           "t": "class",
           "c": "MAT121",
           "f": "Rajalakshmi, D"
+        },
+        "ln": {
+          "t": "lab",
+          "c": "CAP109",
+          "f": "Suganya, S"
         }
       },
       "FRI": {
@@ -9244,10 +9326,6 @@
           "c": "MAT121",
           "f": "Rajalakshmi, D"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "CAP201R01",
@@ -9258,6 +9336,10 @@
           "n": ""
         },
         "8": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
           "t": "free",
           "n": ""
         }
@@ -9283,11 +9365,6 @@
           "t": "lunch",
           "n": "Lunch Break"
         },
-        "ln": {
-          "t": "lab",
-          "c": "CAP202",
-          "f": "Manjula, K"
-        },
         "6": {
           "t": "lab",
           "c": "CAP202",
@@ -9302,6 +9379,11 @@
           "t": "class",
           "c": "CAP108",
           "f": "Rajesh, K"
+        },
+        "ln": {
+          "t": "lab",
+          "c": "CAP202",
+          "f": "Manjula, K"
         }
       },
       "TUE": {
@@ -9325,10 +9407,6 @@
           "c": "CAP201R01",
           "f": "Rajeswari, N"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "MAT121",
@@ -9343,6 +9421,10 @@
           "t": "class",
           "c": "ENG210R01",
           "f": "Sathya, G"
+        },
+        "ln": {
+          "t": "free",
+          "n": ""
         }
       },
       "WED": {
@@ -9366,10 +9448,6 @@
           "c": "CAP107R01",
           "f": "Eashwar, K B"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "CAP201R01",
@@ -9380,6 +9458,10 @@
           "n": ""
         },
         "8": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
           "t": "free",
           "n": ""
         }
@@ -9404,10 +9486,6 @@
           "c": "MAT121",
           "f": "Shanmugavelan, S"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "ENG210R01",
@@ -9419,6 +9497,10 @@
           "f": "Eashwar, K B"
         },
         "8": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
           "t": "free",
           "n": ""
         }
@@ -9443,10 +9525,6 @@
           "c": "MAT121",
           "f": "Shanmugavelan, S"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "CAP201R01",
@@ -9458,6 +9536,10 @@
           "f": "Sathya, G"
         },
         "8": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
           "t": "free",
           "n": ""
         }
@@ -9481,10 +9563,6 @@
           "t": "free",
           "n": ""
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "CAP107R01",
@@ -9499,6 +9577,10 @@
           "t": "class",
           "c": "CAP201R01",
           "f": "Rajeswari, N"
+        },
+        "ln": {
+          "t": "free",
+          "n": ""
         }
       },
       "TUE": {
@@ -9521,10 +9603,6 @@
           "c": "CAP108",
           "f": "Rajesh, K"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "CAP107R01",
@@ -9539,6 +9617,10 @@
           "t": "class",
           "c": "TNP107",
           "f": "Krishnaswamy, N"
+        },
+        "ln": {
+          "t": "free",
+          "n": ""
         }
       },
       "WED": {
@@ -9562,10 +9644,6 @@
           "c": "MAT121",
           "f": "Parameswari, K"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "CAP108",
@@ -9580,6 +9658,10 @@
           "t": "class",
           "c": "CAP201R01",
           "f": "Rajeswari, N"
+        },
+        "ln": {
+          "t": "free",
+          "n": ""
         }
       },
       "THU": {
@@ -9603,10 +9685,6 @@
           "c": "CAP108",
           "f": "Rajesh, K"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "CAP201R01",
@@ -9621,6 +9699,10 @@
           "t": "lab",
           "c": "CAP109",
           "f": "Rajesh, K"
+        },
+        "ln": {
+          "t": "free",
+          "n": ""
         }
       },
       "FRI": {
@@ -9642,10 +9724,6 @@
           "c": "CAP201R01",
           "f": "Rajeswari, N"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "MAT121",
@@ -9660,6 +9738,10 @@
           "t": "class",
           "c": "TNP107",
           "f": "Krishnaswamy, N"
+        },
+        "ln": {
+          "t": "free",
+          "n": ""
         }
       }
     },
@@ -9683,10 +9765,6 @@
           "c": "CSS108",
           "f": "Saravanan, N"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "CSS233",
@@ -9701,6 +9779,10 @@
           "t": "class",
           "c": "MAT121",
           "f": "Balasubramanian, K"
+        },
+        "ln": {
+          "t": "free",
+          "n": ""
         }
       },
       "TUE": {
@@ -9723,10 +9805,6 @@
           "c": "ECS103",
           "f": "Rajendran, V G"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "CSS233",
@@ -9741,6 +9819,10 @@
           "t": "lab",
           "c": "ECS119/CSS109",
           "f": "Srinivasan, S / Umamaheswari, P"
+        },
+        "ln": {
+          "t": "free",
+          "n": ""
         }
       },
       "WED": {
@@ -9764,10 +9846,6 @@
           "c": "TNP107",
           "f": "Sathya Manickam"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "free",
           "n": ""
@@ -9777,6 +9855,10 @@
           "n": ""
         },
         "8": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
           "t": "free",
           "n": ""
         }
@@ -9802,10 +9884,6 @@
           "c": "CSS108",
           "f": "Saravanan, N"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "ENG210R01",
@@ -9820,6 +9898,10 @@
           "t": "class",
           "c": "TNP107",
           "f": "Sathya Manickam"
+        },
+        "ln": {
+          "t": "free",
+          "n": ""
         }
       },
       "FRI": {
@@ -9843,10 +9925,6 @@
           "c": "CSS233",
           "f": "Abirama Sundari, S"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "ENG210R01",
@@ -9861,6 +9939,10 @@
           "t": "class",
           "c": "ECS103",
           "f": "Rajendran, V G"
+        },
+        "ln": {
+          "t": "free",
+          "n": ""
         }
       }
     },
@@ -9885,10 +9967,6 @@
           "c": "CHY102",
           "f": "Karthik, S"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "ENG210R01",
@@ -9903,6 +9981,10 @@
           "t": "class",
           "c": "CSS108",
           "f": "Saravanan, N"
+        },
+        "ln": {
+          "t": "free",
+          "n": ""
         }
       },
       "TUE": {
@@ -9926,10 +10008,6 @@
           "c": "MAT121",
           "f": "Sundararaman, M"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "CSS108",
@@ -9940,6 +10018,10 @@
           "n": ""
         },
         "8": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
           "t": "free",
           "n": ""
         }
@@ -9964,10 +10046,6 @@
           "c": "CSS233",
           "f": "Abirama Sundari, S"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "MAT121",
@@ -9982,6 +10060,10 @@
           "t": "lab",
           "c": "CSS109/ECS119",
           "f": "Arulmani, K / Sundaravazhuthi, V"
+        },
+        "ln": {
+          "t": "free",
+          "n": ""
         }
       },
       "THU": {
@@ -10005,10 +10087,6 @@
           "c": "CSS233",
           "f": "Abirama Sundari, S"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "ECS103",
@@ -10023,6 +10101,10 @@
           "t": "lab",
           "c": "ECS119/CSS109",
           "f": "Sundaravazhuthi, V / Hemamalini, S"
+        },
+        "ln": {
+          "t": "free",
+          "n": ""
         }
       },
       "FRI": {
@@ -10045,10 +10127,6 @@
           "c": "ECS103",
           "f": "Ponmudi, B"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "CSS233",
@@ -10060,6 +10138,10 @@
           "f": "Sathya Manickam"
         },
         "8": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
           "t": "free",
           "n": ""
         }
@@ -10087,10 +10169,6 @@
           "c": "BIS126",
           "f": "Bhuvaneswari, S"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "free",
           "n": ""
@@ -10100,6 +10178,10 @@
           "n": ""
         },
         "8": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
           "t": "free",
           "n": ""
         }
@@ -10124,10 +10206,6 @@
           "t": "free",
           "n": ""
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "BIS211",
@@ -10142,6 +10220,10 @@
           "t": "class",
           "c": "BIS126",
           "f": "Bhuvaneswari, S"
+        },
+        "ln": {
+          "t": "free",
+          "n": ""
         }
       },
       "WED": {
@@ -10164,10 +10246,6 @@
           "t": "free",
           "n": ""
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "lab",
           "c": "BIS127",
@@ -10182,6 +10260,10 @@
           "t": "class",
           "c": "BIS102R01",
           "f": "Sivakumar, R"
+        },
+        "ln": {
+          "t": "free",
+          "n": ""
         }
       },
       "THU": {
@@ -10204,10 +10286,6 @@
           "t": "free",
           "n": ""
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "BIS211",
@@ -10222,6 +10300,10 @@
           "t": "class",
           "c": "BIS102R01",
           "f": "Sivakumar, R"
+        },
+        "ln": {
+          "t": "free",
+          "n": ""
         }
       },
       "FRI": {
@@ -10244,10 +10326,6 @@
           "t": "free",
           "n": ""
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "free",
           "n": ""
@@ -10257,6 +10335,10 @@
           "n": ""
         },
         "8": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
           "t": "free",
           "n": ""
         }
@@ -10284,10 +10366,6 @@
           "c": "BIS301R01",
           "f": "Arun Kumar, M"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "BIS220/BIS222",
@@ -10298,6 +10376,10 @@
           "n": ""
         },
         "8": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
           "t": "free",
           "n": ""
         }
@@ -10323,10 +10405,6 @@
           "c": "BIS114",
           "f": "Suchitra, MR"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "BIS304",
@@ -10337,6 +10415,10 @@
           "n": ""
         },
         "8": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
           "t": "free",
           "n": ""
         }
@@ -10361,10 +10443,6 @@
           "t": "free",
           "n": ""
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "BIS222/BIS220",
@@ -10379,6 +10457,10 @@
           "t": "class",
           "c": "TNP101R01",
           "f": "Sathya Manickam"
+        },
+        "ln": {
+          "t": "free",
+          "n": ""
         }
       },
       "THU": {
@@ -10402,10 +10484,6 @@
           "c": "BIS214",
           "f": "Sivakumar, R / Sumathi, CS"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "lab",
           "c": "BIS214",
@@ -10417,6 +10495,10 @@
           "f": "Mahesh, N"
         },
         "8": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
           "t": "free",
           "n": ""
         }
@@ -10441,10 +10523,6 @@
           "t": "free",
           "n": ""
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "lab",
           "c": "BIS116",
@@ -10456,6 +10534,10 @@
           "f": "Renuka, R / Senthilkumar, S"
         },
         "8": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
           "t": "free",
           "n": ""
         }
@@ -10482,10 +10564,6 @@
           "t": "free",
           "n": ""
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "lab",
           "c": "CSS103",
@@ -10500,6 +10578,10 @@
           "t": "class",
           "c": "BIS121",
           "f": "Balavinayagamani, G"
+        },
+        "ln": {
+          "t": "free",
+          "n": ""
         }
       },
       "TUE": {
@@ -10522,10 +10604,6 @@
           "t": "free",
           "n": ""
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "lab",
           "c": "BIS123R01/BIS122R01",
@@ -10537,6 +10615,10 @@
           "f": "Balavinayagamani, G / Balakumar, S"
         },
         "8": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
           "t": "free",
           "n": ""
         }
@@ -10561,10 +10643,6 @@
           "t": "free",
           "n": ""
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "BIS121",
@@ -10576,6 +10654,10 @@
           "f": "Sumathi, CS"
         },
         "8": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
           "t": "free",
           "n": ""
         }
@@ -10600,10 +10682,6 @@
           "t": "free",
           "n": ""
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "free",
           "n": ""
@@ -10613,6 +10691,10 @@
           "n": ""
         },
         "8": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
           "t": "free",
           "n": ""
         }
@@ -10638,10 +10720,6 @@
           "c": "ENG110R01",
           "f": "Phavatharani, V"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "free",
           "n": ""
@@ -10651,6 +10729,10 @@
           "n": ""
         },
         "8": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
           "t": "free",
           "n": ""
         }
@@ -10677,10 +10759,6 @@
           "c": "CSS222",
           "f": "Sumathi, A"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "ENG209R01",
@@ -10695,6 +10773,10 @@
           "t": "lab",
           "c": "ECS302",
           "f": "Swaminathan, S"
+        },
+        "ln": {
+          "t": "free",
+          "n": ""
         }
       },
       "TUE": {
@@ -10717,10 +10799,6 @@
           "t": "free",
           "n": ""
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "ENG209R01",
@@ -10735,6 +10813,10 @@
           "t": "lab",
           "c": "ECS302",
           "f": "Swaminathan, S"
+        },
+        "ln": {
+          "t": "free",
+          "n": ""
         }
       },
       "WED": {
@@ -10757,10 +10839,6 @@
           "t": "free",
           "n": ""
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "CSS210",
@@ -10772,6 +10850,10 @@
           "f": "Suba, M"
         },
         "8": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
           "t": "free",
           "n": ""
         }
@@ -10796,10 +10878,6 @@
           "t": "free",
           "n": ""
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "ECS206",
@@ -10811,6 +10889,10 @@
           "f": "Swaminathan, S"
         },
         "8": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
           "t": "free",
           "n": ""
         }
@@ -10836,10 +10918,6 @@
           "c": "ENG209R01",
           "f": "Jeremiah P"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "EES201",
@@ -10854,6 +10932,10 @@
           "t": "lab",
           "c": "CSS223",
           "f": "Farjana Farvin, S / Sumathi, A"
+        },
+        "ln": {
+          "t": "free",
+          "n": ""
         }
       }
     },
@@ -10879,10 +10961,6 @@
           "c": "ENG210R01",
           "f": "Sathya, G"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "free",
           "n": ""
@@ -10892,6 +10970,10 @@
           "n": ""
         },
         "8": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
           "t": "free",
           "n": ""
         }
@@ -10917,10 +10999,6 @@
           "c": "ENG210R01",
           "f": "Sathya, G"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "free",
           "n": ""
@@ -10930,6 +11008,10 @@
           "n": ""
         },
         "8": {
+          "t": "free",
+          "n": ""
+        },
+        "ln": {
           "t": "free",
           "n": ""
         }
@@ -10955,10 +11037,6 @@
           "c": "ENG210R01",
           "f": "Sathya, G"
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "lab",
           "c": "CSS109",
@@ -10973,6 +11051,10 @@
           "t": "class",
           "c": "ECS209",
           "f": "Radhakrishnan, S"
+        },
+        "ln": {
+          "t": "free",
+          "n": ""
         }
       },
       "THU": {
@@ -10995,10 +11077,6 @@
           "t": "free",
           "n": ""
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "ECS201",
@@ -11013,6 +11091,10 @@
           "t": "class",
           "c": "CSS108",
           "f": "Ramesh, R"
+        },
+        "ln": {
+          "t": "free",
+          "n": ""
         }
       },
       "FRI": {
@@ -11035,10 +11117,6 @@
           "t": "free",
           "n": ""
         },
-        "ln": {
-          "t": "free",
-          "n": ""
-        },
         "6": {
           "t": "class",
           "c": "CSS108",
@@ -11053,6 +11131,10 @@
           "t": "lab",
           "c": "ECS202",
           "f": "Baskaran, S / Ramasamy, K"
+        },
+        "ln": {
+          "t": "free",
+          "n": ""
         }
       }
     }
